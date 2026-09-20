@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import { getProductoPorSlug, getImagenesDeProducto } from '@/lib/queries'
 import { formatPrecio } from '@/lib/whatsapp'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import AddToCartButton from '@/components/AddToCartButton'
 
 export const revalidate = 300
 
@@ -99,9 +100,18 @@ export default async function ProductoPage({ params }: Props) {
         )}
         {producto.advertencias && <p className="mt-3 text-xs text-gray-400">{producto.advertencias}</p>}
 
-        <div className="mt-6">
+        <div className="mt-6 flex flex-wrap gap-3">
+          <AddToCartButton
+            producto={{ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio }}
+            imagenUrl={imagenes[0]?.url}
+            agotado={producto.estado_inventario === 'agotado'}
+            variante="completo"
+          />
           <WhatsAppButton producto={producto} />
         </div>
+        <p className="mt-2 text-xs text-gray-400">
+          Agrega varios productos al carrito y envía un solo pedido por WhatsApp, o pide este directamente.
+        </p>
       </div>
     </div>
   )

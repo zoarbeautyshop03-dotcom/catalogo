@@ -43,6 +43,27 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="bg-white border-y border-rosa-pastel/60">
+        <div className="max-w-6xl mx-auto px-4 py-5 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-xs text-gray-600">
+          <div>
+            <p className="text-xl">💬</p>
+            <p className="mt-1">Atención personalizada por WhatsApp</p>
+          </div>
+          <div>
+            <p className="text-xl">🚚</p>
+            <p className="mt-1">Envíos a todo el país</p>
+          </div>
+          <div>
+            <p className="text-xl">🌸</p>
+            <p className="mt-1">Productos seleccionados con cuidado</p>
+          </div>
+          <div>
+            <p className="text-xl">🛍️</p>
+            <p className="mt-1">Arma tu pedido y pide todo junto</p>
+          </div>
+        </div>
+      </section>
+
       {categorias.length > 0 && (
         <section className="max-w-6xl mx-auto px-4 py-10">
           <h2 className="font-display text-xl mb-4">Encuentra lo que necesitas</h2>
