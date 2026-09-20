@@ -6,18 +6,19 @@ const config: Config = {
     extend: {
       colors: {
         rosa: {
-          pastel: '#F7D9E3',
-          empolvado: '#E8B4C0',
+          pastel: '#F9DCE6',
+          empolvado: '#EAB0C6',
           nude: '#EED9CE',
         },
-        fucsia: '#D63384',
-        crema: '#FBF6F1',
+        fucsia: '#E0179E',
+        crema: '#FDF3F6',
         lavanda: '#D8CFE8',
-        dorado: '#C9A15A',
+        dorado: '#F0A93C',
       },
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
         body: ['var(--font-body)', 'sans-serif'],
+        script: ['var(--font-script)', 'cursive'],
       },
     },
   },

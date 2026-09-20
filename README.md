@@ -94,6 +94,24 @@ público solo lo que la vista `productos_publicos` expone.
 - El número de WhatsApp del catálogo público todavía no lee de `configuracion`
   (ver nota en esa página).
 
+## Inventario por Excel (`/admin/inventario`)
+
+Flujo pensado para cuando haces un conteo de inventario completo y no quieres
+editar producto por producto:
+
+1. **Descargar plantilla** genera un `.xlsx` con todos tus productos actuales
+   (slug, nombre, sku, código de barras, cantidad en stock, precio).
+2. Editas las columnas `cantidad_stock` y/o `precio` en Excel — el resto son
+   solo referencia, no las toques.
+3. Subes el archivo. **No se aplica nada todavía**: primero ves una tabla de
+   "esto va a cambiar de X a Y", más los slugs que no reconoció (por si hay un
+   error de tipeo).
+4. Solo al presionar "Confirmar y actualizar" se escribe en la base de datos.
+
+El cruce se hace por `slug` (no por SKU, porque tu Excel original nunca trajo
+SKU). Acepta `.xlsx`, `.xls` y `.csv`; si algo no carga bien con CSV, usa el
+Excel que descargaste como plantilla — es el formato más probado.
+
 ## Estructura
 
 ```
