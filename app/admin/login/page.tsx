@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { createClientSupabase } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -29,7 +30,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-crema px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-6">
-        <h1 className="font-display text-xl text-fucsia mb-1">Zoar — Panel</h1>
+        <Image src="/logo.jpg" alt="Zoar Beauty Shop" width={64} height={64} className="rounded-xl mb-4" />
         <p className="text-sm text-gray-500 mb-6">Inicia sesión para administrar el catálogo</p>
 
         <label className="block text-sm mb-1">Correo</label>
