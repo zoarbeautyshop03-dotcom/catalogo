@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { cerrarSesion } from '@/lib/actions/auth'
 
 const LINKS = [
@@ -13,7 +14,7 @@ const LINKS = [
 export default function AdminSidebar({ email }: { email: string }) {
   return (
     <aside className="w-56 shrink-0 bg-white border-r border-rosa-pastel min-h-screen p-4 flex flex-col">
-      <p className="font-display text-fucsia mb-6">Zoar — Panel</p>
+      <Image src="/logo.jpg" alt="Zoar Beauty Shop" width={40} height={40} className="rounded-lg mb-6" />
       <nav className="flex flex-col gap-1 text-sm">
         {LINKS.map((l) => (
           <Link key={l.href} href={l.href} className="rounded-lg px-3 py-2 text-gray-700 hover:bg-rosa-pastel/40">
