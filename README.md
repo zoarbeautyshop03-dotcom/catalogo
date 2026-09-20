@@ -112,6 +112,28 @@ El cruce se hace por `slug` (no por SKU, porque tu Excel original nunca trajo
 SKU). Acepta `.xlsx`, `.xls` y `.csv`; si algo no carga bien con CSV, usa el
 Excel que descargaste como plantilla — es el formato más probado.
 
+## Carrito (pedido consolidado por WhatsApp)
+
+Para no obligar al cliente a mandar un WhatsApp por cada producto:
+
+- "Agregar al carrito" en cada tarjeta de producto y en la ficha completa.
+- El carrito vive en el navegador (`localStorage`, sin base de datos ni login) —
+  cada visitante tiene el suyo, se mantiene si cierra y vuelve a abrir el sitio.
+- Ícono de carrito en el header con contador; al abrirlo puede ajustar
+  cantidades o quitar productos.
+- Un solo botón **"Enviar pedido por WhatsApp"** arma un mensaje con todos los
+  productos, cantidades y el total, listo para enviar.
+- No reemplaza el botón de "Pedir por WhatsApp" de un solo producto en la
+  ficha — ambos conviven, para quien solo quiere uno.
+
+## Diseño: inspiración de layout (no de marca)
+
+Algunas secciones del inicio (franja de confianza, tarjetas de categoría más
+grandes y llamativas, buscador prominente en el header) se inspiraron en la
+estructura común de ecommerce grandes — el patrón de layout, no los colores,
+el logo ni el contenido de ningún sitio en particular. Toda la identidad
+visual (colores, tipografía, copy) sigue siendo la de Zoar.
+
 ## Estructura
 
 ```
