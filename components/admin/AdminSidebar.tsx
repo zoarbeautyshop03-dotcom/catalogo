@@ -4,6 +4,7 @@ import { cerrarSesion } from '@/lib/actions/auth'
 const LINKS = [
   { href: '/admin', label: 'Dashboard' },
   { href: '/admin/productos', label: 'Productos' },
+  { href: '/admin/inventario', label: 'Inventario' },
   { href: '/admin/categorias', label: 'Categorías' },
   { href: '/admin/marcas', label: 'Marcas' },
   { href: '/admin/configuracion', label: 'Configuración' },

@@ -22,6 +22,8 @@ export async function actualizarCategoria(id: string, formData: FormData) {
     .update({
       nombre: String(formData.get('nombre') ?? '').trim(),
       slug: String(formData.get('slug') ?? '').trim(),
+      icono: String(formData.get('icono') ?? '').trim() || null,
+      imagen_url: String(formData.get('imagen_url') ?? '').trim() || null,
       orden: Number(formData.get('orden') ?? 0),
       activa: formData.get('activa') === 'on',
     })
