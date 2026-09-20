@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Inter', sans-serif;
-}
-
 .badge {
   @apply text-[10px] uppercase tracking-wide px-2 py-1 rounded-full;
 }

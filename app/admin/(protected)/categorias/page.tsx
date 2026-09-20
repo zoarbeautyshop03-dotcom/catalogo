@@ -33,6 +33,8 @@ export default async function CategoriasPage() {
               <form action={actualizarConId} className="flex flex-wrap items-center gap-2 flex-1">
                 <input name="nombre" defaultValue={c.nombre} className="rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm flex-1 min-w-[140px]" />
                 <input name="slug" defaultValue={c.slug} className="rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm flex-1 min-w-[140px]" />
+                <input name="icono" defaultValue={c.icono ?? ''} placeholder="emoji" className="w-16 rounded-lg border border-rosa-pastel px-2 py-1.5 text-sm text-center" />
+                <input name="imagen_url" defaultValue={c.imagen_url ?? ''} placeholder="URL de ícono propio (opcional)" className="rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm flex-1 min-w-[160px]" />
                 <input name="orden" type="number" defaultValue={c.orden} className="w-20 rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm" />
                 <label className="flex items-center gap-1 text-xs text-gray-600">
                   <input type="checkbox" name="activa" defaultChecked={c.activa} /> Activa
