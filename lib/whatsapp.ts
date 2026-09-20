@@ -18,3 +18,23 @@ export function buildWhatsappLink(producto: Producto): string {
     `(${precio}). Lo vi en su catálogo: ${url}`
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`
 }
+
+type ItemParaWhatsapp = {
+  nombre: string
+  precio: number
+  cantidad: number
+}
+
+export function buildWhatsappCarritoLink(items: ItemParaWhatsapp[], moneda = 'COP'): string {
+  const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
+  const lineas = items.map(
+    (i, idx) => `${idx + 1}. ${i.nombre} x${i.cantidad} - ${formatPrecio(i.precio * i.cantidad, moneda)}`
+  )
+  const total = items.reduce((acc, i) => acc + i.precio * i.cantidad, 0)
+  const mensaje =
+    `Hola, Zoar Beauty. Quiero pedir:\n\n` +
+    lineas.join('\n') +
+    `\n\nTotal: ${formatPrecio(total, moneda)}` +
+    `\n\n¿Me confirman disponibilidad? Gracias`
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensaje)}`
+}
