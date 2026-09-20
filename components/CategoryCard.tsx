@@ -2,9 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Categoria } from '@/lib/types'
 
-// Emoji por defecto SOLO para cuando la categoria no trae icono/imagen propia
-// desde el panel. En cuanto Zoar suba sus iconos reales (imagen_url), esos
-// tienen prioridad automaticamente.
 const EMOJI_POR_SLUG: Record<string, string> = {
   'cuidado-capilar': '💆🏻‍♀️',
   'perfumeria-femenina': '🌸',
@@ -24,16 +21,17 @@ export default function CategoryCard({ categoria }: { categoria: Categoria }) {
   return (
     <Link
       href={`/catalogo?categoria=${categoria.slug}`}
-      className="flex-shrink-0 w-32 rounded-2xl bg-rosa-pastel/50 hover:bg-rosa-pastel transition p-4 text-center"
+      className="flex-shrink-0 w-36 rounded-2xl bg-gradient-to-br from-rosa-pastel to-rosa-empolvado/60 hover:brightness-95 transition p-5 text-center shadow-sm"
     >
       {categoria.imagen_url ? (
-        <span className="relative block w-8 h-8 mx-auto">
+        <span className="relative block w-10 h-10 mx-auto">
           <Image src={categoria.imagen_url} alt="" fill className="object-contain" />
         </span>
       ) : (
-        <span className="text-2xl">{emoji}</span>
+        <span className="text-3xl">{emoji}</span>
       )}
-      <p className="mt-2 text-xs font-medium text-gray-700">{categoria.nombre}</p>
+      <p className="mt-3 text-xs font-semibold text-gray-800">{categoria.nombre}</p>
+      <span className="mt-1 inline-block text-[10px] text-fucsia">Ver más →</span>
     </Link>
   )
 }
