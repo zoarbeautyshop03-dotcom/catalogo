@@ -2,13 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
-.badge {
-  @apply text-[10px] uppercase tracking-wide px-2 py-1 rounded-full;
+:root {
+  --color-lavender-magenta-50: #fff4fe;
+  --color-lavender-magenta-100: #ffe7fe;
+  --color-lavender-magenta-200: #ffcefc;
+  --color-lavender-magenta-300: #ff94f4;
+  --color-lavender-magenta-400: #fe74ee;
+  --color-lavender-magenta-500: #f540df;
+  --color-lavender-magenta-600: #d920bf;
+  --color-lavender-magenta-700: #b4179a;
+  --color-lavender-magenta-800: #93157d;
+  --color-lavender-magenta-900: #781765;
+  --color-lavender-magenta-950: #510141;
+  --color-ink: #2b1d29;
+  --color-muted: #725f6f;
+  --color-gold: #b78b3c;
 }
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(255, 148, 244, 0.13), transparent 26%),
+    radial-gradient(circle at 0% 100%, rgba(255, 206, 252, 0.18), transparent 30%),
+    var(--color-lavender-magenta-50);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-lavender-magenta-200);
+  color: var(--color-lavender-magenta-950);
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+
+input:focus,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(245, 64, 223, 0.22);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em];
+  }
+
+  .section-shell {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-lavender-magenta-700 shadow-sm ring-1 ring-lavender-magenta-100;
+  }
+
+  .section-title {
+    @apply font-display text-2xl font-bold tracking-tight text-lavender-magenta-950 sm:text-3xl;
+  }
+
+  .section-copy {
+    @apply mt-2 max-w-xl text-sm leading-6 text-gray-500 sm:text-base;
+  }
+
+  .premium-card {
+    @apply rounded-[28px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100/80;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

@@ -28,48 +28,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-crema px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white rounded-2xl shadow-sm p-6">
-        <Image
-          src="/logo-banner.png"
-          alt="Zoar Beauty Shop — By Daniela Perez"
-          width={280}
-          height={102}
-          className="w-full h-auto mb-4"
-        />
-        <p className="text-sm text-gray-500 mb-6">Inicia sesión para administrar el catálogo</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-lavender-magenta-50 px-4 py-8">
+      <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-200/60 blur-3xl" />
+      <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
 
-        <label className="block text-sm mb-1">Correo</label>
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-lg border border-rosa-pastel px-3 py-2 mb-4 text-sm"
-        />
+      <form onSubmit={handleSubmit} className="relative w-full max-w-md rounded-[30px] border border-lavender-magenta-100 bg-white p-6 shadow-2xl shadow-lavender-magenta-900/10 sm:p-8">
+        <div className="rounded-2xl bg-lavender-magenta-50/80 p-2 ring-1 ring-lavender-magenta-100">
+          <Image src="/logo-banner.png" alt="Zoar Beauty Shop — By Daniela Perez" width={420} height={158} className="w-full" />
+        </div>
+        <div className="mt-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-lavender-magenta-600">Panel privado</span>
+          <h1 className="mt-1 font-display text-2xl font-bold text-lavender-magenta-950">Bienvenida a Zoar</h1>
+          <p className="mt-1 text-sm leading-6 text-gray-500">Inicia sesión para administrar productos, inventario y categorías.</p>
+        </div>
 
-        <label className="block text-sm mb-1">Contraseña</label>
-        <input
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-lg border border-rosa-pastel px-3 py-2 mb-4 text-sm"
-        />
+        <label className="mt-6 block text-xs font-semibold text-gray-700">Correo</label>
+        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-lavender-magenta-300 focus:outline-none" />
 
-        {error && <p className="text-sm text-red-500 mb-3">{error}</p>}
+        <label className="mt-4 block text-xs font-semibold text-gray-700">Contraseña</label>
+        <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm focus:border-lavender-magenta-300 focus:outline-none" />
 
-        <button
-          disabled={cargando}
-          className="w-full rounded-full bg-fucsia text-white py-2 font-medium disabled:opacity-60"
-        >
-          {cargando ? 'Entrando...' : 'Entrar'}
+        {error && <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+
+        <button disabled={cargando} className="mt-5 w-full rounded-full bg-lavender-magenta-600 py-3.5 font-semibold text-white shadow-lg shadow-lavender-magenta-600/15 hover:bg-lavender-magenta-700 disabled:opacity-60">
+          {cargando ? 'Entrando...' : 'Entrar al panel'}
         </button>
 
-        <p className="mt-4 text-xs text-gray-400">
-          Tu usuario se crea desde Supabase → Authentication → Users (no hay
-          registro público aquí a propósito).
-        </p>
+        <p className="mt-4 text-center text-[11px] leading-5 text-gray-400">Tu usuario se administra desde Supabase Authentication.</p>
       </form>
     </div>
   )
