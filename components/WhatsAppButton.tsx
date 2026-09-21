@@ -8,9 +8,10 @@ export default function WhatsAppButton({ producto }: { producto: Producto }) {
       href={buildWhatsappLink(producto)}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center justify-center gap-2 rounded-full bg-fucsia px-6 py-3 text-white font-medium shadow-md hover:opacity-90 transition"
+      className="inline-flex items-center justify-center gap-2 rounded-full border border-lavender-magenta-200 bg-white px-6 py-3 font-semibold text-lavender-magenta-700 shadow-sm hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
     >
-      💬 Pedir por WhatsApp
+      <span aria-hidden="true">💬</span>
+      Pedir por WhatsApp
     </a>
   )
 }

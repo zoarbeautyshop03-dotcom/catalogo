@@ -15,42 +15,54 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
   const agotado = producto.estado_inventario === 'agotado'
 
   return (
-    // Nota: el boton de "agregar al carrito" NO puede ir dentro del <Link>
-    // (un <button> dentro de un <a> es HTML invalido), por eso es un
-    // hermano posicionado encima, no un hijo del Link.
-    <div className="group relative rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+    <article className="group relative overflow-hidden rounded-[26px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100/80 hover:-translate-y-1 hover:shadow-soft-pink">
       <Link href={`/producto/${producto.slug}`} className="block">
-        <div className="relative aspect-square bg-rosa-pastel/40">
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-lavender-magenta-50 to-lavender-magenta-100/70">
           {imagenUrl ? (
-            <Image src={imagenUrl} alt={producto.nombre} fill className="object-cover" />
+            <Image
+              src={imagenUrl}
+              alt={producto.nombre}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover transition duration-500 group-hover:scale-[1.035]"
+            />
           ) : (
-            <div className="flex h-full items-center justify-center text-rosa-empolvado text-xs text-center px-2">
-              Foto pendiente
+            <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-lavender-magenta-500">
+              <span className="text-4xl">✦</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-lavender-magenta-600">Foto pendiente</span>
             </div>
           )}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
-            {producto.nuevo && <span className="badge bg-lavanda text-white">Nuevo</span>}
-            {producto.mas_vendido && <span className="badge bg-dorado text-white">Más vendido</span>}
-            {producto.oferta && <span className="badge bg-fucsia text-white">Oferta</span>}
+
+          <div className="absolute left-3 top-3 flex flex-col gap-1.5">
+            {producto.nuevo && <span className="badge bg-lavender-magenta-950 text-white">Nuevo</span>}
+            {producto.mas_vendido && <span className="badge bg-white/95 text-lavender-magenta-800 ring-1 ring-lavender-magenta-100">Favorito</span>}
+            {producto.oferta && <span className="badge bg-lavender-magenta-600 text-white">Oferta</span>}
           </div>
+
           {agotado && (
-            <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-sm font-medium text-gray-600">
-              Agotado
+            <div className="absolute inset-0 flex items-center justify-center bg-white/75 backdrop-blur-[2px]">
+              <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 shadow-sm ring-1 ring-gray-100">Agotado</span>
             </div>
           )}
         </div>
-        <div className="p-3">
+
+        <div className="p-4 sm:p-5">
           {marcaNombre && (
-            <p className="text-[11px] uppercase tracking-wide text-rosa-empolvado">{marcaNombre}</p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-lavender-magenta-600">{marcaNombre}</p>
           )}
-          <h3 className="font-display text-sm text-gray-800 line-clamp-2">{producto.nombre}</h3>
-          <div className="mt-1 flex items-baseline gap-2">
-            {tieneDescuento && (
-              <span className="text-xs text-gray-400 line-through">
-                {formatPrecio(producto.precio_anterior as number, producto.moneda)}
+          <h3 className="mt-1 font-display text-sm font-semibold leading-5 text-lavender-magenta-950 sm:text-base">{producto.nombre}</h3>
+          <div className="mt-3 flex items-end justify-between gap-2">
+            <div className="flex min-w-0 flex-col">
+              {tieneDescuento && (
+                <span className="text-[11px] text-gray-400 line-through">
+                  {formatPrecio(producto.precio_anterior as number, producto.moneda)}
+                </span>
+              )}
+              <span className="text-base font-bold text-lavender-magenta-700 sm:text-lg">
+                {formatPrecio(producto.precio, producto.moneda)}
               </span>
-            )}
-            <span className="text-fucsia font-semibold">{formatPrecio(producto.precio, producto.moneda)}</span>
+            </div>
+            <span className="hidden rounded-full bg-lavender-magenta-50 px-3 py-1 text-[10px] font-semibold text-lavender-magenta-700 sm:inline-flex">Ver producto</span>
           </div>
         </div>
       </Link>
@@ -60,6 +72,6 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
         imagenUrl={imagenUrl}
         agotado={agotado}
       />
-    </div>
+    </article>
   )
 }
