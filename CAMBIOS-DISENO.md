@@ -40,3 +40,10 @@ Los nombres antiguos (`rosa-*`, `fucsia`, `crema`, etc.) se conservaron como ali
 Se realizó una comprobación sintáctica de los archivos TypeScript/TSX modificados y del resto del proyecto: 41 archivos analizados, 0 diagnósticos sintácticos.
 
 No fue posible ejecutar `npm run build` dentro del entorno porque las dependencias npm no están disponibles localmente y el intento de instalación no pudo completarse por la conectividad del entorno.
+
+## Ajuste solicitado — carrito y banner
+
+- El carrito ahora abre como un panel lateral oscuro, con fondo de la página oscurecido y desenfoque suave para dar prioridad al pedido.
+- Se conserva la paleta Zoar (rosa/fucsia) en acentos, contador, cantidades y botón de WhatsApp.
+- Se añadieron cierre con tecla Escape, estados de accesibilidad y una entrada lateral más fluida.
+- El banner principal de inicio dejó de usar el bloque gráfico derecho y ahora presenta únicamente el mensaje, botones y detalles decorativos, manteniendo el estilo premium de Zoar.
