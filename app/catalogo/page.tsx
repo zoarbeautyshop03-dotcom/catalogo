@@ -1,5 +1,5 @@
 import ProductCard from '@/components/ProductCard'
-import { getProductosCatalogo, getCategorias, getMarcas } from '@/lib/queries'
+import { getProductosCatalogo, getCategorias, getMarcas, getImagenesPrincipales } from '@/lib/queries'
 
 export const revalidate = 60
 
@@ -23,6 +23,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
     page,
   })
   const [categorias, marcas] = await Promise.all([getCategorias(), getMarcas()])
+  const imagenes = await getImagenesPrincipales(productos.map((p) => p.id))
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -66,7 +67,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {productos.map((p) => (
-          <ProductCard key={p.id} producto={p} />
+          <ProductCard key={p.id} producto={p} imagenUrl={imagenes[p.id]} />
         ))}
       </div>
 

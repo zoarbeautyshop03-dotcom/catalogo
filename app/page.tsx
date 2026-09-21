@@ -8,6 +8,7 @@ import {
   getNovedades,
   getOfertas,
   getMasVendidos,
+  getImagenesPrincipales,
 } from '@/lib/queries'
 
 export const revalidate = 300 // ISR: refresca cada 5 minutos
@@ -20,6 +21,13 @@ export default async function HomePage() {
     getOfertas(),
     getMasVendidos(),
   ])
+
+  // Una sola consulta de imagenes para todos los productos que van a salir
+  // en el inicio (evita repetir la consulta seccion por seccion).
+  const idsUnicos = Array.from(
+    new Set([...destacados, ...novedades, ...ofertas, ...masVendidos].map((p) => p.id))
+  )
+  const imagenes = await getImagenesPrincipales(idsUnicos)
 
   return (
     <div>
@@ -75,10 +83,18 @@ export default async function HomePage() {
         </section>
       )}
 
-      {masVendidos.length > 0 && <Section title="🔥 Los favoritos de nuestras clientas" productos={masVendidos} />}
-      {novedades.length > 0 && <Section title="✨ Recién llegados" productos={novedades} />}
-      {ofertas.length > 0 && <Section title="💗 Ofertas especiales" productos={ofertas} />}
-      {destacados.length > 0 && <Section title="Destacados" productos={destacados} />}
+      {masVendidos.length > 0 && (
+        <Section title="🔥 Los favoritos de nuestras clientas" productos={masVendidos} imagenes={imagenes} />
+      )}
+      {novedades.length > 0 && (
+        <Section title="✨ Recién llegados" productos={novedades} imagenes={imagenes} />
+      )}
+      {ofertas.length > 0 && (
+        <Section title="💗 Ofertas especiales" productos={ofertas} imagenes={imagenes} />
+      )}
+      {destacados.length > 0 && (
+        <Section title="Destacados" productos={destacados} imagenes={imagenes} />
+      )}
 
       {masVendidos.length === 0 && novedades.length === 0 && ofertas.length === 0 && destacados.length === 0 && (
         <p className="text-center text-gray-500 py-16">
@@ -90,13 +106,21 @@ export default async function HomePage() {
   )
 }
 
-function Section({ title, productos }: { title: string; productos: Producto[] }) {
+function Section({
+  title,
+  productos,
+  imagenes,
+}: {
+  title: string
+  productos: Producto[]
+  imagenes: Record<string, string>
+}) {
   return (
     <section className="max-w-6xl mx-auto px-4 py-8">
       <h2 className="font-display text-xl mb-4">{title}</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {productos.map((p) => (
-          <ProductCard key={p.id} producto={p} />
+          <ProductCard key={p.id} producto={p} imagenUrl={imagenes[p.id]} />
         ))}
       </div>
     </section>
