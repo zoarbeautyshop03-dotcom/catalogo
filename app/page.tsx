@@ -30,54 +30,45 @@ export default async function HomePage() {
   return (
     <div className="pb-10">
       <section className="section-shell pt-5 sm:pt-8">
-        <div className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-white via-lavender-magenta-50 to-lavender-magenta-100 px-6 py-12 shadow-soft-pink ring-1 ring-lavender-magenta-100 sm:px-10 sm:py-16 lg:px-16 lg:py-20">
-          <div className="absolute -right-16 -top-24 h-64 w-64 rounded-full bg-lavender-magenta-200/50 blur-3xl" />
-          <div className="absolute -bottom-24 left-1/3 h-72 w-72 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
-          <div className="relative grid items-center gap-12 lg:grid-cols-[1.1fr_.9fr]">
-            <div className="max-w-2xl">
-              <span className="eyebrow">Belleza · Cuidado · Confianza</span>
-              <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] tracking-tight text-lavender-magenta-950 sm:text-5xl lg:text-6xl">
-                Tu cabello merece sentirse tan bien como se ve.
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-7 text-gray-600 sm:text-lg">
-                Descubre una selección de productos de belleza y cuidado capilar para crear tu rutina y disfrutar cada paso.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/catalogo"
-                  className="rounded-full bg-lavender-magenta-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
-                >
-                  Explorar catálogo
-                </Link>
-                <Link
-                  href="/catalogo?oferta=1"
-                  className="rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-lavender-magenta-700 ring-1 ring-lavender-magenta-200 hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
-                >
-                  Ver ofertas
-                </Link>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-5 text-xs font-medium text-gray-500">
-                <span>✓ Atención por WhatsApp</span>
-                <span>✓ Pedido consolidado</span>
-                <span>✓ Envíos a todo el país</span>
-              </div>
+        <div className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-white via-lavender-magenta-50 to-lavender-magenta-100 px-6 py-12 text-center shadow-soft-pink ring-1 ring-lavender-magenta-100 sm:px-12 sm:py-16 lg:px-20 lg:py-20">
+          <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
+          <div className="absolute -bottom-28 -left-16 h-80 w-80 rounded-full bg-lavender-magenta-200/35 blur-3xl" />
+          <div className="absolute left-1/2 top-7 h-px w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-lavender-magenta-300 to-transparent" />
+
+          <div className="relative mx-auto max-w-4xl">
+            <span className="eyebrow">Belleza · Cuidado · Confianza</span>
+            <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-lavender-magenta-950 sm:text-5xl lg:text-6xl">
+              Tu cabello merece sentirse tan bien como se ve.
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg">
+              Descubre una selección de productos de belleza y cuidado capilar para crear una rutina que disfrutes de principio a fin.
+            </p>
+
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/catalogo"
+                className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
+              >
+                Explorar catálogo
+              </Link>
+              <Link
+                href="/catalogo?oferta=1"
+                className="rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-lavender-magenta-700 ring-1 ring-lavender-magenta-200 hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
+              >
+                Ver ofertas
+              </Link>
             </div>
 
-            <div className="relative mx-auto w-full max-w-md">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[30px] bg-white/85 p-5 shadow-soft-card ring-1 ring-lavender-magenta-100 backdrop-blur">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,148,244,.36),transparent_32%),radial-gradient(circle_at_72%_70%,rgba(255,206,252,.8),transparent_42%)]" />
-                <div className="relative flex h-full flex-col items-center justify-center text-center">
-                  <div className="text-[72px] leading-none text-lavender-magenta-500 drop-shadow-sm">✦</div>
-                  <p className="mt-2 font-display text-3xl font-semibold text-lavender-magenta-950">Zoar Beauty</p>
-                  <p className="mt-1 font-script text-3xl text-lavender-magenta-600">Shop</p>
-                  <span className="mt-4 h-px w-24 bg-lavender-magenta-300" />
-                  <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-gray-500">By Daniela Perez</p>
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 rounded-2xl bg-white px-4 py-3 shadow-soft-card ring-1 ring-lavender-magenta-100">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-lavender-magenta-600">Tu rutina</p>
-                <p className="mt-1 text-sm font-semibold text-lavender-magenta-950">Empieza aquí ✨</p>
-              </div>
+            <div className="mx-auto mt-9 flex max-w-2xl flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs font-medium text-gray-500">
+              <span>✓ Atención por WhatsApp</span>
+              <span>✓ Pedido consolidado</span>
+              <span>✓ Envíos a todo el país</span>
+            </div>
+
+            <div className="mt-9 flex items-center justify-center gap-3 text-lavender-magenta-300">
+              <span className="h-px w-16 bg-lavender-magenta-200" />
+              <span className="text-lg">✦</span>
+              <span className="h-px w-16 bg-lavender-magenta-200" />
             </div>
           </div>
         </div>
