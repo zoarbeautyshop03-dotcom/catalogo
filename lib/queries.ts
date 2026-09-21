@@ -111,10 +111,12 @@ type FiltrosCatalogo = {
   busqueda?: string
   page?: number
   porPagina?: number
+  nuevo?: boolean
+  oferta?: boolean
 }
 
 export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
-  const { categoriaSlug, marcaSlug, precioMin, precioMax, busqueda, page = 1, porPagina = 24 } = filtros
+  const { categoriaSlug, marcaSlug, precioMin, precioMax, busqueda, page = 1, porPagina = 24, nuevo, oferta } = filtros
 
   let categoriaId: string | undefined
   if (categoriaSlug) {
@@ -134,6 +136,8 @@ export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
   if (precioMin != null) query = query.gte('precio', precioMin)
   if (precioMax != null) query = query.lte('precio', precioMax)
   if (busqueda) query = query.ilike('nombre', `%${busqueda}%`)
+  if (nuevo) query = query.eq('nuevo', true)
+  if (oferta) query = query.eq('oferta', true)
 
   const from = (page - 1) * porPagina
   const to = from + porPagina - 1
