@@ -47,3 +47,15 @@ No fue posible ejecutar `npm run build` dentro del entorno porque las dependenci
 - Se conserva la paleta Zoar (rosa/fucsia) en acentos, contador, cantidades y botón de WhatsApp.
 - Se añadieron cierre con tecla Escape, estados de accesibilidad y una entrada lateral más fluida.
 - El banner principal de inicio dejó de usar el bloque gráfico derecho y ahora presenta únicamente el mensaje, botones y detalles decorativos, manteniendo el estilo premium de Zoar.
+
+## Fase 12 — corrección del carrito y logo en texto
+
+**Bug del carrito (causa raíz encontrada):** el `<header>` usa `backdrop-blur-xl`. Cualquier elemento con `backdrop-filter` (o `filter`/`transform`) crea, según la especificación CSS, un nuevo "containing block" para sus descendientes con `position: fixed`. Como `<CartDrawer />` se renderiza dentro del `<header>`, el overlay `fixed inset-0` del carrito quedaba encerrado dentro de la altura del header (~140px) en vez de cubrir toda la pantalla. Por eso el panel se veía como una cajita chica y recortada, y el resumen con el botón "Enviar pedido por WhatsApp" —que va más abajo en el panel— no alcanzaba a mostrarse.
+
+- Arreglo: `CartDrawer.tsx` ahora renderiza el fondo oscuro y el panel lateral con `createPortal` directo a `document.body`, así el overlay siempre cubre toda la pantalla sin importar los estilos del header.
+
+**Banner/logo en imagen → texto real:**
+
+- Nuevo componente `components/Logo.tsx`: "ZOAR BEAUTY" en `font-display` con degradado rosa-magenta + "Shop" en `font-script` (cursiva), más una mariposa vectorial (SVG) extraída del banner original y la firma "By: Daniela Pérez" debajo. Al ser texto y SVG, nunca se ve borroso ni pixelado al agrandarlo.
+- Se reemplazó el `<Image src="/logo-banner.png">` por `<Logo />` en el header público, el sidebar de administración y el login de administración, cada uno con un tamaño (`sm` / `md` / `lg`) ajustado a su espacio. El del header quedó más grande que antes.
+- El archivo `public/logo-banner.png` se dejó intacto por si se necesita en otro lado, simplemente ya no se referencia en estos tres componentes.
