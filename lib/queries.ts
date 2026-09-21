@@ -83,6 +83,26 @@ export async function getImagenesDeProducto(productoId: string): Promise<Product
   return (data ?? []) as ProductoImagen[]
 }
 
+// Trae, en una sola consulta, la mejor imagen (principal si existe, si no la
+// de menor `orden`) de cada producto de la lista. Se usa en el inicio y en el
+// listado del catalogo para no dejar las tarjetas siempre en "Foto pendiente".
+export async function getImagenesPrincipales(productoIds: string[]): Promise<Record<string, string>> {
+  if (productoIds.length === 0) return {}
+  const { data, error } = await supabase
+    .from('producto_imagenes')
+    .select('producto_id, url, orden, es_principal')
+    .in('producto_id', productoIds)
+    .order('es_principal', { ascending: false })
+    .order('orden', { ascending: true })
+  if (error) throw error
+
+  const mapa: Record<string, string> = {}
+  for (const img of data ?? []) {
+    if (!mapa[img.producto_id]) mapa[img.producto_id] = img.url
+  }
+  return mapa
+}
+
 type FiltrosCatalogo = {
   categoriaSlug?: string
   marcaSlug?: string
