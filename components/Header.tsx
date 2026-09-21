@@ -5,15 +5,15 @@ import CartDrawer from './CartDrawer'
 export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-crema/95 backdrop-blur border-b border-rosa-pastel">
-      <div className="mx-auto max-w-6xl px-4 py-2.5 flex items-center gap-4">
+      <div className="mx-auto max-w-6xl px-4 py-3 flex items-center gap-4">
         <Link href="/" className="shrink-0">
           <Image
-            src="/logo.jpg"
-            alt="Zoar Beauty Shop"
-            width={44}
-            height={44}
-            className="rounded-xl object-cover"
+            src="/logo-banner.png"
+            alt="Zoar Beauty Shop — By Daniela Perez"
+            width={2073}
+            height={758}
             priority
+            className="h-14 sm:h-16 md:h-20 w-auto"
           />
         </Link>
 
