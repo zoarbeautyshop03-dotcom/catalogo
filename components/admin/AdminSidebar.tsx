@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import Logo from '@/components/Logo'
 import { cerrarSesion } from '@/lib/actions/auth'
 
 const LINKS = [
@@ -14,8 +14,8 @@ const LINKS = [
 export default function AdminSidebar({ email }: { email: string }) {
   return (
     <aside className="flex min-h-screen w-64 shrink-0 flex-col border-r border-lavender-magenta-100 bg-white px-4 py-5 shadow-sm">
-      <Link href="/admin" className="block rounded-2xl bg-lavender-magenta-50/70 p-2 ring-1 ring-lavender-magenta-100">
-        <Image src="/logo-banner.png" alt="Zoar Beauty Shop" width={260} height={98} className="h-auto w-full" priority />
+      <Link href="/admin" className="block rounded-2xl bg-lavender-magenta-50/70 px-3 py-4 ring-1 ring-lavender-magenta-100">
+        <Logo size="sm" />
       </Link>
 
       <div className="px-2 pb-3 pt-7">

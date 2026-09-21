@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCarrito } from '@/lib/cart-context'
@@ -25,7 +26,19 @@ function CloseIcon() {
 
 export default function CartDrawer() {
   const [abierto, setAbierto] = useState(false)
+  const [montado, setMontado] = useState(false)
   const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio } = useCarrito()
+
+  // El carrito se renderiza en un portal (ver más abajo) porque el <header>
+  // tiene backdrop-blur, y cualquier ancestro con backdrop-filter/filter/
+  // transform crea un "containing block" para los hijos con position:fixed.
+  // Eso encerraba el overlay del carrito dentro de la altura del header en
+  // vez de cubrir toda la pantalla (por eso se veía chiquito, recortado y
+  // sin el botón de WhatsApp). document.body solo existe en el navegador,
+  // así que esperamos a montar antes de crear el portal.
+  useEffect(() => {
+    setMontado(true)
+  }, [])
 
   useEffect(() => {
     if (!abierto) return
@@ -65,7 +78,7 @@ export default function CartDrawer() {
         )}
       </button>
 
-      {abierto && (
+      {montado && abierto && createPortal(
         <div className="fixed inset-0 z-[60]" role="presentation">
           <button
             aria-label="Cerrar carrito"
@@ -203,7 +216,8 @@ export default function CartDrawer() {
               </div>
             )}
           </aside>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   )

@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import CartDrawer from './CartDrawer'
+import Logo from './Logo'
 
 function SearchIcon() {
   return (
@@ -27,15 +27,8 @@ export default function Header() {
       </div>
 
       <div className="section-shell grid grid-cols-[auto_1fr_auto] items-center gap-3 py-2.5 sm:gap-5 sm:py-3">
-        <Link href="/" className="shrink-0 rounded-xl">
-          <Image
-            src="/logo-banner.png"
-            alt="Zoar Beauty Shop — By Daniela Perez"
-            width={280}
-            height={105}
-            className="h-12 w-auto object-contain sm:h-14"
-            priority
-          />
+        <Link href="/" className="shrink-0 rounded-xl" aria-label="Zoar Beauty Shop — Inicio">
+          <Logo size="md" />
         </Link>
 
         <form action="/catalogo" className="hidden min-w-0 md:block">
