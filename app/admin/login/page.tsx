@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import Logo from '@/components/Logo'
 import { createClientSupabase } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -33,8 +33,8 @@ export default function LoginPage() {
       <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
 
       <form onSubmit={handleSubmit} className="relative w-full max-w-md rounded-[30px] border border-lavender-magenta-100 bg-white p-6 shadow-2xl shadow-lavender-magenta-900/10 sm:p-8">
-        <div className="rounded-2xl bg-lavender-magenta-50/80 p-2 ring-1 ring-lavender-magenta-100">
-          <Image src="/logo-banner.png" alt="Zoar Beauty Shop — By Daniela Perez" width={420} height={158} className="w-full" />
+        <div className="flex justify-center rounded-2xl bg-lavender-magenta-50/80 px-4 py-6 ring-1 ring-lavender-magenta-100">
+          <Logo size="lg" />
         </div>
         <div className="mt-6">
           <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-lavender-magenta-600">Panel privado</span>
