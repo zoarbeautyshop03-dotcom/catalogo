@@ -96,6 +96,9 @@ público solo lo que la vista `productos_publicos` expone.
 
 ## Inventario por Excel (`/admin/inventario`)
 
+**Nota técnica:** la carga y confirmación del Excel se realizan mediante rutas API de Node.js para evitar errores del navegador asociados a Server Actions al transmitir archivos. Se mantiene el mismo flujo de previsualización antes de actualizar la base de datos.
+
+
 Flujo pensado para cuando haces un conteo de inventario completo y no quieres
 editar producto por producto:
 
