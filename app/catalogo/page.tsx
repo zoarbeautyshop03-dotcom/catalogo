@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
+import BotonVolver from '@/components/BotonVolver'
 import { getProductosCatalogo, getCategorias, getMarcas, getImagenesPrincipales } from '@/lib/queries'
 
 export const revalidate = 60
@@ -35,6 +36,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
 
   return (
     <div className="section-shell py-7 sm:py-10">
+      <BotonVolver label="Volver" />
       <div className="overflow-hidden rounded-[30px] bg-gradient-to-br from-white to-lavender-magenta-50 px-5 py-8 ring-1 ring-lavender-magenta-100 sm:px-8 sm:py-10">
         <span className="eyebrow">Colección Zoar</span>
         <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

@@ -5,6 +5,7 @@ import { getProductoPorSlug, getImagenesDeProducto } from '@/lib/queries'
 import { formatPrecio } from '@/lib/whatsapp'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import AddToCartButton from '@/components/AddToCartButton'
+import BotonVolver from '@/components/BotonVolver'
 
 export const revalidate = 300
 
@@ -33,6 +34,7 @@ export default async function ProductoPage({ params }: Props) {
 
   return (
     <div className="section-shell py-7 sm:py-10">
+      <BotonVolver label="Volver al catálogo" />
       <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-10">
         <div>
           <div className="relative aspect-square overflow-hidden rounded-[32px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100">
