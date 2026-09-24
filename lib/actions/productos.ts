@@ -46,6 +46,9 @@ export async function crearProducto(formData: FormData) {
   const { data, error } = await supabase.from('productos').insert(payload).select('id').single()
   if (error) throw new Error(error.message)
   revalidatePath('/admin/productos')
+  revalidatePath('/')
+  revalidatePath('/catalogo')
+  revalidatePath('/producto/[slug]', 'page')
   redirect(`/admin/productos/${data.id}`)
 }
 
@@ -58,6 +61,7 @@ export async function actualizarProducto(id: string, formData: FormData) {
   revalidatePath(`/admin/productos/${id}`)
   revalidatePath('/')
   revalidatePath('/catalogo')
+  revalidatePath('/producto/[slug]', 'page')
   redirect('/admin/productos')
 }
 
@@ -66,6 +70,9 @@ export async function eliminarProducto(id: string) {
   const { error } = await supabase.from('productos').delete().eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath('/admin/productos')
+  revalidatePath('/')
+  revalidatePath('/catalogo')
+  revalidatePath('/producto/[slug]', 'page')
 }
 
 export async function duplicarProducto(id: string) {
