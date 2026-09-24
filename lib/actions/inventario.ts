@@ -102,13 +102,18 @@ export async function previsualizarInventario(
   return { ok: true, cambios, noReconocidos, sinCambios }
 }
 
-export async function confirmarImportacionInventario(formData: FormData) {
+export type ResultadoConfirmacion = { ok: boolean; error?: string }
+
+export async function confirmarImportacionInventario(
+  _prevState: ResultadoConfirmacion,
+  formData: FormData
+): Promise<ResultadoConfirmacion> {
   const crudo = String(formData.get('cambios') ?? '[]')
   let cambios: FilaCambio[]
   try {
     cambios = JSON.parse(crudo)
   } catch {
-    throw new Error('No pude leer los cambios a aplicar. Vuelve a subir el archivo.')
+    return { ok: false, error: 'No pude leer los cambios a aplicar. Vuelve a subir el archivo.' }
   }
 
   const supabase = createServerSupabase()
@@ -120,7 +125,13 @@ export async function confirmarImportacionInventario(formData: FormData) {
     if (Object.keys(payload).length === 0) continue
 
     const { error } = await supabase.from('productos').update(payload).eq('slug', c.slug)
-    if (error) throw new Error(`Error actualizando "${c.slug}": ${error.message}`)
+    if (error) {
+      // Antes esto hacia "throw", y un throw dentro de una Server Action se
+      // oculta en produccion (Next.js lo reemplaza por el error generico de
+      // "Application error"), asi que el mensaje real nunca llegaba a verse.
+      // Devolverlo como dato normal si lo muestra en pantalla.
+      return { ok: false, error: `Error actualizando "${c.slug}": ${error.message}` }
+    }
   }
 
   revalidatePath('/admin/productos')
