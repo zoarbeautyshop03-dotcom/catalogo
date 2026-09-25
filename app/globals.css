@@ -92,6 +92,16 @@ a:focus-visible {
     @apply rounded-[28px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100/80;
   }
 
+
+  .catalog-filter-card {
+    box-shadow: 0 18px 50px rgba(81, 1, 65, 0.06);
+    backdrop-filter: blur(12px);
+  }
+
+  .catalog-chip {
+    @apply inline-flex items-center rounded-full font-semibold shadow-sm ring-1;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

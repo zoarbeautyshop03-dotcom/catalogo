@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import CartDrawer from './CartDrawer'
 import Logo from './Logo'
+import RedesSociales from './RedesSociales'
+import { getConfiguracion } from '@/lib/queries'
 
 function SearchIcon() {
   return (
@@ -19,11 +21,18 @@ function MenuIcon() {
   )
 }
 
-export default function Header() {
+export default async function Header() {
+  const config = await getConfiguracion()
+
   return (
     <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/90 backdrop-blur-xl">
-      <div className="hidden border-b border-lavender-magenta-100 bg-lavender-magenta-950 text-center text-[10px] font-semibold uppercase tracking-[0.18em] text-lavender-magenta-100 sm:block">
-        <div className="section-shell py-2">Belleza que se siente · Detalles que enamoran</div>
+      <div className="border-b border-lavender-magenta-900 bg-lavender-magenta-950 text-lavender-magenta-100">
+        <div className="section-shell flex items-center justify-between gap-3 py-1.5 sm:py-2">
+          <p className="min-w-0 truncate text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">
+            Belleza que se siente · Detalles que enamoran
+          </p>
+          <RedesSociales config={config} variant="header" />
+        </div>
       </div>
 
       <div className="section-shell grid grid-cols-[auto_1fr_auto] items-center gap-3 py-2.5 sm:gap-5 sm:py-3">

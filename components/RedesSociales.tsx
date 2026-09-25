@@ -15,8 +15,10 @@ function urlRedSocial(red: Red, valorCrudo: string) {
 
 export default function RedesSociales({
   config,
+  variant = 'footer',
 }: {
   config: Pick<Configuracion, 'instagram' | 'facebook' | 'tiktok'> | null
+  variant?: 'footer' | 'header'
 }) {
   if (!config) return null
 
@@ -30,7 +32,7 @@ export default function RedesSociales({
   if (redes.length === 0) return null
 
   return (
-    <div className="flex items-center gap-2.5">
+    <div className={variant === 'header' ? 'flex items-center gap-1' : 'flex items-center gap-2.5'}>
       {redes.map((r) => (
         <a
           key={r.key}
@@ -39,9 +41,12 @@ export default function RedesSociales({
           rel="noopener noreferrer"
           aria-label={r.label}
           title={r.label}
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 transition hover:bg-lavender-magenta-600 hover:text-white"
+          className={variant === 'header'
+            ? 'flex h-7 w-7 items-center justify-center rounded-full text-lavender-magenta-100/90 transition hover:bg-white/10 hover:text-white sm:h-8 sm:w-8'
+            : 'flex h-9 w-9 items-center justify-center rounded-full bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 transition hover:bg-lavender-magenta-600 hover:text-white'
+          }
         >
-          {r.icono}
+          <span className={variant === 'header' ? 'scale-90 sm:scale-100' : ''}>{r.icono}</span>
         </a>
       ))}
     </div>
