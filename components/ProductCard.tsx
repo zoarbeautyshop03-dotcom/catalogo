@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Producto } from '@/lib/types'
-import { formatPrecio } from '@/lib/whatsapp'
+import { formatPrecio, porcentajeDescuento } from '@/lib/whatsapp'
 import AddToCartButton from './AddToCartButton'
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
 
 export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props) {
   const tieneDescuento = !!producto.precio_anterior && producto.precio_anterior > producto.precio
+  const porcentaje = porcentajeDescuento(producto)
   const agotado = producto.estado_inventario === 'agotado'
 
   return (
@@ -54,8 +55,15 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
           <div className="mt-3 flex items-end justify-between gap-2">
             <div className="flex min-w-0 flex-col">
               {tieneDescuento && (
-                <span className="text-[11px] text-gray-400 line-through">
-                  {formatPrecio(producto.precio_anterior as number, producto.moneda)}
+                <span className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-gray-400 line-through">
+                    {formatPrecio(producto.precio_anterior as number, producto.moneda)}
+                  </span>
+                  {porcentaje != null && (
+                    <span className="rounded-full bg-lavender-magenta-100 px-1.5 py-0.5 text-[10px] font-bold text-lavender-magenta-700">
+                      -{porcentaje}%
+                    </span>
+                  )}
                 </span>
               )}
               <span className="text-base font-bold text-lavender-magenta-700 sm:text-lg">

@@ -8,6 +8,22 @@ export function formatPrecio(precio: number, moneda = 'COP'): string {
   }).format(precio)
 }
 
+// Prioriza el % que se escribe a mano en el admin; si no hay ninguno pero sí
+// hay precio anterior, lo calcula a partir de la diferencia de precios.
+export function porcentajeDescuento(producto: {
+  precio: number
+  precio_anterior: number | null
+  descuento: number | null
+}): number | null {
+  if (producto.descuento != null && producto.descuento > 0) {
+    return Math.round(producto.descuento)
+  }
+  if (producto.precio_anterior && producto.precio_anterior > producto.precio) {
+    return Math.round((1 - producto.precio / producto.precio_anterior) * 100)
+  }
+  return null
+}
+
 export function buildWhatsappLink(producto: Producto): string {
   const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''

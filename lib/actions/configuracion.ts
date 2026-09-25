@@ -18,5 +18,5 @@ export async function guardarConfiguracion(formData: FormData) {
   })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/configuracion')
-  revalidatePath('/')
+  revalidatePath('/', 'layout')
 }

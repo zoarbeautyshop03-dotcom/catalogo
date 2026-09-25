@@ -54,6 +54,18 @@ export type ProductoImagen = {
   texto_alt: string | null
 }
 
+export type Configuracion = {
+  id: number
+  nombre_tienda: string | null
+  whatsapp_numero: string | null
+  instagram: string | null
+  facebook: string | null
+  tiktok: string | null
+  horarios: string | null
+  info_entrega: string | null
+  mostrar_agotados: boolean | null
+}
+
 // Placeholder simple: para tipado completo generado desde el esquema real,
 // mas adelante correr `supabase gen types typescript` y reemplazar esto.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

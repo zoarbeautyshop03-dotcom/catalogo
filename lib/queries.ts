@@ -1,7 +1,20 @@
 import { supabase } from './supabase/public'
-import type { Producto, Categoria, Marca, ProductoImagen } from './types'
+import type { Producto, Categoria, Marca, ProductoImagen, Configuracion } from './types'
 
 const PRODUCTO_PUBLICO_SELECT = '*'
+
+// Usa el cliente público (sin sesión), así que si la tabla "configuracion" no
+// tiene una política RLS que permita lectura anónima, esto devuelve null en
+// vez de romper el sitio para cualquier visitante.
+export async function getConfiguracion(): Promise<Configuracion | null> {
+  try {
+    const { data, error } = await supabase.from('configuracion').select('*').eq('id', 1).maybeSingle()
+    if (error) return null
+    return data
+  } catch {
+    return null
+  }
+}
 
 export async function getCategorias(): Promise<Categoria[]> {
   const { data, error } = await supabase
