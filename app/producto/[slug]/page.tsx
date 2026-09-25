@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { getProductoPorSlug, getImagenesDeProducto } from '@/lib/queries'
-import { formatPrecio } from '@/lib/whatsapp'
+import { formatPrecio, porcentajeDescuento } from '@/lib/whatsapp'
 import WhatsAppButton from '@/components/WhatsAppButton'
 import AddToCartButton from '@/components/AddToCartButton'
 import BotonVolver from '@/components/BotonVolver'
@@ -31,6 +31,7 @@ export default async function ProductoPage({ params }: Props) {
 
   const imagenes = await getImagenesDeProducto(producto.id)
   const tieneDescuento = !!producto.precio_anterior && producto.precio_anterior > producto.precio
+  const porcentaje = porcentajeDescuento(producto)
 
   return (
     <div className="section-shell py-7 sm:py-10">
@@ -66,6 +67,11 @@ export default async function ProductoPage({ params }: Props) {
           <div className="mt-5 flex items-end gap-3">
             {tieneDescuento && <span className="text-sm text-gray-400 line-through">{formatPrecio(producto.precio_anterior as number, producto.moneda)}</span>}
             <span className="font-display text-3xl font-bold text-lavender-magenta-700">{formatPrecio(producto.precio, producto.moneda)}</span>
+            {tieneDescuento && porcentaje != null && (
+              <span className="mb-1 rounded-full bg-lavender-magenta-600 px-2.5 py-1 text-xs font-bold text-white">
+                -{porcentaje}%
+              </span>
+            )}
           </div>
 
           <div className="mt-4 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
