@@ -59,3 +59,24 @@ No fue posible ejecutar `npm run build` dentro del entorno porque las dependenci
 - Nuevo componente `components/Logo.tsx`: "ZOAR BEAUTY" en `font-display` con degradado rosa-magenta + "Shop" en `font-script` (cursiva), más una mariposa vectorial (SVG) extraída del banner original y la firma "By: Daniela Pérez" debajo. Al ser texto y SVG, nunca se ve borroso ni pixelado al agrandarlo.
 - Se reemplazó el `<Image src="/logo-banner.png">` por `<Logo />` en el header público, el sidebar de administración y el login de administración, cada uno con un tamaño (`sm` / `md` / `lg`) ajustado a su espacio. El del header quedó más grande que antes.
 - El archivo `public/logo-banner.png` se dejó intacto por si se necesita en otro lado, simplemente ya no se referencia en estos tres componentes.
+
+## Segunda pasada — catálogo (estética y experiencia visual)
+
+Se hizo una revisión específica de la página `/catalogo`, sin cambiar la lógica de Supabase, inventario o carrito.
+
+- Hero del catálogo rediseñado con composición editorial, profundidad y una búsqueda más protagonista.
+- Panel de filtros convertido en una superficie visual única y ordenada, con encabezados diferenciados para categorías y marcas.
+- Categorías y las marcas activas ahora se acomodan en varias filas y quedan visibles sin desplazamiento horizontal oculto.
+- Marcas con chips compactos e iniciales para mejorar la lectura cuando existen muchas opciones.
+- Filtros activos mostrados junto al contador de resultados.
+- Paginación rediseñada como control compacto y más coherente con la identidad visual.
+- Tarjetas de producto renovadas: imágenes completas (`object-contain`), badges más limpios, marca visible cuando existe, indicador de disponibilidad, precio mejor jerarquizado y acceso visual a “Ver detalles”.
+- Estados de oferta, nuevo, favorito, últimas unidades y agotado tienen un tratamiento visual diferenciado.
+- Se mejoraron sombras, radios, fondos, espacios y microinteracciones para una apariencia de tienda de belleza más cuidada y consistente.
+- La versión móvil mantiene dos columnas para producto y adapta la lectura de filtros y controles sin depender de barras horizontales.
+
+## Validación de esta segunda pasada
+
+Los archivos TSX modificados (`app/catalogo/page.tsx` y `components/ProductCard.tsx`) fueron comprobados con el compilador TypeScript en modo de transpilación sintáctica: ambos se procesan sin errores de parseo.
+
+La compilación completa de Next.js no pudo ejecutarse porque la instalación de dependencias npm del entorno quedó incompleta por una limitación de conectividad; por eso esta versión no se presenta como una compilación de producción verificada.
