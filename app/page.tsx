@@ -32,7 +32,6 @@ export default async function HomePage() {
       <section className="section-shell pt-5 sm:pt-8">
         <div className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-white via-lavender-magenta-50 to-lavender-magenta-100 px-6 py-12 text-center shadow-soft-pink ring-1 ring-lavender-magenta-100 sm:px-12 sm:py-16 lg:px-20 lg:py-20">
           <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
-          <div className="absolute -bottom-28 -left-16 h-80 w-80 rounded-full bg-lavender-magenta-200/35 blur-3xl" />
           <div className="absolute left-1/2 top-7 h-px w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-lavender-magenta-300 to-transparent" />
 
           <div className="relative mx-auto max-w-4xl">

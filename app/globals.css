@@ -102,6 +102,25 @@ a:focus-visible {
     @apply inline-flex items-center rounded-full font-semibold shadow-sm ring-1;
   }
 
+  .scroll-brand {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.lavender-magenta.300') theme('colors.lavender-magenta.50');
+  }
+  .scroll-brand::-webkit-scrollbar {
+    height: 7px;
+  }
+  .scroll-brand::-webkit-scrollbar-track {
+    background: theme('colors.lavender-magenta.50');
+    border-radius: 9999px;
+  }
+  .scroll-brand::-webkit-scrollbar-thumb {
+    background-color: theme('colors.lavender-magenta.300');
+    border-radius: 9999px;
+  }
+  .scroll-brand::-webkit-scrollbar-thumb:hover {
+    background-color: theme('colors.lavender-magenta.400');
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

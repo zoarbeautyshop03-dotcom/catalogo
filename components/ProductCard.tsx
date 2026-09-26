@@ -57,13 +57,13 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
             </span>
           )}
 
-          <div className="catalog-product-hover absolute inset-x-3 bottom-3 z-20 flex translate-y-2 items-center justify-between rounded-2xl bg-white/[0.92] px-3 py-2.5 text-xs font-bold text-lavender-magenta-800 shadow-lg ring-1 ring-white/80 backdrop-blur-md">
+          <div className="catalog-product-hover absolute inset-x-3 bottom-3 z-20 flex translate-y-2 items-center justify-between rounded-2xl bg-white/95 px-3 py-2.5 text-xs font-bold text-lavender-magenta-800 shadow-lg ring-1 ring-white/80">
             <span>Ver detalles</span>
             <ArrowUpRight />
           </div>
 
           {agotado && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/72 backdrop-blur-[2px]">
+            <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/85">
               <span className="rounded-full bg-lavender-magenta-950 px-4 py-2 text-xs font-bold text-white shadow-lg">Agotado</span>
             </div>
           )}

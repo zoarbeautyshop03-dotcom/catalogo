@@ -25,7 +25,7 @@ export default async function Header() {
   const config = await getConfiguracion()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/95">
       <div className="border-b border-lavender-magenta-900 bg-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-1.5 sm:py-2">
           <p className="min-w-0 truncate text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">

@@ -1,42 +1,13 @@
 import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import BotonVolver from '@/components/BotonVolver'
+import MarcasFiltro from '@/components/MarcasFiltro'
+import { construirUrl, type SearchParams } from '@/lib/catalogo-url'
 import { getProductosCatalogo, getCategorias, getMarcas, getImagenesPrincipales } from '@/lib/queries'
 
 const POR_PAGINA = 24
 
 export const revalidate = 60
-
-type SearchParams = {
-  categoria?: string
-  marca?: string
-  min?: string
-  max?: string
-  q?: string
-  page?: string
-  nuevo?: string
-  oferta?: string
-}
-
-function construirUrl(searchParams: SearchParams, cambios: Partial<SearchParams>) {
-  const combinado: SearchParams = { ...searchParams, ...cambios }
-  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios) {
-    combinado.page = undefined
-  }
-
-  const params = new URLSearchParams()
-  if (combinado.categoria) params.set('categoria', combinado.categoria)
-  if (combinado.marca) params.set('marca', combinado.marca)
-  if (combinado.min) params.set('min', combinado.min)
-  if (combinado.max) params.set('max', combinado.max)
-  if (combinado.q) params.set('q', combinado.q)
-  if (combinado.nuevo) params.set('nuevo', combinado.nuevo)
-  if (combinado.oferta) params.set('oferta', combinado.oferta)
-  if (combinado.page && combinado.page !== '1') params.set('page', combinado.page)
-
-  const qs = params.toString()
-  return `/catalogo${qs ? `?${qs}` : ''}`
-}
 
 function SearchIcon() {
   return (
@@ -99,7 +70,6 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
   return (
     <div className="relative overflow-hidden pb-14 pt-5 sm:pb-20 sm:pt-7">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[500px] bg-[radial-gradient(circle_at_12%_8%,rgba(255,148,244,0.15),transparent_28%),radial-gradient(circle_at_90%_22%,rgba(255,206,252,0.38),transparent_30%)]" />
-      <div className="pointer-events-none absolute right-[-110px] top-[560px] h-80 w-80 rounded-full bg-lavender-magenta-200/15 blur-3xl" />
       <div className="pointer-events-none absolute left-[-120px] top-[1050px] h-96 w-96 rounded-full bg-lavender-magenta-100/40 blur-3xl" />
 
       <div className="section-shell relative">
@@ -107,7 +77,6 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
 
         <section className="catalog-hero mt-3 overflow-hidden rounded-[34px] px-5 py-7 ring-1 ring-lavender-magenta-100/90 sm:px-8 sm:py-9 lg:px-10 lg:py-11">
           <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-200/45 blur-3xl" />
-          <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full bg-white/80 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <div>
               <span className="eyebrow"><SparkleIcon /> Colección Zoar</span>
@@ -126,7 +95,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
             </div>
 
             <div className="relative">
-              <div className="rounded-[27px] border border-white/90 bg-white/90 p-2 shadow-[0_20px_50px_rgba(81,1,65,0.10)] backdrop-blur-md">
+              <div className="rounded-[27px] border border-white/90 bg-white/95 p-2 shadow-[0_20px_50px_rgba(81,1,65,0.10)]">
                 <form action="/catalogo" className="flex flex-col gap-2 sm:flex-row">
                   <label className="flex min-w-0 flex-1 items-center gap-3 rounded-[20px] bg-lavender-magenta-50/80 px-4 py-3.5 text-gray-500 ring-1 ring-lavender-magenta-100/80 focus-within:ring-2 focus-within:ring-lavender-magenta-300/80">
                     <SearchIcon />
@@ -181,10 +150,10 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
               </div>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-2.5">
+            <div className="mt-4 flex gap-2.5 overflow-x-auto pb-3 scroll-brand">
               <a
                 href={construirUrl(searchParams, { categoria: undefined })}
-                className={`catalog-chip gap-2 px-4 py-2.5 text-xs ${
+                className={`catalog-chip shrink-0 gap-2 px-4 py-2.5 text-xs ${
                   !searchParams.categoria
                     ? 'catalog-chip-active'
                     : 'catalog-chip-muted'
@@ -197,7 +166,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
                 <a
                   key={c.id}
                   href={construirUrl(searchParams, { categoria: c.slug })}
-                  className={`catalog-chip max-w-full justify-between gap-3 px-4 py-2.5 text-xs ${
+                  className={`catalog-chip shrink-0 justify-between gap-3 px-4 py-2.5 text-xs ${
                     searchParams.categoria === c.slug
                       ? 'catalog-chip-active'
                       : 'catalog-chip-muted'
@@ -225,26 +194,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
                 <span className="hidden rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 sm:inline-flex">A–Z</span>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <a
-                  href={construirUrl(searchParams, { marca: undefined })}
-                  className={`catalog-brand-chip ${!searchParams.marca ? 'catalog-brand-chip-active' : ''}`}
-                >
-                  <span className="catalog-brand-initial">A</span>
-                  <span className="truncate">Todas</span>
-                </a>
-                {marcas.map((m) => (
-                  <a
-                    key={m.id}
-                    href={construirUrl(searchParams, { marca: m.slug })}
-                    className={`catalog-brand-chip ${searchParams.marca === m.slug ? 'catalog-brand-chip-active' : ''}`}
-                    title={`Filtrar por ${m.nombre}`}
-                  >
-                    <span className="catalog-brand-initial">{m.nombre.charAt(0).toUpperCase()}</span>
-                    <span className="truncate">{m.nombre}</span>
-                  </a>
-                ))}
-              </div>
+              <MarcasFiltro marcas={marcas} searchParams={searchParams} />
             </div>
           )}
         </section>
