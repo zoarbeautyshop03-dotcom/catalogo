@@ -7,7 +7,7 @@ import DeleteButton from '@/components/admin/DeleteButton'
 
 export const dynamic = 'force-dynamic'
 
-export default async function EditarProductoPage({ params }: { params: { id: string } }) {
+export default async function EditarProductoPage({ params, searchParams }: { params: { id: string }; searchParams: { returnTo?: string } }) {
   const supabase = createServerSupabase()
   const [{ data: producto }, { data: categorias }, { data: marcas }, { data: subcategorias }, { data: imagenes }] =
     await Promise.all([
@@ -33,6 +33,7 @@ export default async function EditarProductoPage({ params }: { params: { id: str
         marcas={marcas ?? []}
         subcategorias={subcategorias ?? []}
         action={actualizarConId}
+        returnTo={searchParams.returnTo ?? '/admin/productos'}
       />
 
       <section className="bg-white rounded-2xl shadow-sm p-5 mt-6">

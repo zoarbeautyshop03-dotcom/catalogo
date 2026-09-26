@@ -38,13 +38,15 @@ type Props = {
   marcas: Marca[]
   subcategorias: Subcategoria[]
   action: (formData: FormData) => void
+  returnTo?: string
 }
 
-export default function ProductoForm({ producto, categorias, marcas, subcategorias, action }: Props) {
+export default function ProductoForm({ producto, categorias, marcas, subcategorias, action, returnTo = '/admin/productos' }: Props) {
   const v = producto
 
   return (
     <form action={action} className="space-y-6">
+      <input type="hidden" name="return_to" value={returnTo} />
       <section className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
         <h2 className="font-medium text-gray-700">Información básica</h2>
         <Campo label="Nombre" name="nombre" defaultValue={v?.nombre} required />
