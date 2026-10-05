@@ -109,7 +109,17 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
                     {p.estado_inventario === 'ultimas_unidades' && <span className="text-amber-600">🟡 Últimas</span>}
                     {p.estado_inventario === 'agotado' && <span className="text-red-500">🔴 Agotado</span>}
                   </td>
-                  <td className="px-4 py-2 capitalize">{p.estado_publicacion}</td>
+                  <td className="px-4 py-2">
+                    {p.estado_publicacion === 'publicado' ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+                        <span className="h-1.5 w-1.5 rounded-full bg-green-500" /> Publicado
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500" /> Borrador
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-2">
                     <div className="flex items-center gap-3">
                       <Link href={`/admin/productos/${p.id}?returnTo=${encodeURIComponent(returnTo)}`} data-preserve-scroll="true" className="text-xs text-fucsia hover:underline">

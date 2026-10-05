@@ -2,6 +2,7 @@ import Link from 'next/link'
 import CartDrawer from './CartDrawer'
 import Logo from './Logo'
 import RedesSociales from './RedesSociales'
+import MenuMovil from './MenuMovil'
 import { getConfiguracion } from '@/lib/queries'
 
 function SearchIcon() {
@@ -9,14 +10,6 @@ function SearchIcon() {
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
       <circle cx="11" cy="11" r="6.5" />
       <path d="m16 16 4 4" strokeLinecap="round" />
-    </svg>
-  )
-}
-
-function MenuIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-      <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
     </svg>
   )
 }
@@ -57,24 +50,7 @@ export default async function Header() {
             <SearchIcon />
           </Link>
           <CartDrawer />
-          <details className="relative md:hidden">
-            <summary className="flex cursor-pointer list-none items-center rounded-full p-2 text-lavender-magenta-800 hover:bg-lavender-magenta-50" aria-label="Abrir menú">
-              <MenuIcon />
-            </summary>
-            <div className="absolute right-0 top-12 w-56 rounded-2xl border border-lavender-magenta-100 bg-white p-2 shadow-xl">
-              {[
-                ['/','Inicio'],
-                ['/catalogo','Catálogo'],
-                ['/catalogo?oferta=1','Ofertas'],
-                ['/catalogo?nuevo=1','Novedades'],
-                ['/admin','Administración'],
-              ].map(([href, label]) => (
-                <Link key={href} href={href} className="block rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:bg-lavender-magenta-50 hover:text-lavender-magenta-800">
-                  {label}
-                </Link>
-              ))}
-            </div>
-          </details>
+          <MenuMovil />
         </div>
       </div>
 
