@@ -7,13 +7,14 @@ import { formatPrecio } from '@/lib/whatsapp'
 
 export const dynamic = 'force-dynamic'
 
-type SearchParams = { q?: string; page?: string }
+type SearchParams = { q?: string; page?: string; estado?: string }
 
 const PAGE_SIZE = 25
 
 export default async function ProductosPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = createServerSupabase()
   const requestedPage = Math.max(1, Number(searchParams.page ?? '1') || 1)
+  const estadoFiltro = searchParams.estado === 'publicado' || searchParams.estado === 'borrador' ? searchParams.estado : undefined
 
   let query = supabase
     .from('productos')
@@ -21,10 +22,22 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
     .order('nombre')
 
   if (searchParams.q) query = query.ilike('nombre', `%${searchParams.q}%`)
+  if (estadoFiltro) query = query.eq('estado_publicacion', estadoFiltro)
 
   const from = (requestedPage - 1) * PAGE_SIZE
   const to = from + PAGE_SIZE - 1
   const { data: productos, error, count } = await query.range(from, to)
+
+  // Conteos para las pestañas (respetando la búsqueda, pero no el filtro de estado).
+  let conteoTodos = supabase.from('productos').select('*', { count: 'exact', head: true })
+  let conteoPublicados = supabase.from('productos').select('*', { count: 'exact', head: true }).eq('estado_publicacion', 'publicado')
+  let conteoBorradores = supabase.from('productos').select('*', { count: 'exact', head: true }).eq('estado_publicacion', 'borrador')
+  if (searchParams.q) {
+    conteoTodos = conteoTodos.ilike('nombre', `%${searchParams.q}%`)
+    conteoPublicados = conteoPublicados.ilike('nombre', `%${searchParams.q}%`)
+    conteoBorradores = conteoBorradores.ilike('nombre', `%${searchParams.q}%`)
+  }
+  const [resTodos, resPublicados, resBorradores] = await Promise.all([conteoTodos, conteoPublicados, conteoBorradores])
 
   const total = count ?? 0
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
@@ -38,6 +51,7 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
       .select('id, nombre, slug, precio, estado_inventario, estado_publicacion, activo')
       .order('nombre')
     if (searchParams.q) lastQuery = lastQuery.ilike('nombre', `%${searchParams.q}%`)
+    if (estadoFiltro) lastQuery = lastQuery.eq('estado_publicacion', estadoFiltro)
     const last = await lastQuery.range((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE - 1)
     productosFinal = last.data ?? []
   }
@@ -45,7 +59,16 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
   const buildPageUrl = (page: number) => {
     const params = new URLSearchParams()
     if (searchParams.q) params.set('q', searchParams.q)
+    if (estadoFiltro) params.set('estado', estadoFiltro)
     if (page > 1) params.set('page', String(page))
+    const queryString = params.toString()
+    return `/admin/productos${queryString ? `?${queryString}` : ''}`
+  }
+
+  const buildEstadoUrl = (estado?: string) => {
+    const params = new URLSearchParams()
+    if (searchParams.q) params.set('q', searchParams.q)
+    if (estado) params.set('estado', estado)
     const queryString = params.toString()
     return `/admin/productos${queryString ? `?${queryString}` : ''}`
   }
@@ -73,6 +96,33 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
           className="w-full max-w-sm rounded-full border border-rosa-pastel px-4 py-2 text-sm"
         />
       </form>
+
+      <div className="flex flex-wrap gap-2 mb-4">
+        <Link
+          href={buildEstadoUrl(undefined)}
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            !estadoFiltro ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          }`}
+        >
+          Todos ({resTodos.count ?? 0})
+        </Link>
+        <Link
+          href={buildEstadoUrl('publicado')}
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            estadoFiltro === 'publicado' ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          }`}
+        >
+          Publicados ({resPublicados.count ?? 0})
+        </Link>
+        <Link
+          href={buildEstadoUrl('borrador')}
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+            estadoFiltro === 'borrador' ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          }`}
+        >
+          Borradores ({resBorradores.count ?? 0})
+        </Link>
+      </div>
 
       <div className="flex items-center justify-between mb-3 text-sm text-gray-500">
         <span>

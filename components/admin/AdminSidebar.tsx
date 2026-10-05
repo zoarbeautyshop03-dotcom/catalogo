@@ -6,6 +6,8 @@ const LINKS = [
   { href: '/admin', label: 'Dashboard', icon: '⌂' },
   { href: '/admin/productos', label: 'Productos', icon: '◇' },
   { href: '/admin/inventario', label: 'Inventario', icon: '▦' },
+  { href: '/admin/alertas', label: 'Alertas', icon: '⚠' },
+  { href: '/admin/reportes', label: 'Reportes', icon: '◒' },
   { href: '/admin/categorias', label: 'Categorías', icon: '◫' },
   { href: '/admin/marcas', label: 'Marcas', icon: '✦' },
   { href: '/admin/configuracion', label: 'Configuración', icon: '⚙' },
