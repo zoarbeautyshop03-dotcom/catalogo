@@ -1,7 +1,6 @@
 'use server'
 
 import * as XLSX from 'xlsx'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createServerSupabase } from '@/lib/supabase/server'
 
@@ -24,7 +23,7 @@ export type ResultadoPrevisualizacion = {
   sinCambios?: number
 }
 
-export type ResultadoConfirmacion = { ok: boolean; error?: string }
+export type ResultadoConfirmacion = { ok: boolean; error?: string; aplicados?: number }
 
 function numeroValido(value: unknown): number | null {
   if (value === null || value === '' || value === undefined) return null
@@ -112,11 +111,48 @@ export async function previsualizarInventario(
   return { ok: true, cambios, noReconocidos, sinCambios }
 }
 
+function funcionSqlNoInstalada(error: { code?: string; message?: string }) {
+  return (
+    error.code === 'PGRST202' ||
+    error.code === '42883' ||
+    /could not find the function|schema cache/i.test(error.message ?? '')
+  )
+}
+
 /**
- * Aplica una importación de Excel. Si la función SQL está instalada usa una
- * transacción en Supabase; si todavía no se ha ejecutado el SQL, conserva un
- * fallback compatible con la estructura anterior.
+ * Aplica una lista de cambios (Excel o edición rápida). Usa la función SQL
+ * `aplicar_cambios_inventario` (transacción + historial). Solo si esa función NO está
+ * instalada todavía se usa el método antiguo; cualquier otro error se devuelve tal cual
+ * para que no quede oculto.
+ * Devuelve un mensaje de error, o null si todo salió bien.
  */
+async function aplicarCambios(cambios: FilaCambio[]): Promise<string | null> {
+  const supabase = createServerSupabase()
+  const { error: rpcError } = await supabase.rpc('aplicar_cambios_inventario', {
+    cambios: cambios.map((c) => ({
+      id: c.id,
+      cantidad_stock: c.stockNuevo,
+      precio: c.precioNuevo,
+      tipo: 'ajuste_excel',
+      motivo: 'Importación desde Excel',
+    })),
+  })
+
+  if (!rpcError) return null
+  if (!funcionSqlNoInstalada(rpcError)) return `No se pudieron aplicar los cambios: ${rpcError.message}`
+
+  // Compatibilidad con proyectos donde aún no se ha ejecutado supabase/inventario.sql
+  for (const c of cambios) {
+    const payload: Record<string, number> = {}
+    if (c.stockNuevo !== null) payload.cantidad_stock = c.stockNuevo
+    if (c.precioNuevo !== null) payload.precio = c.precioNuevo
+    if (!Object.keys(payload).length) continue
+    const { error } = await supabase.from('productos').update(payload).eq('id', c.id || '')
+    if (error) return `Error actualizando "${c.nombre}": ${error.message}`
+  }
+  return null
+}
+
 export async function confirmarImportacionInventario(
   _prevState: ResultadoConfirmacion,
   formData: FormData
@@ -126,33 +162,26 @@ export async function confirmarImportacionInventario(
   try {
     cambios = JSON.parse(crudo)
   } catch {
-    return { ok: false, error: 'No pude leer los cambios. Vuelve a subir el archivo.' }
+    return { ok: false, error: 'No pude leer los cambios. Vuelve a intentarlo.' }
   }
   if (!Array.isArray(cambios)) return { ok: false, error: 'Formato de cambios inválido.' }
+  cambios = cambios.filter((c) => c && typeof c.id === 'string' && c.id)
+  if (!cambios.length) return { ok: false, error: 'No hay cambios para aplicar.' }
 
-  const supabase = createServerSupabase()
-  const { error: rpcError } = await supabase.rpc('aplicar_cambios_inventario', { cambios: cambios.map((c) => ({
-    id: c.id,
-    cantidad_stock: c.stockNuevo,
-    precio: c.precioNuevo,
-    tipo: 'ajuste_excel',
-    motivo: 'Importación desde Excel',
-  })) })
-
-  if (rpcError) {
-    // Compatibilidad con proyectos donde aún no se ha ejecutado el SQL nuevo.
-    for (const c of cambios) {
-      const payload: Record<string, number> = {}
-      if (c.stockNuevo !== null) payload.cantidad_stock = c.stockNuevo
-      if (c.precioNuevo !== null) payload.precio = c.precioNuevo
-      if (!Object.keys(payload).length) continue
-      const { error } = await supabase.from('productos').update(payload).eq('id', c.id || '').eq('slug', c.slug)
-      if (error) return { ok: false, error: `Error actualizando "${c.nombre}": ${error.message}` }
+  for (const c of cambios) {
+    if (c.stockNuevo != null && (!Number.isInteger(c.stockNuevo) || c.stockNuevo < 0)) {
+      return { ok: false, error: `Stock inválido para "${c.nombre}". Debe ser un entero igual o mayor que 0.` }
+    }
+    if (c.precioNuevo != null && (!Number.isFinite(c.precioNuevo) || c.precioNuevo < 0)) {
+      return { ok: false, error: `Precio inválido para "${c.nombre}".` }
     }
   }
 
+  const error = await aplicarCambios(cambios)
+  if (error) return { ok: false, error }
+
   revalidateInventory()
-  redirect('/admin/inventario?ok=1')
+  return { ok: true, aplicados: cambios.length }
 }
 
 export type ResultadoMovimiento = { ok: boolean; error?: string }
@@ -225,6 +254,7 @@ export async function actualizarStockRapido(
 }
 
 function revalidateInventory() {
+  revalidatePath('/admin')
   revalidatePath('/admin/inventario')
   revalidatePath('/admin/productos')
   revalidatePath('/')

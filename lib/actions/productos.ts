@@ -62,8 +62,11 @@ export async function actualizarProducto(id: string, formData: FormData) {
   revalidatePath('/')
   revalidatePath('/catalogo')
   revalidatePath('/producto/[slug]', 'page')
+  revalidatePath('/admin/inventario')
+  revalidatePath('/admin')
   const returnTo = String(formData.get('return_to') ?? '/admin/productos')
-  redirect(returnTo.startsWith('/admin/productos') ? returnTo : '/admin/productos')
+  const permitido = returnTo.startsWith('/admin/productos') || returnTo.startsWith('/admin/inventario')
+  redirect(permitido ? returnTo : '/admin/productos')
 }
 
 export async function eliminarProducto(id: string) {

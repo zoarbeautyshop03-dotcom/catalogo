@@ -14,6 +14,12 @@ export default async function InventarioPage({ searchParams }: { searchParams: {
   ])
 
   const lista = (productos ?? []) as InventarioProducto[]
+
+  // Supabase devuelve la relación productos(nombre) como arreglo; el cliente espera un solo objeto.
+  const listaMovimientos = (movimientos ?? []).map((m: any) => ({
+    ...m,
+    productos: Array.isArray(m.productos) ? (m.productos[0] ?? null) : (m.productos ?? null),
+  }))
   const resumen = {
     total: lista.length,
     disponibles: lista.filter((p) => (p.cantidad_stock ?? 0) > (p.stock_minimo ?? 0)).length,
@@ -30,7 +36,7 @@ export default async function InventarioPage({ searchParams }: { searchParams: {
       filtroInicial={(searchParams.filtro as InventarioFiltro) || 'todos'}
       errorInicial={error?.message}
       actualizado={searchParams.ok === '1'}
-      movimientos={movimientos ?? []}
+      movimientos={listaMovimientos}
     />
   )
 }

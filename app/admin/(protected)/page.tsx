@@ -30,13 +30,16 @@ export default async function DashboardPage() {
   const marcasData = marcas.data ?? []
   const movimientosData = movimientos.data ?? []
 
-  const disponibles = items.filter((p) => p.estado_inventario === 'disponible').length
-  const ultimas = items.filter((p) => p.estado_inventario === 'ultimas_unidades').length
-  const agotados = items.filter((p) => p.estado_inventario === 'agotado' || (p.cantidad_stock ?? 0) <= 0).length
+  // Mismos criterios que /admin/inventario y /admin/alertas, para que los números coincidan en todo el panel.
+  const stockDe = (p: any) => Number(p.cantidad_stock ?? 0)
+  const minimoDe = (p: any) => Number(p.stock_minimo ?? 0)
+  const errorCarga = productos.error?.message || categorias.error?.message || marcas.error?.message
+  const disponibles = items.filter((p: any) => stockDe(p) > minimoDe(p)).length
+  const agotados = items.filter((p: any) => stockDe(p) <= 0).length
   const publicados = items.filter((p) => p.estado_publicacion === 'publicado').length
   const borradores = items.filter((p) => p.estado_publicacion === 'borrador').length
   const ofertas = items.filter((p) => p.oferta).length
-  const bajoMinimo = items.filter((p) => p.cantidad_stock != null && p.stock_minimo != null && p.cantidad_stock <= p.stock_minimo && p.cantidad_stock > 0)
+  const bajoMinimo = items.filter((p: any) => stockDe(p) > 0 && stockDe(p) <= minimoDe(p))
   const sinPrecio = items.filter((p) => p.precio == null || Number(p.precio) <= 0).length
   const valorInventario = items.reduce((sum, p) => sum + Number(p.precio || 0) * Number(p.cantidad_stock || 0), 0)
 
@@ -46,7 +49,7 @@ export default async function DashboardPage() {
 
   const stats = [
     { label: 'Productos', value: items.length, note: `${publicados} publicados · ${borradores} borradores`, href: '/admin/productos', icon: '◇' },
-    { label: 'Inventario', value: disponibles, note: `${ultimas} últimas unidades`, href: '/admin/inventario', icon: '▦' },
+    { label: 'Inventario', value: disponibles, note: `${bajoMinimo.length} bajo mínimo · ${agotados} agotados`, href: '/admin/inventario', icon: '▦' },
     { label: 'Agotados', value: agotados, note: 'Requieren reposición', href: '/admin/alertas?tipo=agotados', icon: '!' },
     { label: 'Bajo mínimo', value: bajoMinimo.length, note: 'Revisar compras', href: '/admin/alertas?tipo=minimo', icon: '⚠' },
   ]
@@ -63,6 +66,8 @@ export default async function DashboardPage() {
           <Link href="/admin/inventario" className="inline-flex w-fit items-center rounded-2xl bg-white px-5 py-3 text-sm font-bold text-lavender-magenta-800 shadow-lg transition hover:-translate-y-0.5">⚡ Gestionar inventario</Link>
         </div>
       </section>
+
+      {errorCarga && <div className="mt-5 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 ring-1 ring-red-100">No pude cargar algunos datos del dashboard: {errorCarga}</div>}
 
       <div className="mt-5 flex flex-wrap gap-2.5">
         {ACCESOS_RAPIDOS.map((a) => <Link key={a.href} href={a.href} className={`rounded-full px-4 py-2 text-sm font-semibold transition ${a.destacado ? 'bg-lavender-magenta-700 text-white hover:bg-lavender-magenta-800' : 'bg-white text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 hover:bg-lavender-magenta-50'}`}>{a.label}</Link>)}
@@ -108,7 +113,7 @@ export default async function DashboardPage() {
         </section>
         <section className="rounded-[26px] bg-white p-5 shadow-soft-card ring-1 ring-lavender-magenta-100 sm:p-6">
           <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-lavender-magenta-500">Actividad</p><h2 className="mt-1 text-xl font-bold text-gray-900">Movimientos recientes</h2></div><Link href="/admin/inventario#historial" className="text-xs font-bold text-lavender-magenta-700">Historial →</Link></div>
-          <div className="mt-4 space-y-2">{movimientosData.length ? movimientosData.map((m: any) => <div key={m.id} className="flex items-center justify-between gap-3 rounded-2xl bg-gray-50 px-3 py-3"><div className="min-w-0"><p className="truncate text-sm font-semibold text-gray-700">{m.productos?.nombre ?? 'Producto'}</p><p className="text-xs text-gray-400">{m.motivo || m.tipo}</p></div><span className={`shrink-0 text-xs font-bold ${Number(m.cantidad_movimiento) >= 0 ? 'text-green-600' : 'text-red-600'}`}>{Number(m.cantidad_movimiento) >= 0 ? '+' : ''}{m.cantidad_movimiento}</span></div>) : <div className="rounded-2xl bg-gray-50 p-4 text-sm text-gray-500">Aún no hay movimientos registrados. Ejecuta el SQL de inventario para activar el historial.</div>}</div>
+          <div className="mt-4 space-y-2">{movimientosData.length ? movimientosData.map((m: any) => <div key={m.id} className="flex items-center justify-between gap-3 rounded-2xl bg-gray-50 px-3 py-3"><div className="min-w-0"><p className="truncate text-sm font-semibold text-gray-700">{m.productos?.nombre ?? 'Producto'}</p><p className="text-xs text-gray-400">{m.motivo || m.tipo}</p></div><span className={`shrink-0 text-xs font-bold ${Number(m.cantidad_movimiento) >= 0 ? 'text-green-600' : 'text-red-600'}`}>{Number(m.cantidad_movimiento) >= 0 ? '+' : ''}{m.cantidad_movimiento}</span></div>) : <div className="rounded-2xl bg-gray-50 p-4 text-sm text-gray-500">{movimientos.error ? 'No se pudo leer el historial. Ejecuta supabase/inventario.sql en Supabase (SQL Editor) para activarlo.' : 'Aún no hay movimientos registrados.'}</div>}</div>
         </section>
       </div>
 

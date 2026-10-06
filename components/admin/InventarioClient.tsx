@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useFormState, useFormStatus } from 'react-dom'
 import {
   actualizarInventarioMasivo,
@@ -34,6 +34,18 @@ type Opcion = { id: string; nombre: string }
 
 const INITIAL_MOV: ResultadoMovimiento = { ok: true }
 const INITIAL_IMPORT: ResultadoPrevisualizacion = { ok: true }
+const INITIAL_CONF: ResultadoConfirmacion = { ok: true }
+
+// Colombia no usa horario de verano (UTC−5 todo el año). Se formatea a mano para que el servidor
+// y el navegador generen EXACTAMENTE el mismo texto; con toLocaleString() cada uno daba una hora
+// distinta y React lanzaba un error de hidratación al mostrar el historial.
+function formatearFecha(iso: string) {
+  const t = new Date(iso).getTime()
+  if (Number.isNaN(t)) return '—'
+  const d = new Date(t - 5 * 60 * 60 * 1000)
+  const dos = (n: number) => String(n).padStart(2, '0')
+  return `${dos(d.getUTCDate())}/${dos(d.getUTCMonth() + 1)}/${d.getUTCFullYear()} ${dos(d.getUTCHours())}:${dos(d.getUTCMinutes())}`
+}
 
 export default function InventarioClient({
   productos,
@@ -64,10 +76,26 @@ export default function InventarioClient({
   const [modo, setModo] = useState<'entrada' | 'salida' | 'establecer'>('entrada')
   const [cantidadMasiva, setCantidadMasiva] = useState('1')
   const [motivo, setMotivo] = useState('')
-  const [importState, importAction] = useFormState(previsualizarInventario, INITIAL_IMPORT)
+  const [mensajeOk, setMensajeOk] = useState(actualizado ? 'Inventario actualizado correctamente.' : '')
+  const [importKey, setImportKey] = useState(0)
   const [massState, massAction] = useFormState(actualizarInventarioMasivo, INITIAL_MOV)
   const [priceState, priceAction] = useFormState(actualizarPrecioMasivo, INITIAL_MOV)
   const [precioMasivo, setPrecioMasivo] = useState('')
+
+  // Al terminar bien una acción masiva se limpia la selección y se avisa al usuario.
+  useEffect(() => {
+    if (massState !== INITIAL_MOV && massState.ok) {
+      setSeleccionados(new Set())
+      setMensajeOk('Inventario actualizado correctamente.')
+    }
+  }, [massState])
+  useEffect(() => {
+    if (priceState !== INITIAL_MOV && priceState.ok) {
+      setSeleccionados(new Set())
+      setPrecioMasivo('')
+      setMensajeOk('Precio actualizado correctamente.')
+    }
+  }, [priceState])
 
   const porId = useMemo(() => new Map(productos.map((p) => [p.id, p])), [productos])
   const filtrados = useMemo(() => {
@@ -101,7 +129,14 @@ export default function InventarioClient({
   }
   function setDraft(id: string, value: number) {
     if (!Number.isFinite(value) || value < 0) return
-    setBorradores((prev) => ({ ...prev, [id]: Math.floor(value) }))
+    const entero = Math.floor(value)
+    const original = porId.get(id)?.cantidad_stock ?? 0
+    setBorradores((prev) => {
+      const next = { ...prev }
+      if (entero === original) delete next[id]
+      else next[id] = entero
+      return next
+    })
   }
   function descartarCambios() { setBorradores({}) }
 
@@ -128,8 +163,11 @@ export default function InventarioClient({
         </div>
       </header>
 
-      {(actualizado || massState.ok && massState !== INITIAL_MOV) && !massState.error && (
-        <div className="rounded-2xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700 ring-1 ring-green-100">✓ Inventario actualizado correctamente.</div>
+      {mensajeOk && (
+        <div className="flex items-center justify-between gap-3 rounded-2xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700 ring-1 ring-green-100">
+          <span>✓ {mensajeOk}</span>
+          <button type="button" onClick={() => setMensajeOk('')} className="text-xs font-semibold hover:underline">Cerrar</button>
+        </div>
       )}
       {errorInicial && <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">No pude cargar el inventario: {errorInicial}</div>}
 
@@ -213,7 +251,7 @@ export default function InventarioClient({
             <div><strong className="text-fucsia">{Object.keys(borradores).length}</strong> cambios pendientes de guardar.</div>
             <div className="flex gap-2">
               <button type="button" onClick={descartarCambios} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600">Descartar</button>
-              <GuardarCambios cambios={cambiosRapidos} />
+              <GuardarCambios cambios={cambiosRapidos} onGuardado={() => { setBorradores({}); setMensajeOk('Stock guardado correctamente.') }} />
             </div>
           </div>
         </section>
@@ -239,9 +277,9 @@ export default function InventarioClient({
       </section>
 
       {movimientos.length > 0 && (
-        <section className="premium-card overflow-hidden">
+        <section id="historial" className="premium-card overflow-hidden">
           <div className="border-b border-rosa-pastel/50 px-5 py-4"><h2 className="font-semibold text-gray-800">Últimos movimientos</h2><p className="mt-1 text-xs text-gray-400">Historial reciente de entradas, salidas y ajustes.</p></div>
-          <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-sm"><thead className="bg-rosa-pastel/30 text-left text-xs uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Producto</th><th className="px-4 py-3">Movimiento</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Motivo</th></tr></thead><tbody>{movimientos.map((m) => <tr key={m.id} className="border-t border-rosa-pastel/40"><td className="px-4 py-3 text-xs text-gray-500">{new Date(m.creado_en).toLocaleString('es-CO')}</td><td className="px-4 py-3 font-medium text-gray-700">{m.productos?.nombre || 'Producto'}</td><td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${m.tipo === 'entrada' ? 'bg-green-50 text-green-700' : m.tipo === 'salida' ? 'bg-red-50 text-red-600' : 'bg-lavender-magenta-50 text-lavender-magenta-700'}`}>{m.tipo === 'entrada' ? '+' : m.tipo === 'salida' ? '−' : '↕'} {Math.abs(m.cantidad_movimiento)}</span></td><td className="px-4 py-3 text-gray-600">{m.cantidad_anterior} → <strong>{m.cantidad_nueva}</strong></td><td className="px-4 py-3 text-xs text-gray-500">{m.motivo || '—'}</td></tr>)}</tbody></table></div>
+          <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-sm"><thead className="bg-rosa-pastel/30 text-left text-xs uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Producto</th><th className="px-4 py-3">Movimiento</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Motivo</th></tr></thead><tbody>{movimientos.map((m) => <tr key={m.id} className="border-t border-rosa-pastel/40"><td className="px-4 py-3 text-xs text-gray-500">{formatearFecha(m.creado_en)}</td><td className="px-4 py-3 font-medium text-gray-700">{m.productos?.nombre || 'Producto'}</td><td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${m.tipo === 'entrada' ? 'bg-green-50 text-green-700' : m.tipo === 'salida' ? 'bg-red-50 text-red-600' : 'bg-lavender-magenta-50 text-lavender-magenta-700'}`}>{m.tipo === 'entrada' ? '+' : m.tipo === 'salida' ? '−' : '↕'} {Math.abs(m.cantidad_movimiento)}</span></td><td className="px-4 py-3 text-gray-600">{m.cantidad_anterior} → <strong>{m.cantidad_nueva}</strong></td><td className="px-4 py-3 text-xs text-gray-500">{m.motivo || '—'}</td></tr>)}</tbody></table></div>
         </section>
       )}
 
@@ -250,15 +288,15 @@ export default function InventarioClient({
           <div><span className="eyebrow">Carga grande</span><h2 className="mt-3 font-display text-2xl font-bold text-gray-800">Importar desde Excel</h2><p className="mt-1 max-w-2xl text-sm text-gray-500">Ideal para actualizar decenas o cientos de productos. Primero previsualizamos y luego confirmas.</p></div>
           <a href="/admin/inventario/plantilla" className="text-sm font-semibold text-fucsia hover:underline">Descargar plantilla →</a>
         </div>
-        {!importState.cambios ? (
-          <form action={importAction} className="mt-5 rounded-2xl border border-dashed border-rosa-pastel bg-rosa-pastel/10 p-5">
-            <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
-            <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
-            <p className="mt-2 text-xs text-gray-400">La plantilla reconoce <strong>slug</strong> o <strong>SKU</strong>. No cambies esos identificadores.</p>
-            <ImportButton />
-            {importState.error && <p className="mt-3 text-sm text-red-500">{importState.error}</p>}
-          </form>
-        ) : <Previsualizacion resultado={importState} />}
+        <Importador
+          key={importKey}
+          onReiniciar={() => setImportKey((k) => k + 1)}
+          onTerminado={(n) => {
+            setImportKey((k) => k + 1)
+            setMensajeOk(`Importación aplicada: ${n} ${n === 1 ? 'producto actualizado' : 'productos actualizados'}.`)
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }}
+        />
       </section>
     </div>
   )
@@ -282,19 +320,85 @@ function Fila({ producto, seleccionado, onSelect, draft, onDraft }: { producto: 
   </tr>
 }
 
-function GuardarCambios({ cambios }: { cambios: FilaCambio[] }) {
-  const [state, action] = useFormState(confirmarImportacionInventario, { ok: true } as ResultadoConfirmacion)
-  return <form action={action}><input type="hidden" name="cambios" value={JSON.stringify(cambios)} /><button className="rounded-full bg-fucsia px-5 py-2 text-sm font-semibold text-white">Guardar cambios</button>{state.error && <span className="ml-3 text-xs text-red-500">{state.error}</span>}</form>
+function GuardarCambios({ cambios, onGuardado }: { cambios: FilaCambio[]; onGuardado: () => void }) {
+  const [state, action] = useFormState(confirmarImportacionInventario, INITIAL_CONF)
+  useEffect(() => {
+    if (state.ok && state.aplicados) onGuardado()
+  }, [state])
+  return (
+    <form action={action} className="flex items-center">
+      <input type="hidden" name="cambios" value={JSON.stringify(cambios)} />
+      <ConfirmarBoton texto="Guardar cambios" cargando="Guardando…" className="rounded-full bg-fucsia px-5 py-2 text-sm font-semibold text-white disabled:opacity-60" />
+      {state.error && <span className="ml-3 text-xs text-red-500">{state.error}</span>}
+    </form>
+  )
+}
+
+function ConfirmarBoton({ texto, cargando, className }: { texto: string; cargando: string; className: string }) {
+  const { pending } = useFormStatus()
+  return <button disabled={pending} className={className}>{pending ? cargando : texto}</button>
 }
 
 function PriceButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10 disabled:opacity-60">{pending ? 'Guardando…' : 'Cambiar precio'}</button> }
 function MassButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-lavender-magenta-950 disabled:opacity-60">{pending ? 'Aplicando…' : 'Aplicar'}</button> }
 function ImportButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="mt-4 rounded-full bg-fucsia px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{pending ? 'Leyendo…' : 'Previsualizar cambios'}</button> }
 
-function Previsualizacion({ resultado }: { resultado: ResultadoPrevisualizacion }) {
-  const [state, action] = useFormState(confirmarImportacionInventario, { ok: true } as ResultadoConfirmacion)
+function Importador({ onReiniciar, onTerminado }: { onReiniciar: () => void; onTerminado: (n: number) => void }) {
+  const [importState, importAction] = useFormState(previsualizarInventario, INITIAL_IMPORT)
+  if (importState.cambios) return <Previsualizacion resultado={importState} onReiniciar={onReiniciar} onTerminado={onTerminado} />
+  return (
+    <form action={importAction} className="mt-5 rounded-2xl border border-dashed border-rosa-pastel bg-rosa-pastel/10 p-5">
+      <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
+      <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
+      <p className="mt-2 text-xs text-gray-400">La plantilla reconoce <strong>slug</strong> o <strong>SKU</strong>. No cambies esos identificadores.</p>
+      <ImportButton />
+      {importState.error && <p className="mt-3 text-sm text-red-500">{importState.error}</p>}
+    </form>
+  )
+}
+
+function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: ResultadoPrevisualizacion; onReiniciar: () => void; onTerminado: (n: number) => void }) {
+  const [state, action] = useFormState(confirmarImportacionInventario, INITIAL_CONF)
   const cambios = resultado.cambios ?? []
-  return <div className="mt-5 space-y-4"><div className="rounded-2xl bg-lavender-magenta-50 p-4 text-sm text-gray-600"><strong className="text-fucsia">{cambios.length}</strong> cambios · {resultado.sinCambios ?? 0} sin cambios · {(resultado.noReconocidos ?? []).length} no reconocidos</div>{cambios.length > 0 && <div className="overflow-x-auto rounded-2xl border border-rosa-pastel"><table className="w-full min-w-[650px] text-sm"><thead className="bg-rosa-pastel/30 text-left text-gray-600"><tr><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Precio</th></tr></thead><tbody>{cambios.map((c) => <tr key={c.id || c.slug} className="border-t border-rosa-pastel/40"><td className="px-4 py-2">{c.nombre}</td><td className="px-4 py-2 text-xs text-gray-500">{c.sku || '—'}</td><td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} → <strong className="text-fucsia">{c.stockNuevo}</strong></> : '—'}</td><td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} → <strong className="text-fucsia">{c.precioNuevo}</strong></> : '—'}</td></tr>)}</tbody></table></div>}{(resultado.noReconocidos ?? []).length > 0 && <div className="rounded-2xl bg-amber-50 p-4 text-xs text-amber-800"><strong>No reconocidos:</strong> {(resultado.noReconocidos ?? []).join(', ')}</div>}{cambios.length > 0 && <form action={action}><input type="hidden" name="cambios" value={JSON.stringify(cambios)} /><button className="rounded-full bg-fucsia px-6 py-2.5 text-sm font-semibold text-white">Confirmar y actualizar</button>{state.error && <p className="mt-2 text-sm text-red-500">{state.error}</p>}</form>}</div>
+  const noReconocidos = resultado.noReconocidos ?? []
+  useEffect(() => {
+    if (state.ok && state.aplicados) onTerminado(state.aplicados)
+  }, [state])
+  return (
+    <div className="mt-5 space-y-4">
+      <div className="rounded-2xl bg-lavender-magenta-50 p-4 text-sm text-gray-600">
+        <strong className="text-fucsia">{cambios.length}</strong> cambios · {resultado.sinCambios ?? 0} sin cambios · {noReconocidos.length} no reconocidos
+      </div>
+      {cambios.length > 0 && (
+        <div className="overflow-x-auto rounded-2xl border border-rosa-pastel">
+          <table className="w-full min-w-[650px] text-sm">
+            <thead className="bg-rosa-pastel/30 text-left text-gray-600"><tr><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Precio</th></tr></thead>
+            <tbody>
+              {cambios.map((c) => (
+                <tr key={c.id || c.slug} className="border-t border-rosa-pastel/40">
+                  <td className="px-4 py-2">{c.nombre}</td>
+                  <td className="px-4 py-2 text-xs text-gray-500">{c.sku || '—'}</td>
+                  <td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} → <strong className="text-fucsia">{c.stockNuevo}</strong></> : '—'}</td>
+                  <td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} → <strong className="text-fucsia">{c.precioNuevo}</strong></> : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {noReconocidos.length > 0 && <div className="rounded-2xl bg-amber-50 p-4 text-xs text-amber-800"><strong>No reconocidos:</strong> {noReconocidos.join(', ')}</div>}
+      <div className="flex flex-wrap items-center gap-3">
+        {cambios.length > 0 && (
+          <form action={action} className="flex items-center">
+            <input type="hidden" name="cambios" value={JSON.stringify(cambios)} />
+            <ConfirmarBoton texto="Confirmar y actualizar" cargando="Aplicando…" className="rounded-full bg-fucsia px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60" />
+          </form>
+        )}
+        <button type="button" onClick={onReiniciar} className="rounded-full border border-rosa-pastel px-5 py-2.5 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia">{cambios.length > 0 ? 'Cancelar' : 'Subir otro archivo'}</button>
+      </div>
+      {state.error && <p className="text-sm text-red-500">{state.error}</p>}
+    </div>
+  )
 }
 
 function Paginacion({ pagina, total, onChange }: { pagina: number; total: number; onChange: (p: number) => void }) { return <div className="flex items-center justify-center gap-2 border-t border-rosa-pastel/50 p-4"><button disabled={pagina === 1} onClick={() => onChange(pagina - 1)} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 disabled:opacity-30">← Anterior</button><span className="rounded-full bg-rosa-pastel/40 px-4 py-2 text-xs font-semibold text-lavender-magenta-800">Página {pagina} de {total}</span><button disabled={pagina === total} onClick={() => onChange(pagina + 1)} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 disabled:opacity-30">Siguiente →</button></div> }
