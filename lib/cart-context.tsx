@@ -19,6 +19,10 @@ type CarritoContexto = {
   vaciar: () => void
   totalItems: number
   totalPrecio: number
+  // El panel del carrito se controla desde aquí para poder abrirlo también
+  // desde la barra inferior del celular.
+  carritoAbierto: boolean
+  setCarritoAbierto: (abierto: boolean) => void
 }
 
 const CarritoContext = createContext<CarritoContexto | null>(null)
@@ -28,6 +32,7 @@ const CLAVE_STORAGE = 'zoar-carrito'
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ItemCarrito[]>([])
   const [cargado, setCargado] = useState(false)
+  const [carritoAbierto, setCarritoAbierto] = useState(false)
 
   // Cargar del localStorage solo en el navegador (evita desajuste con el
   // render del servidor, que no tiene acceso a localStorage).
@@ -77,7 +82,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   const totalPrecio = useMemo(() => items.reduce((acc, i) => acc + i.cantidad * i.precio, 0), [items])
 
   return (
-    <CarritoContext.Provider value={{ items, agregar, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio }}>
+    <CarritoContext.Provider value={{ items, agregar, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio, carritoAbierto, setCarritoAbierto }}>
       {children}
     </CarritoContext.Provider>
   )

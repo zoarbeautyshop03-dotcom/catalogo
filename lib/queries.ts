@@ -126,10 +126,11 @@ type FiltrosCatalogo = {
   porPagina?: number
   nuevo?: boolean
   oferta?: boolean
+  orden?: 'nombre' | 'precio-asc' | 'precio-desc'
 }
 
 export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
-  const { categoriaSlug, marcaSlug, precioMin, precioMax, busqueda, page = 1, porPagina = 24, nuevo, oferta } = filtros
+  const { categoriaSlug, marcaSlug, precioMin, precioMax, busqueda, page = 1, porPagina = 24, nuevo, oferta, orden = 'nombre' } = filtros
 
   let categoriaId: string | undefined
   if (categoriaSlug) {
@@ -154,7 +155,14 @@ export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
 
   const from = (page - 1) * porPagina
   const to = from + porPagina - 1
-  query = query.range(from, to).order('nombre')
+  if (orden === 'precio-asc') {
+    query = query.order('precio', { ascending: true }).order('nombre')
+  } else if (orden === 'precio-desc') {
+    query = query.order('precio', { ascending: false }).order('nombre')
+  } else {
+    query = query.order('nombre')
+  }
+  query = query.range(from, to)
 
   const { data, error, count } = await query
   if (error) throw error

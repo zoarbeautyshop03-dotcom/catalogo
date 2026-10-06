@@ -80,3 +80,13 @@ Se hizo una revisión específica de la página `/catalogo`, sin cambiar la lóg
 Los archivos TSX modificados (`app/catalogo/page.tsx` y `components/ProductCard.tsx`) fueron comprobados con el compilador TypeScript en modo de transpilación sintáctica: ambos se procesan sin errores de parseo.
 
 La compilación completa de Next.js no pudo ejecutarse porque la instalación de dependencias npm del entorno quedó incompleta por una limitación de conectividad; por eso esta versión no se presenta como una compilación de producción verificada.
+
+
+## Mejoras para compra en celular
+
+- **Buscador siempre visible:** en celular el header muestra la barra de búsqueda debajo del logo (antes solo había una lupa que llevaba al catálogo). El campo usa 16px para que iPhone no haga zoom al tocarlo.
+- **Catálogo más corto en celular:** el hero grande y la tarjeta de filtros solo se muestran desde tablet (≥640px). En celular hay un título compacto y dos botones: **Filtrar** (abre un panel desde abajo con categorías y marcas, con contador de filtros activos) y **Ordenar**.
+- **Ordenar por:** nuevo parámetro `orden` en la URL (`nombre`, `precio-asc`, `precio-desc`). Funciona también en escritorio.
+- **Barra inferior del carrito (celular):** cuando hay productos aparece "Ver mi carrito · N productos · $total" fijo abajo y abre el carrito con un toque. El estado abierto/cerrado del carrito ahora vive en `lib/cart-context.tsx`.
+- Archivos nuevos: `components/BarraCarritoMovil.tsx`, `components/FiltrosMovil.tsx`, `components/OrdenarSelect.tsx`.
+- Validación: revisión sintáctica de los archivos modificados sin errores. No se pudo correr `npm run build` en este entorno (sin dependencias instaladas).
