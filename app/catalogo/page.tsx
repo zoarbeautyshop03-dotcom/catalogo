@@ -2,6 +2,7 @@ import Link from 'next/link'
 import ProductCard from '@/components/ProductCard'
 import BotonVolver from '@/components/BotonVolver'
 import MarcasFiltro from '@/components/MarcasFiltro'
+import AyudaCompraMovil from '@/components/AyudaCompraMovil'
 import { construirUrl, type SearchParams } from '@/lib/catalogo-url'
 import { getProductosCatalogo, getCategorias, getMarcas, getImagenesPrincipales } from '@/lib/queries'
 
@@ -121,6 +122,22 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
           </div>
         </section>
 
+        <section className="mt-4 md:hidden">
+          <form action="/catalogo" className="rounded-[24px] bg-white p-2 shadow-[0_12px_30px_rgba(81,1,65,0.07)] ring-1 ring-lavender-magenta-100">
+            <label className="flex items-center gap-3 rounded-[18px] bg-lavender-magenta-50/80 px-4 py-3.5 text-gray-500 ring-1 ring-lavender-magenta-100/80">
+              <SearchIcon />
+              <span className="sr-only">Buscar productos, marcas o categorías</span>
+              <input type="text" name="q" defaultValue={searchParams.q} placeholder="¿Qué estás buscando?" className="min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none" />
+              <button className="rounded-full bg-lavender-magenta-600 px-3.5 py-2 text-[11px] font-bold text-white">Buscar</button>
+            </label>
+          </form>
+          <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
+            <AyudaCompraMovil />
+            <Link href="/catalogo?oferta=1" className="shrink-0 rounded-full border border-lavender-magenta-100 bg-white px-4 py-2.5 text-xs font-bold text-lavender-magenta-700">🔥 Ofertas</Link>
+            <Link href="/catalogo?nuevo=1" className="shrink-0 rounded-full border border-lavender-magenta-100 bg-white px-4 py-2.5 text-xs font-bold text-lavender-magenta-700">✨ Novedades</Link>
+          </div>
+        </section>
+
         <section id="filtros-catalogo" className="catalog-filter-card mt-6 rounded-[30px] bg-white/[0.88] p-4 ring-1 ring-lavender-magenta-100/90 sm:mt-7 sm:p-6">
           <div className="flex flex-col gap-4 border-b border-lavender-magenta-100/80 pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -137,6 +154,22 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
                 <span aria-hidden="true">×</span>
               </Link>
             )}
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-5 md:hidden">
+            {[
+              { label: 'Todos', activo: !searchParams.oferta && !searchParams.nuevo, href: construirUrl(searchParams, { oferta: undefined, nuevo: undefined }) },
+              { label: 'Ofertas', activo: searchParams.oferta === '1', href: construirUrl(searchParams, { oferta: searchParams.oferta === '1' ? undefined : '1' }) },
+              { label: 'Nuevos', activo: searchParams.nuevo === '1', href: construirUrl(searchParams, { nuevo: searchParams.nuevo === '1' ? undefined : '1' }) },
+            ].map((chip) => (
+              <Link
+                key={chip.label}
+                href={chip.href}
+                className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-semibold ring-1  ${chip.activo ? 'bg-lavender-magenta-950 text-white ring-lavender-magenta-950' : 'bg-white text-gray-600 ring-lavender-magenta-100'}`}
+              >
+                {chip.label}
+              </Link>
+            ))}
           </div>
 
           <div className="pt-5">

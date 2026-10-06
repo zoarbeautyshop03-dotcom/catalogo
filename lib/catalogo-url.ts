@@ -12,7 +12,7 @@ export type SearchParams = {
 export function construirUrl(searchParams: SearchParams, cambios: Partial<SearchParams>) {
   const combinado: SearchParams = { ...searchParams, ...cambios }
   // Si cambia el filtro (categoría, marca o búsqueda), siempre volvemos a la página 1.
-  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios) {
+  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios || 'nuevo' in cambios || 'oferta' in cambios) {
     combinado.page = undefined
   }
 

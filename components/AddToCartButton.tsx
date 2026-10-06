@@ -51,9 +51,9 @@ export default function AddToCartButton({ producto, imagenUrl, agotado, variante
       disabled={agotado}
       aria-label="Agregar al carrito"
       title="Agregar al carrito"
-      className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-lavender-magenta-700 shadow-md ring-1 ring-lavender-magenta-100 hover:-translate-y-0.5 hover:bg-lavender-magenta-50 disabled:cursor-not-allowed disabled:opacity-40"
+      className="absolute bottom-3 right-3 z-40 flex h-10 w-auto items-center justify-center rounded-full px-3 sm:w-10 sm:px-0 bg-white/95 text-lavender-magenta-700 shadow-md ring-1 ring-lavender-magenta-100 transition hover:-translate-y-0.5 hover:bg-lavender-magenta-50 disabled:cursor-not-allowed disabled:opacity-40 sm:bottom-auto sm:right-3 sm:top-3"
     >
-      {agregado ? '✓' : <BagIcon />}
+      <span className="sm:hidden">{agregado ? '✓ Agregado' : 'Agregar'}</span><span className="hidden sm:inline-flex">{agregado ? '✓' : <BagIcon />}</span>
     </button>
   )
 }
