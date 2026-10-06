@@ -12,8 +12,13 @@ export type SearchParams = {
 export function construirUrl(searchParams: SearchParams, cambios: Partial<SearchParams>) {
   const combinado: SearchParams = { ...searchParams, ...cambios }
   // Si cambia el filtro (categoría, marca o búsqueda), siempre volvemos a la página 1.
-  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios || 'nuevo' in cambios || 'oferta' in cambios) {
+  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios) {
     combinado.page = undefined
+  }
+  // Elegir una categoría o marca es "quiero ver todo esto", así que limpiamos
+  // una búsqueda anterior para que no se combinen y terminen sin resultados.
+  if (('categoria' in cambios || 'marca' in cambios) && !('q' in cambios)) {
+    combinado.q = undefined
   }
 
   const params = new URLSearchParams()

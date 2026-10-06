@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes pista-agregar {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.14); }
+  }
+  /* Un par de "latidos" suaves al aparecer, para que en celular (donde el
+     botón es solo el ícono) quede claro que es para agregar al carrito.
+     Tiene cantidad fija de repeticiones: no queda animando para siempre. */
+  .pista-agregar-carrito {
+    animation: pista-agregar 0.8s ease-in-out 2;
+  }
+}
+
 :root {
   --color-lavender-magenta-50: #fff4fe;
   --color-lavender-magenta-100: #ffe7fe;
@@ -272,75 +285,5 @@ a:focus-visible {
       transform: translateY(0);
       background: rgba(255, 255, 255, 0.88);
     }
-  }
-}
-
-@media (max-width: 639px) {
-  .catalog-hero {
-    border-radius: 26px;
-    padding: 1.25rem;
-  }
-
-  .catalog-hero h1 {
-    font-size: 2rem;
-  }
-
-  .catalog-hero p {
-    font-size: 0.8rem;
-    line-height: 1.45rem;
-  }
-
-  .catalog-filter-card {
-    margin-top: 1rem;
-    border-radius: 24px;
-    padding: 0.9rem;
-  }
-
-  .catalog-filter-card > div:first-child h2 {
-    font-size: 1.15rem;
-  }
-
-  .catalog-filter-card > div:first-child p {
-    display: none;
-  }
-
-  .catalog-filter-card > div:first-child {
-    padding-bottom: 0.75rem;
-  }
-
-  .catalog-filter-card .scroll-brand {
-    margin-right: -0.25rem;
-    padding-bottom: 0.35rem;
-  }
-
-  .catalog-product-grid {
-    gap: 0.7rem;
-  }
-
-  .catalog-product-card {
-    border-radius: 21px;
-  }
-
-  .catalog-product-media {
-    aspect-ratio: 0.9;
-  }
-
-  .catalog-product-card .min-h-\[148px\] {
-    min-height: 126px;
-    padding: 0.75rem;
-  }
-
-  .catalog-product-card h3 {
-    font-size: 0.8rem;
-    line-height: 1.15rem;
-  }
-
-  .catalog-product-card .text-lg {
-    font-size: 1rem;
-  }
-
-
-  .catalog-product-hover {
-    display: none;
   }
 }

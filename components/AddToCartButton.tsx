@@ -49,11 +49,18 @@ export default function AddToCartButton({ producto, imagenUrl, agotado, variante
     <button
       onClick={handleClick}
       disabled={agotado}
-      aria-label="Agregar al carrito"
+      aria-label={agregado ? 'Agregado al carrito' : 'Agregar al carrito'}
       title="Agregar al carrito"
-      className="absolute bottom-3 right-3 z-40 flex h-10 w-auto items-center justify-center rounded-full px-3 sm:w-10 sm:px-0 bg-white/95 text-lavender-magenta-700 shadow-md ring-1 ring-lavender-magenta-100 transition hover:-translate-y-0.5 hover:bg-lavender-magenta-50 disabled:cursor-not-allowed disabled:opacity-40 sm:bottom-auto sm:right-3 sm:top-3"
+      className={`absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center gap-1.5 rounded-full px-0 text-[11px] font-bold shadow-md ring-1 transition-all duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto sm:px-3.5 ${
+        agotado ? '' : 'pista-agregar-carrito sm:[animation:none]'
+      } ${
+        agregado
+          ? 'bg-lavender-magenta-600 text-white ring-lavender-magenta-600'
+          : 'bg-white/95 text-lavender-magenta-700 ring-lavender-magenta-100 hover:bg-lavender-magenta-50'
+      }`}
     >
-      <span className="sm:hidden">{agregado ? '✓ Agregado' : 'Agregar'}</span><span className="hidden sm:inline-flex">{agregado ? '✓' : <BagIcon />}</span>
+      {agregado ? '✓' : <BagIcon />}
+      <span className="hidden sm:inline">{agregado ? 'Agregado' : 'Agregar'}</span>
     </button>
   )
 }
