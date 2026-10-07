@@ -7,13 +7,12 @@ export type SearchParams = {
   page?: string
   nuevo?: string
   oferta?: string
-  orden?: string
 }
 
 export function construirUrl(searchParams: SearchParams, cambios: Partial<SearchParams>) {
   const combinado: SearchParams = { ...searchParams, ...cambios }
   // Si cambia el filtro (categoría, marca o búsqueda), siempre volvemos a la página 1.
-  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios || 'orden' in cambios) {
+  if ('categoria' in cambios || 'marca' in cambios || 'q' in cambios) {
     combinado.page = undefined
   }
   // Elegir una categoría o marca es "quiero ver todo esto", así que limpiamos
@@ -30,7 +29,6 @@ export function construirUrl(searchParams: SearchParams, cambios: Partial<Search
   if (combinado.q) params.set('q', combinado.q)
   if (combinado.nuevo) params.set('nuevo', combinado.nuevo)
   if (combinado.oferta) params.set('oferta', combinado.oferta)
-  if (combinado.orden && combinado.orden !== 'nombre') params.set('orden', combinado.orden)
   if (combinado.page && combinado.page !== '1') params.set('page', combinado.page)
 
   const qs = params.toString()

@@ -3,7 +3,6 @@ import { Playfair_Display, Inter, Playball } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import BarraCarritoMovil from '@/components/BarraCarritoMovil'
 import { CarritoProvider } from '@/lib/cart-context'
 
 // Fuentes reales cargadas por Next (antes solo estaban referenciadas en el CSS
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <BarraCarritoMovil />
         </CarritoProvider>
       </body>
     </html>

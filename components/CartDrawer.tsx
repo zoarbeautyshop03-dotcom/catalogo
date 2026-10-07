@@ -25,8 +25,9 @@ function CloseIcon() {
 }
 
 export default function CartDrawer() {
+  const [abierto, setAbierto] = useState(false)
   const [montado, setMontado] = useState(false)
-  const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio, carritoAbierto: abierto, setCarritoAbierto: setAbierto } = useCarrito()
+  const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio } = useCarrito()
 
   // El carrito se renderiza en un portal (ver más abajo) porque el <header>
   // tiene backdrop-blur, y cualquier ancestro con backdrop-filter/filter/

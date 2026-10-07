@@ -74,14 +74,7 @@ export default async function ProductoPage({ params }: Props) {
             )}
           </div>
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            <AddToCartButton producto={{ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio }} imagenUrl={imagenes[0]?.url} agotado={producto.estado_inventario === 'agotado'} variante="completo" />
-            <WhatsAppButton producto={producto} />
-          </div>
-
-          <p className="mt-3 text-xs leading-5 text-gray-400">Agrega varios productos al carrito y envía un solo pedido por WhatsApp, o solicita este producto directamente.</p>
-
-          <div className="mt-5 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
+          <div className="mt-4 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
             {producto.estado_inventario === 'disponible' && 'Disponible'}
             {producto.estado_inventario === 'ultimas_unidades' && 'Últimas unidades'}
             {producto.estado_inventario === 'agotado' && 'Agotado'}
@@ -105,6 +98,13 @@ export default async function ProductoPage({ params }: Props) {
             )}
             {producto.advertencias && <p className="text-xs leading-5 text-gray-400">{producto.advertencias}</p>}
           </div>
+
+          <div className="mt-7 flex flex-wrap gap-3">
+            <AddToCartButton producto={{ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio }} imagenUrl={imagenes[0]?.url} agotado={producto.estado_inventario === 'agotado'} variante="completo" />
+            <WhatsAppButton producto={producto} />
+          </div>
+
+          <p className="mt-4 text-xs leading-5 text-gray-400">Agrega varios productos al carrito y envía un solo pedido por WhatsApp, o solicita este producto directamente.</p>
         </div>
       </div>
     </div>

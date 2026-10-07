@@ -23,7 +23,7 @@ const SIZES: Record<LogoSize, { icon: string; word: string; by: string; gap: str
 
 // Silueta de mariposa extraída del banner original de Zoar, redibujada como
 // SVG (vectorial, nunca se ve pixelada al agrandarla).
-function ButterflyMark({ className = '' }: { className?: string }) {
+export function ButterflyMark({ className = '' }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
       <defs>
