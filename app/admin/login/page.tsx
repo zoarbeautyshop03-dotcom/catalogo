@@ -42,15 +42,15 @@ export default function LoginPage() {
           <p className="mt-1 text-sm leading-6 text-gray-500">Inicia sesión para administrar productos, inventario y categorías.</p>
         </div>
 
-        <label className="mt-6 block text-xs font-semibold text-gray-700">Correo</label>
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-lavender-magenta-300 focus:outline-none" />
+        <label htmlFor="login-correo" className="mt-6 block text-xs font-semibold text-gray-700">Correo</label>
+        <input id="login-correo" name="email" autoComplete="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm placeholder:text-gray-400 focus:border-lavender-magenta-300 focus:outline-none" />
 
-        <label className="mt-4 block text-xs font-semibold text-gray-700">Contraseña</label>
-        <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm focus:border-lavender-magenta-300 focus:outline-none" />
+        <label htmlFor="login-clave" className="mt-4 block text-xs font-semibold text-gray-700">Contraseña</label>
+        <input id="login-clave" name="password" autoComplete="current-password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-2xl border border-lavender-magenta-100 bg-lavender-magenta-50/45 px-4 py-3 text-sm focus:border-lavender-magenta-300 focus:outline-none" />
 
-        {error && <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+        {error && <p role="alert" className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
 
-        <button disabled={cargando} className="mt-5 w-full rounded-full bg-lavender-magenta-600 py-3.5 font-semibold text-white shadow-lg shadow-lavender-magenta-600/15 hover:bg-lavender-magenta-700 disabled:opacity-60">
+        <button type="submit" disabled={cargando} className="mt-5 w-full rounded-full bg-lavender-magenta-600 py-3.5 font-semibold text-white shadow-lg shadow-lavender-magenta-600/15 hover:bg-lavender-magenta-700 disabled:opacity-60">
           {cargando ? 'Entrando...' : 'Entrar al panel'}
         </button>
 

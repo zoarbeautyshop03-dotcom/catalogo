@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCarrito } from '@/lib/cart-context'
+import { useDialogoAccesible } from '@/lib/use-dialogo'
 import { formatPrecio, buildWhatsappCarritoLink } from '@/lib/whatsapp'
 
 function BagIcon({ className = 'h-5 w-5' }: { className?: string }) {
@@ -25,9 +26,9 @@ function CloseIcon() {
 }
 
 export default function CartDrawer() {
-  const [abierto, setAbierto] = useState(false)
   const [montado, setMontado] = useState(false)
-  const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio } = useCarrito()
+  const panelRef = useRef<HTMLElement>(null)
+  const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio, carritoAbierto: abierto, setCarritoAbierto: setAbierto } = useCarrito()
 
   // El carrito se renderiza en un portal (ver más abajo) porque el <header>
   // tiene backdrop-blur, y cualquier ancestro con backdrop-filter/filter/
@@ -56,6 +57,8 @@ export default function CartDrawer() {
       window.removeEventListener('keydown', manejarEscape)
     }
   }, [abierto, setAbierto])
+
+  useDialogoAccesible(panelRef, abierto && montado)
 
   const linkWhatsapp = buildWhatsappCarritoLink(
     items.map((i) => ({ nombre: i.nombre, precio: i.precio, cantidad: i.cantidad }))
@@ -87,6 +90,8 @@ export default function CartDrawer() {
           />
 
           <aside
+            ref={panelRef}
+            tabIndex={-1}
             className="cart-panel absolute right-0 top-0 flex h-full min-h-0 w-full max-w-lg flex-col overflow-hidden border-l border-white/10 bg-[#1d171d] text-white shadow-2xl"
             role="dialog"
             aria-modal="true"
@@ -127,7 +132,7 @@ export default function CartDrawer() {
                 <Link
                   href="/catalogo"
                   onClick={() => setAbierto(false)}
-                  className="mt-6 rounded-full bg-lavender-magenta-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-500/20 hover:bg-lavender-magenta-400"
+                  className="mt-6 rounded-full bg-lavender-magenta-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-500/20 hover:bg-lavender-magenta-700"
                 >
                   Explorar catálogo
                 </Link>
@@ -199,11 +204,27 @@ export default function CartDrawer() {
                   <span className="font-display text-2xl font-bold text-white sm:text-3xl">{formatPrecio(totalPrecio)}</span>
                 </div>
 
+                <p className="mb-3 text-[11px] leading-5 text-white/65">
+                  Al enviar tu pedido se abrirá WhatsApp con el resumen; allí nos compartirás tu nombre, ciudad y dirección solo para gestionarlo. Al continuar
+                  aceptas la{' '}
+                  <Link href="/privacidad" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                    Política de privacidad
+                  </Link>{' '}
+                  y los{' '}
+                  <Link href="/terminos" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                    Términos
+                  </Link>
+                  . Tienes{' '}
+                  <Link href="/devoluciones" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                    derecho de retracto
+                  </Link>
+                  .
+                </p>
                 <a
                   href={linkWhatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block rounded-2xl bg-lavender-magenta-500 px-5 py-3.5 text-center text-sm font-bold text-white shadow-xl shadow-lavender-magenta-500/15 hover:-translate-y-0.5 hover:bg-lavender-magenta-400"
+                  className="block rounded-2xl bg-lavender-magenta-600 px-5 py-3.5 text-center text-sm font-bold text-white shadow-xl shadow-lavender-magenta-500/15 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
                 >
                   Enviar pedido por WhatsApp
                 </a>

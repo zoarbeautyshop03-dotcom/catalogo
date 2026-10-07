@@ -64,17 +64,23 @@ export default async function EditarProductoPage({ params, searchParams }: { par
           )}
         </div>
 
+        <p className="mb-2 text-xs leading-5 text-gray-600">
+          Usa solo fotos tuyas o que tengas autorización escrita de usar (de la marca o del proveedor). No copies imágenes de otras tiendas, buscadores o redes
+          sociales: pueden tener derechos de autor. En «Texto alternativo» describe lo que se ve (ej.: «Frasco de shampoo hidratante de 400 ml»).
+        </p>
         <form action={agregarImagenConId} className="flex flex-col sm:flex-row gap-2">
           <input
             name="url"
             type="url"
             required
+            aria-label="URL de la foto"
             placeholder="URL de la foto (Cloudinary/ImageKit)"
             className="flex-1 rounded-lg border border-rosa-pastel px-3 py-2 text-sm"
           />
           <input
             name="texto_alt"
             type="text"
+            aria-label="Texto alternativo de la foto"
             placeholder="Texto alternativo (opcional)"
             className="flex-1 rounded-lg border border-rosa-pastel px-3 py-2 text-sm"
           />

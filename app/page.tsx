@@ -82,7 +82,7 @@ export default async function HomePage() {
             ['04', 'Un solo pedido', 'Agrega varios productos al carrito.'],
           ].map(([n, title, copy]) => (
             <div key={n} className="rounded-2xl bg-white/90 p-4 ring-1 ring-lavender-magenta-100 sm:p-5">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-lavender-magenta-500">{n}</span>
+              <span className="text-[10px] font-bold tracking-[0.2em] text-lavender-magenta-700">{n}</span>
               <p className="mt-2 text-sm font-semibold text-lavender-magenta-950">{title}</p>
               <p className="mt-1 text-xs leading-5 text-gray-500">{copy}</p>
             </div>
@@ -109,7 +109,7 @@ export default async function HomePage() {
         </section>
       )}
 
-      {masVendidos.length > 0 && <Section title="Los favoritos de nuestras clientas" eyebrow="Más buscados" productos={masVendidos} imagenes={imagenes} />}
+      {masVendidos.length > 0 && <Section title="Favoritos de la tienda" eyebrow="Recomendados" productos={masVendidos} imagenes={imagenes} />}
       {novedades.length > 0 && <Section title="Recién llegados" eyebrow="Lo nuevo" productos={novedades} imagenes={imagenes} />}
       {ofertas.length > 0 && <Section title="Ofertas especiales" eyebrow="Precio especial" productos={ofertas} imagenes={imagenes} />}
       {destacados.length > 0 && <Section title="Destacados" eyebrow="Selección Zoar" productos={destacados} imagenes={imagenes} />}

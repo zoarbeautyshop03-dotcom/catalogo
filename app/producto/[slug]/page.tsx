@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import type { Metadata } from 'next'
@@ -42,7 +43,7 @@ export default async function ProductoPage({ params }: Props) {
             {imagenes[0] ? (
               <Image src={imagenes[0].url} alt={imagenes[0].texto_alt ?? producto.nombre} fill sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" priority />
             ) : (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-lavender-magenta-500">
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-lavender-magenta-700">
                 <span className="text-6xl">✦</span>
                 <span className="text-[10px] font-semibold uppercase tracking-[0.16em]">Foto pendiente</span>
               </div>
@@ -51,9 +52,9 @@ export default async function ProductoPage({ params }: Props) {
 
           {imagenes.length > 1 && (
             <div className="mt-4 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {imagenes.map((img) => (
+              {imagenes.map((img, i) => (
                 <div key={img.id} className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white ring-1 ring-lavender-magenta-100">
-                  <Image src={img.url} alt={img.texto_alt ?? ''} fill sizes="80px" className="object-cover" />
+                  <Image src={img.url} alt={img.texto_alt ?? `${producto.nombre} (foto ${i + 1})`} fill sizes="80px" className="object-cover" />
                 </div>
               ))}
             </div>
@@ -65,7 +66,7 @@ export default async function ProductoPage({ params }: Props) {
           <h1 className="mt-4 font-display text-3xl font-bold leading-tight text-lavender-magenta-950 sm:text-4xl">{producto.nombre}</h1>
 
           <div className="mt-5 flex items-end gap-3">
-            {tieneDescuento && <span className="text-sm text-gray-400 line-through">{formatPrecio(producto.precio_anterior as number, producto.moneda)}</span>}
+            {tieneDescuento && <span className="text-sm text-gray-500 line-through">{formatPrecio(producto.precio_anterior as number, producto.moneda)}</span>}
             <span className="font-display text-3xl font-bold text-lavender-magenta-700">{formatPrecio(producto.precio, producto.moneda)}</span>
             {tieneDescuento && porcentaje != null && (
               <span className="mb-1 rounded-full bg-lavender-magenta-600 px-2.5 py-1 text-xs font-bold text-white">
@@ -74,14 +75,26 @@ export default async function ProductoPage({ params }: Props) {
             )}
           </div>
 
-          <div className="mt-4 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
+          <div className="mt-5 flex flex-wrap gap-3">
+            <AddToCartButton producto={{ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio }} imagenUrl={imagenes[0]?.url} agotado={producto.estado_inventario === 'agotado'} variante="completo" />
+            <WhatsAppButton producto={producto} />
+          </div>
+
+          <p className="mt-3 text-xs leading-5 text-gray-600">
+            Agrega varios productos al carrito y envía un solo pedido por WhatsApp, o solicita este producto directamente. Al continuar a WhatsApp aceptas la{' '}
+            <Link href="/privacidad" className="font-semibold text-lavender-magenta-700 underline underline-offset-2">Política de privacidad</Link> y los{' '}
+            <Link href="/terminos" className="font-semibold text-lavender-magenta-700 underline underline-offset-2">Términos</Link>. Tienes{' '}
+            <Link href="/devoluciones" className="font-semibold text-lavender-magenta-700 underline underline-offset-2">derecho de retracto</Link>.
+          </p>
+
+          <div className="mt-5 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
             {producto.estado_inventario === 'disponible' && 'Disponible'}
             {producto.estado_inventario === 'ultimas_unidades' && 'Últimas unidades'}
             {producto.estado_inventario === 'agotado' && 'Agotado'}
           </div>
 
           {producto.descripcion_completa && <p className="mt-6 text-sm leading-7 text-gray-600">{producto.descripcion_completa}</p>}
-          {producto.contenido && <p className="mt-4 text-xs font-medium uppercase tracking-[0.1em] text-gray-400">Contenido: {producto.contenido}</p>}
+          {producto.contenido && <p className="mt-4 text-xs font-medium uppercase tracking-[0.1em] text-gray-500">Contenido: {producto.contenido}</p>}
 
           <div className="mt-7 space-y-4">
             {producto.modo_uso && (
@@ -96,15 +109,8 @@ export default async function ProductoPage({ params }: Props) {
                 <p className="mt-1 text-sm leading-6 text-gray-600">{producto.ingredientes_destacados}</p>
               </div>
             )}
-            {producto.advertencias && <p className="text-xs leading-5 text-gray-400">{producto.advertencias}</p>}
+            {producto.advertencias && <p className="text-xs leading-5 text-gray-500">{producto.advertencias}</p>}
           </div>
-
-          <div className="mt-7 flex flex-wrap gap-3">
-            <AddToCartButton producto={{ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio }} imagenUrl={imagenes[0]?.url} agotado={producto.estado_inventario === 'agotado'} variante="completo" />
-            <WhatsAppButton producto={producto} />
-          </div>
-
-          <p className="mt-4 text-xs leading-5 text-gray-400">Agrega varios productos al carrito y envía un solo pedido por WhatsApp, o solicita este producto directamente.</p>
         </div>
       </div>
     </div>

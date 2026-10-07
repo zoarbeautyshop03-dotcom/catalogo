@@ -1,7 +1,8 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { useDialogoAccesible } from '@/lib/use-dialogo'
 
 function FilterIcon() {
   return (
@@ -35,6 +36,7 @@ type Props = {
 export default function FiltrosMovil({ children, cantidadActivos, hayFiltros, total }: Props) {
   const [abierto, setAbierto] = useState(false)
   const [montado, setMontado] = useState(false)
+  const dialogoRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMontado(true)
@@ -66,6 +68,8 @@ export default function FiltrosMovil({ children, cantidadActivos, hayFiltros, to
     }
   }, [abierto])
 
+  useDialogoAccesible(dialogoRef, abierto && montado)
+
   return (
     <>
       <button
@@ -94,6 +98,8 @@ export default function FiltrosMovil({ children, cantidadActivos, hayFiltros, to
           />
 
           <div
+            ref={dialogoRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="filtros-titulo"

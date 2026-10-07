@@ -3,6 +3,8 @@ import ProductCard from '@/components/ProductCard'
 import BotonVolver from '@/components/BotonVolver'
 import MarcasFiltro from '@/components/MarcasFiltro'
 import ScrollAlPaginar from '@/components/ScrollAlPaginar'
+import FiltrosMovil from '@/components/FiltrosMovil'
+import OrdenarSelect from '@/components/OrdenarSelect'
 import { construirUrl, type SearchParams } from '@/lib/catalogo-url'
 import { getProductosCatalogo, getCategorias, getMarcas, getImagenesPrincipales } from '@/lib/queries'
 
@@ -47,6 +49,7 @@ function ArrowIcon() {
 
 export default async function CatalogoPage({ searchParams }: { searchParams: SearchParams }) {
   const page = Number(searchParams.page ?? '1')
+  const orden = searchParams.orden === 'precio-asc' || searchParams.orden === 'precio-desc' ? searchParams.orden : 'nombre'
   const { productos, total } = await getProductosCatalogo({
     categoriaSlug: searchParams.categoria,
     marcaSlug: searchParams.marca,
@@ -55,6 +58,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
     busqueda: searchParams.q,
     nuevo: searchParams.nuevo === '1',
     oferta: searchParams.oferta === '1',
+    orden,
     page,
     porPagina: POR_PAGINA,
   })
@@ -67,6 +71,75 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
   const categoriaActual = categorias.find((c) => c.slug === searchParams.categoria)?.nombre
   const marcaActual = marcas.find((m) => m.slug === searchParams.marca)?.nombre
   const hayFiltros = Boolean(searchParams.q || categoriaActual || marcaActual || searchParams.nuevo || searchParams.oferta)
+  const cantidadActivos = [categoriaActual, marcaActual, searchParams.nuevo === '1', searchParams.oferta === '1'].filter(Boolean).length
+
+  // Mismo contenido para la tarjeta de escritorio y para el panel del celular.
+  // En el panel (envolver = true) las categorías se acomodan en varias filas en
+  // vez de deslizarse hacia los lados.
+  const bloqueCategorias = (envolver: boolean) => (
+    <div className="pt-5">
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
+          <SparkleIcon />
+        </span>
+        <div>
+          <p className="text-sm font-bold text-lavender-magenta-950">Categorías</p>
+          <p className="text-[11px] text-gray-500">{categorias.length} opciones disponibles</p>
+        </div>
+      </div>
+
+      <div className={envolver ? 'mt-4 flex flex-wrap gap-2.5' : 'mt-4 flex gap-2.5 overflow-x-auto pb-3 scroll-brand'}>
+        <a
+          href={construirUrl(searchParams, { categoria: undefined })}
+          className={`catalog-chip shrink-0 gap-2 px-4 py-2.5 text-xs ${
+            !searchParams.categoria
+              ? 'catalog-chip-active'
+              : 'catalog-chip-muted'
+          }`}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+          Todas
+        </a>
+        {categorias.map((c) => (
+          <a
+            key={c.id}
+            href={construirUrl(searchParams, { categoria: c.slug })}
+            className={`catalog-chip shrink-0 justify-between gap-3 px-4 py-2.5 text-xs ${
+              searchParams.categoria === c.slug
+                ? 'catalog-chip-active'
+                : 'catalog-chip-muted'
+            }`}
+          >
+            <span className="truncate">{c.nombre}</span>
+            <ArrowIcon />
+          </a>
+        ))}
+      </div>
+    </div>
+  )
+
+  const bloqueMarcas = (
+    <>
+      {marcas.length > 0 && (
+        <div className="mt-7 border-t border-lavender-magenta-100/80 pt-6">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-lavender-magenta-950 text-white">
+                <TagIcon />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-lavender-magenta-950">Marcas</p>
+                <p className="text-[11px] text-gray-500">{marcas.length} marcas disponibles</p>
+              </div>
+            </div>
+            <span className="hidden rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 sm:inline-flex">A–Z</span>
+          </div>
+
+          <MarcasFiltro marcas={marcas} searchParams={searchParams} />
+        </div>
+      )}
+    </>
+  )
 
   return (
     <div className="relative overflow-hidden pb-14 pt-5 sm:pb-20 sm:pt-7">
@@ -76,7 +149,12 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
       <div className="section-shell relative">
         <BotonVolver label="Volver" />
 
-        <section className="catalog-hero mt-3 overflow-hidden rounded-[34px] px-5 py-7 ring-1 ring-lavender-magenta-100/90 sm:px-8 sm:py-9 lg:px-10 lg:py-11">
+        <div className="mt-1 sm:hidden">
+          <p className="font-display text-3xl font-bold tracking-tight text-lavender-magenta-950">Catálogo</p>
+          <p className="mt-1 text-xs text-gray-500">Agrega varios productos y envía un solo pedido por WhatsApp.</p>
+        </div>
+
+        <section className="catalog-hero mt-3 hidden overflow-hidden rounded-[34px] px-5 py-7 ring-1 ring-lavender-magenta-100/90 sm:block sm:px-8 sm:py-9 lg:px-10 lg:py-11">
           <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-200/45 blur-3xl" />
           <div className="relative grid gap-8 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <div>
@@ -98,7 +176,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
             <div className="relative">
               <div className="rounded-[27px] border border-white/90 bg-white/95 p-2 shadow-[0_20px_50px_rgba(81,1,65,0.10)]">
                 <form action="/catalogo" className="flex flex-col gap-2 sm:flex-row">
-                  <label className="flex min-w-0 flex-1 items-center gap-3 rounded-[20px] bg-lavender-magenta-50/80 px-4 py-3.5 text-gray-500 ring-1 ring-lavender-magenta-100/80 focus-within:ring-2 focus-within:ring-lavender-magenta-300/80">
+                  <label className="campo-pill flex min-w-0 flex-1 items-center gap-3 rounded-[20px] bg-lavender-magenta-50/80 px-4 py-3.5 text-gray-600 ring-1 ring-lavender-magenta-100/80">
                     <SearchIcon />
                     <span className="sr-only">Buscar productos</span>
                     <input
@@ -106,7 +184,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
                       name="q"
                       defaultValue={searchParams.q}
                       placeholder="Busca por nombre..."
-                      className="min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+                      className="min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-800 placeholder:text-gray-500 focus:outline-none"
                     />
                   </label>
                   <button className="rounded-[20px] bg-lavender-magenta-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700">
@@ -122,7 +200,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
           </div>
         </section>
 
-        <section id="filtros-catalogo" className="catalog-filter-card mt-6 rounded-[30px] bg-white/[0.88] p-4 ring-1 ring-lavender-magenta-100/90 sm:mt-7 sm:p-6">
+        <section id="filtros-catalogo" className="catalog-filter-card mt-6 hidden rounded-[30px] bg-white/[0.88] p-4 ring-1 ring-lavender-magenta-100/90 sm:mt-7 sm:block sm:p-6">
           <div className="flex flex-col gap-4 border-b border-lavender-magenta-100/80 pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="eyebrow px-2.5 py-1 text-[9px]">Encuentra más rápido</span>
@@ -140,67 +218,12 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
             )}
           </div>
 
-          <div className="pt-5">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
-                <SparkleIcon />
-              </span>
-              <div>
-                <p className="text-sm font-bold text-lavender-magenta-950">Categorías</p>
-                <p className="text-[11px] text-gray-400">{categorias.length} opciones disponibles</p>
-              </div>
-            </div>
+          {bloqueCategorias(false)}
 
-            <div className="mt-4 flex gap-2.5 overflow-x-auto pb-3 scroll-brand">
-              <a
-                href={construirUrl(searchParams, { categoria: undefined })}
-                className={`catalog-chip shrink-0 gap-2 px-4 py-2.5 text-xs ${
-                  !searchParams.categoria
-                    ? 'catalog-chip-active'
-                    : 'catalog-chip-muted'
-                }`}
-              >
-                <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                Todas
-              </a>
-              {categorias.map((c) => (
-                <a
-                  key={c.id}
-                  href={construirUrl(searchParams, { categoria: c.slug })}
-                  className={`catalog-chip shrink-0 justify-between gap-3 px-4 py-2.5 text-xs ${
-                    searchParams.categoria === c.slug
-                      ? 'catalog-chip-active'
-                      : 'catalog-chip-muted'
-                  }`}
-                >
-                  <span className="truncate">{c.nombre}</span>
-                  <ArrowIcon />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {marcas.length > 0 && (
-            <div className="mt-7 border-t border-lavender-magenta-100/80 pt-6">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-lavender-magenta-950 text-white">
-                    <TagIcon />
-                  </span>
-                  <div>
-                    <p className="text-sm font-bold text-lavender-magenta-950">Marcas</p>
-                    <p className="text-[11px] text-gray-400">{marcas.length} marcas disponibles</p>
-                  </div>
-                </div>
-                <span className="hidden rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 sm:inline-flex">A–Z</span>
-              </div>
-
-              <MarcasFiltro marcas={marcas} searchParams={searchParams} />
-            </div>
-          )}
+          {bloqueMarcas}
         </section>
 
-        <div className="mt-7 flex flex-col gap-4 border-b border-lavender-magenta-100/80 pb-5 sm:mt-8 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mt-5 flex flex-col-reverse gap-4 border-b border-lavender-magenta-100/80 pb-5 sm:mt-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-display text-2xl font-bold tracking-tight text-lavender-magenta-950">{total} {total === 1 ? 'producto' : 'productos'}</p>
@@ -214,8 +237,16 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
                 {marcaActual && <span className="catalog-active-filter">{marcaActual}</span>}
               </div>
             )}
+            {totalPaginas > 1 && <p className="mt-2 text-xs font-medium text-gray-500">Página {page} de {totalPaginas}</p>}
           </div>
-          <p className="text-xs font-medium text-gray-400">Página {page} de {totalPaginas}</p>
+
+          <div className="flex items-center gap-2">
+            <FiltrosMovil cantidadActivos={cantidadActivos} hayFiltros={hayFiltros} total={total}>
+              {bloqueCategorias(true)}
+              {bloqueMarcas}
+            </FiltrosMovil>
+            <OrdenarSelect searchParams={searchParams} valorActual={orden} />
+          </div>
         </div>
 
         <ScrollAlPaginar targetId="resultados" />
@@ -260,7 +291,7 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
 
         {total === 0 && (
           <div className="premium-card mt-8 overflow-hidden px-6 py-16 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-lavender-magenta-50 text-lavender-magenta-600 ring-1 ring-lavender-magenta-100">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
               <SearchIcon />
             </div>
             <p className="mt-5 font-display text-2xl text-lavender-magenta-950">No encontramos ese producto</p>

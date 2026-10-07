@@ -47,14 +47,14 @@ export default function MarcasFiltro({
           onClick={() => setExpandido(true)}
           className="catalog-brand-chip border-dashed"
         >
-          <span className="catalog-brand-initial bg-white text-lavender-magenta-600">+{ocultas}</span>
+          <span className="catalog-brand-initial bg-white text-lavender-magenta-700">+{ocultas}</span>
           <span>Ver más marcas</span>
         </button>
       )}
 
       {expandido && marcas.length > LIMITE_VISIBLE && (
         <button type="button" onClick={() => setExpandido(false)} className="catalog-brand-chip border-dashed">
-          <span className="catalog-brand-initial bg-white text-lavender-magenta-600">−</span>
+          <span className="catalog-brand-initial bg-white text-lavender-magenta-700">−</span>
           <span>Ver menos</span>
         </button>
       )}

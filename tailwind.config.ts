@@ -12,7 +12,7 @@ const config: Config = {
           300: '#ff94f4',
           400: '#fe74ee',
           500: '#f540df',
-          600: '#d920bf',
+          600: '#d11fb8', // oscurecido levemente para que texto blanco sobre este color cumpla contraste AA (4.5:1)
           700: '#b4179a',
           800: '#93157d',
           900: '#781765',
@@ -24,7 +24,7 @@ const config: Config = {
           empolvado: '#ffcefc',
           nude: '#fff4fe',
         },
-        fucsia: '#d920bf',
+        fucsia: '#d11fb8',
         crema: '#fff4fe',
         lavanda: '#ffcefc',
         dorado: '#b78b3c',

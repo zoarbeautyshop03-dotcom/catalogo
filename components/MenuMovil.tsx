@@ -34,7 +34,7 @@ export default function MenuMovil() {
       >
         <MenuIcon />
       </summary>
-      <div className="absolute right-0 top-12 w-56 rounded-2xl border border-lavender-magenta-100 bg-white p-2 shadow-xl">
+      <nav aria-label="Menú principal" className="absolute right-0 top-12 w-56 rounded-2xl border border-lavender-magenta-100 bg-white p-2 shadow-xl">
         {ENLACES.map(([href, label]) => (
           <Link
             key={href}
@@ -45,7 +45,7 @@ export default function MenuMovil() {
             {label}
           </Link>
         ))}
-      </div>
+      </nav>
     </details>
   )
 }

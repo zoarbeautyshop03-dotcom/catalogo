@@ -39,9 +39,9 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
               className="relative z-10 object-contain p-3 transition duration-500 ease-out group-hover:scale-[1.045] sm:p-4"
             />
           ) : (
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-lavender-magenta-500">
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-lavender-magenta-700">
               <span className="text-4xl">✦</span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-lavender-magenta-600">Foto pendiente</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-lavender-magenta-700">Foto pendiente</span>
             </div>
           )}
 
@@ -73,7 +73,7 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               {marcaNombre && (
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-lavender-magenta-600">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-lavender-magenta-700">
                   {marcaNombre}
                 </p>
               )}
@@ -88,7 +88,7 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
               <div className="min-w-0">
                 {tieneDescuento && (
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[11px] font-medium text-gray-400 line-through">
+                    <span className="text-[11px] font-medium text-gray-500 line-through">
                       {formatPrecio(producto.precio_anterior as number, producto.moneda)}
                     </span>
                     {porcentaje != null && (

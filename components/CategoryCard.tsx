@@ -30,7 +30,7 @@ export default function CategoryCard({ categoria }: { categoria: Categoria }) {
             <Image src={categoria.imagen_url} alt="" fill className="object-contain" />
           </span>
         ) : (
-          <span className="font-display text-4xl text-lavender-magenta-500">{icono}</span>
+          <span className="font-display text-4xl text-lavender-magenta-700">{icono}</span>
         )}
       </div>
       <p className="relative mt-4 text-sm font-semibold text-lavender-magenta-950">{categoria.nombre}</p>

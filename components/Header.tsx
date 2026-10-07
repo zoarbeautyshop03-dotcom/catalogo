@@ -34,33 +34,51 @@ export default async function Header() {
         </Link>
 
         <form action="/catalogo" className="hidden min-w-0 md:block">
-          <label className="mx-auto flex max-w-xl items-center gap-2 rounded-full border border-lavender-magenta-100 bg-lavender-magenta-50/75 px-4 py-2.5 text-sm text-gray-500 shadow-inner">
+          <label className="campo-pill mx-auto flex max-w-xl items-center gap-2 rounded-full border border-lavender-magenta-100 bg-lavender-magenta-50/75 px-4 py-2.5 text-sm text-gray-600 shadow-inner">
             <SearchIcon />
+            <span className="sr-only">Buscar productos, marcas o categorías</span>
             <input
               type="text"
               name="q"
               placeholder="Buscar productos, marcas o categorías..."
-              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
+              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-gray-800 placeholder:text-gray-500 focus:outline-none"
             />
           </label>
         </form>
 
         <div className="flex items-center justify-end gap-2 sm:gap-3">
-          <Link href="/catalogo" className="rounded-full p-2 text-lavender-magenta-700 hover:bg-lavender-magenta-50 md:hidden" aria-label="Buscar">
-            <SearchIcon />
-          </Link>
           <CartDrawer />
           <MenuMovil />
         </div>
       </div>
 
+      {/* Buscador siempre visible en celular (en escritorio va en la fila de arriba). */}
+      <form action="/catalogo" role="search" className="section-shell pb-2.5 md:hidden">
+        <label className="campo-pill flex items-center gap-2 rounded-full border border-lavender-magenta-100 bg-lavender-magenta-50/75 py-1 pl-4 pr-1 shadow-inner">
+          <SearchIcon />
+          <span className="sr-only">Buscar productos</span>
+          {/* text-base (16px) evita que iPhone haga zoom al tocar el campo */}
+          <input
+            type="search"
+            name="q"
+            enterKeyHint="search"
+            autoComplete="off"
+            placeholder="Buscar productos..."
+            className="min-w-0 flex-1 border-0 bg-transparent py-2 text-base text-gray-800 placeholder:text-gray-500 focus:outline-none"
+          />
+          <button type="submit" className="shrink-0 rounded-full bg-lavender-magenta-600 px-4 py-2 text-xs font-bold text-white hover:bg-lavender-magenta-700">
+            Buscar
+          </button>
+        </label>
+      </form>
+
       <div className="hidden border-t border-lavender-magenta-100/80 md:block">
-        <nav className="section-shell flex items-center justify-center gap-8 py-2.5 text-sm font-medium text-gray-600">
+        <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-8 py-2.5 text-sm font-medium text-gray-600">
           <Link href="/" className="hover:text-lavender-magenta-700">Inicio</Link>
           <Link href="/catalogo" className="hover:text-lavender-magenta-700">Catálogo</Link>
           <Link href="/catalogo?oferta=1" className="hover:text-lavender-magenta-700">Ofertas</Link>
           <Link href="/catalogo?nuevo=1" className="hover:text-lavender-magenta-700">Novedades</Link>
-          <Link href="/admin" className="text-xs text-gray-400 hover:text-lavender-magenta-700">Administración</Link>
+          <Link href="/admin" className="text-xs text-gray-500 hover:text-lavender-magenta-700">Administración</Link>
         </nav>
       </div>
     </header>
