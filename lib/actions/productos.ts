@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabase/server'
+import { slugify } from '@/lib/slug'
 
 function extraerPayload(formData: FormData) {
   const num = (v: FormDataEntryValue | null) => (v === null || v === '' ? null : Number(v))
@@ -43,6 +44,8 @@ function extraerPayload(formData: FormData) {
 export async function crearProducto(formData: FormData) {
   const supabase = createServerSupabase()
   const payload = extraerPayload(formData)
+  // Slug limpio (sin signos ni acentos); si queda vacío se arma con el nombre.
+  payload.slug = slugify(payload.slug || payload.nombre) || `producto-${Date.now()}`
   const { data, error } = await supabase.from('productos').insert(payload).select('id').single()
   if (error) throw new Error(error.message)
   revalidatePath('/admin/productos')
@@ -55,6 +58,12 @@ export async function crearProducto(formData: FormData) {
 export async function actualizarProducto(id: string, formData: FormData) {
   const supabase = createServerSupabase()
   const payload = extraerPayload(formData)
+  // Si el slug no cambió se respeta tal cual (así no se rompen enlaces ya
+  // compartidos ni la plantilla de Excel). Si lo escribiste de nuevo, se limpia.
+  const { data: actual } = await supabase.from('productos').select('slug').eq('id', id).maybeSingle()
+  if (payload.slug !== actual?.slug) {
+    payload.slug = slugify(payload.slug || payload.nombre) || `producto-${Date.now()}`
+  }
   const { error } = await supabase.from('productos').update(payload).eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath('/admin/productos')
@@ -93,7 +102,7 @@ export async function duplicarProducto(id: string) {
   delete copia.creado_en
   delete copia.actualizado_en
   copia.nombre = `${original.nombre} (copia)`
-  copia.slug = `${original.slug}-copia-${Date.now()}`
+  copia.slug = `${slugify(String(original.slug ?? original.nombre))}-copia-${Date.now()}`
   copia.estado_publicacion = 'borrador'
 
   const { error } = await supabase.from('productos').insert(copia)

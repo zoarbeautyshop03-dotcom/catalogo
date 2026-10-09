@@ -63,11 +63,11 @@ export default async function ProductoPage({ params }: Props) {
 
         <div className="premium-card p-6 sm:p-8 lg:p-9">
           <span className="eyebrow">Zoar Beauty Shop</span>
-          <h1 className="mt-4 font-display text-3xl font-bold leading-tight text-lavender-magenta-950 sm:text-4xl">{producto.nombre}</h1>
+          <h1 className="mt-4 font-display text-3xl font-semibold leading-tight tracking-[-0.015em] text-lavender-magenta-950 sm:text-4xl">{producto.nombre}</h1>
 
           <div className="mt-5 flex items-end gap-3">
             {tieneDescuento && <span className="text-sm text-gray-500 line-through">{formatPrecio(producto.precio_anterior as number, producto.moneda)}</span>}
-            <span className="font-display text-3xl font-bold text-lavender-magenta-700">{formatPrecio(producto.precio, producto.moneda)}</span>
+            <span className="font-display text-3xl font-semibold text-lavender-magenta-950">{formatPrecio(producto.precio, producto.moneda)}</span>
             {tieneDescuento && porcentaje != null && (
               <span className="mb-1 rounded-full bg-lavender-magenta-600 px-2.5 py-1 text-xs font-bold text-white">
                 -{porcentaje}%
@@ -94,7 +94,7 @@ export default async function ProductoPage({ params }: Props) {
           </div>
 
           {producto.descripcion_completa && <p className="mt-6 text-sm leading-7 text-gray-600">{producto.descripcion_completa}</p>}
-          {producto.contenido && <p className="mt-4 text-xs font-medium uppercase tracking-[0.1em] text-gray-500">Contenido: {producto.contenido}</p>}
+          {producto.contenido && <p className="mt-4 text-sm font-medium text-gray-500">Contenido: {producto.contenido}</p>}
 
           <div className="mt-7 space-y-4">
             {producto.modo_uso && (

@@ -25,9 +25,25 @@ const config: Config = {
           nude: '#fff4fe',
         },
         fucsia: '#d11fb8',
-        crema: '#fff4fe',
+        crema: '#fdf8fc',
         lavanda: '#ffcefc',
-        dorado: '#b78b3c',
+        // Dorado: acento secundario, solo para pequeños detalles (filetes, firma).
+        dorado: { DEFAULT: '#b78b3c', claro: '#e8cf9a' },
+        // Grises con un leve matiz ciruela para que texto, bordes y fondos
+        // neutros armonicen con el magenta de la marca (antes eran grises puros).
+        gray: {
+          50: '#faf7fa',
+          100: '#f4eef4',
+          200: '#e8dfe8',
+          300: '#d6cad5',
+          400: '#a999a7',
+          500: '#725f6f',
+          600: '#5a4859',
+          700: '#463746',
+          800: '#33252f',
+          900: '#241a22',
+          950: '#170f16',
+        },
       },
       fontFamily: {
         display: ['var(--font-display)', 'serif'],
@@ -35,8 +51,8 @@ const config: Config = {
         script: ['var(--font-script)', 'cursive'],
       },
       boxShadow: {
-        'soft-pink': '0 14px 40px rgba(217, 32, 191, 0.10)',
-        'soft-card': '0 10px 30px rgba(81, 1, 65, 0.07)',
+        'soft-pink': '0 1px 2px rgba(81, 1, 65, 0.05), 0 18px 48px rgba(81, 1, 65, 0.10)',
+        'soft-card': '0 1px 2px rgba(81, 1, 65, 0.04), 0 10px 28px rgba(81, 1, 65, 0.06)',
       },
       borderRadius: {
         '4xl': '2rem',

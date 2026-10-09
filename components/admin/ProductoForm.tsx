@@ -50,7 +50,7 @@ export default function ProductoForm({ producto, categorias, marcas, subcategori
       <section className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
         <h2 className="font-medium text-gray-700">Información básica</h2>
         <Campo label="Nombre" name="nombre" defaultValue={v?.nombre} required />
-        <Campo label="Slug (URL)" name="slug" defaultValue={v?.slug} required />
+        <Campo label="Slug (URL)" name="slug" defaultValue={v?.slug} hint="Opcional. Si lo dejas vacío se crea solo desde el nombre. Se limpia automáticamente: sin tildes, espacios ni signos como + & % #." />
         <div className="grid grid-cols-2 gap-4">
           <Select label="Categoría" name="categoria_id" defaultValue={v?.categoria_id ?? ''}>
             <option value="">— Sin categoría —</option>
@@ -139,12 +139,14 @@ function Campo({
   defaultValue,
   type = 'text',
   required,
+  hint,
 }: {
   label: string
   name: string
   defaultValue?: string | number | null
   type?: string
   required?: boolean
+  hint?: string
 }) {
   return (
     <label className="block text-sm">
@@ -156,6 +158,7 @@ function Campo({
         required={required}
         className="mt-1 w-full rounded-lg border border-rosa-pastel px-3 py-2"
       />
+      {hint && <span className="mt-1 block text-xs text-gray-500">{hint}</span>}
     </label>
   )
 }

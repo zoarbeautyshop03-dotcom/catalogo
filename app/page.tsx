@@ -1,7 +1,10 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import ProductCard from '@/components/ProductCard'
 import CategoryCard from '@/components/CategoryCard'
 import type { Producto } from '@/lib/types'
+import { rutaProducto } from '@/lib/slug'
+import { formatPrecio } from '@/lib/whatsapp'
 import {
   getCategorias,
   getDestacados,
@@ -12,6 +15,29 @@ import {
 } from '@/lib/queries'
 
 export const revalidate = 300
+
+const GARANTIAS = [
+  {
+    titulo: 'Atención personalizada',
+    texto: 'Te ayudamos por WhatsApp a elegir.',
+    icono: 'M4 5h16v11H9l-5 4V5Z',
+  },
+  {
+    titulo: 'Envíos a todo el país',
+    texto: 'Compra desde donde estés.',
+    icono: 'M3 7h11v9H3V7Zm11 3h4l3 3v3h-7v-6ZM7 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z',
+  },
+  {
+    titulo: 'Selección cuidada',
+    texto: 'Productos pensados para tu rutina.',
+    icono: 'm12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z',
+  },
+  {
+    titulo: 'Un solo pedido',
+    texto: 'Agrega varios productos al carrito.',
+    icono: 'M6 8.5h12l.7 11H5.3L6 8.5ZM9 9V7a3 3 0 0 1 6 0v2',
+  },
+]
 
 export default async function HomePage() {
   const [categorias, destacados, novedades, ofertas, masVendidos] = await Promise.all([
@@ -27,81 +53,89 @@ export default async function HomePage() {
   )
   const imagenes = await getImagenesPrincipales(idsUnicos)
 
+  // Tres productos con foto para la portada. Si no hay suficientes, la portada
+  // queda centrada y solo con texto.
+  const vistos = new Set<string>()
+  const portada = [...destacados, ...masVendidos, ...novedades, ...ofertas]
+    .filter((p) => {
+      if (!imagenes[p.id] || vistos.has(p.id)) return false
+      vistos.add(p.id)
+      return true
+    })
+    .slice(0, 3)
+  const conColeccion = portada.length === 3
+
   return (
-    <div className="pb-10">
-      <section className="section-shell pt-5 sm:pt-8">
-        <div className="relative overflow-hidden rounded-[34px] bg-gradient-to-br from-white via-lavender-magenta-50 to-lavender-magenta-100 px-6 py-12 text-center shadow-soft-pink ring-1 ring-lavender-magenta-100 sm:px-12 sm:py-16 lg:px-20 lg:py-20">
-          <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-lavender-magenta-300/25 blur-3xl" />
-          <div className="absolute left-1/2 top-7 h-px w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-lavender-magenta-300 to-transparent" />
+    <div className="pb-8">
+      <section className="section-shell pt-4 sm:pt-8">
+        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-white via-white to-lavender-magenta-100/70 ring-1 ring-lavender-magenta-100">
+          <div
+            className={`grid items-center gap-10 px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 ${
+              conColeccion ? 'lg:grid-cols-[1.05fr_0.95fr] lg:gap-14' : ''
+            }`}
+          >
+            <div className={conColeccion ? '' : 'mx-auto max-w-3xl text-center'}>
+              <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-[-0.02em] text-lavender-magenta-950 sm:text-5xl lg:text-[3.5rem]">
+                Tu cabello merece sentirse tan bien como se ve.
+              </h1>
+              <p className={`mt-5 max-w-xl text-base leading-7 text-gray-600 sm:text-lg sm:leading-8 ${conColeccion ? '' : 'mx-auto'}`}>
+                Descubre una selección de productos de belleza y cuidado capilar para crear una rutina que disfrutes de principio a fin.
+              </p>
 
-          <div className="relative mx-auto max-w-4xl">
-            <span className="eyebrow">Belleza · Cuidado · Confianza</span>
-            <h1 className="mt-6 font-display text-4xl font-bold leading-[1.05] tracking-tight text-lavender-magenta-950 sm:text-5xl lg:text-6xl">
-              Tu cabello merece sentirse tan bien como se ve.
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg">
-              Descubre una selección de productos de belleza y cuidado capilar para crear una rutina que disfrutes de principio a fin.
-            </p>
-
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link
-                href="/catalogo"
-                className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
-              >
-                Explorar catálogo
-              </Link>
-              <Link
-                href="/catalogo?oferta=1"
-                className="rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-lavender-magenta-700 ring-1 ring-lavender-magenta-200 hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
-              >
-                Ver ofertas
-              </Link>
+              <div className={`mt-8 flex flex-wrap gap-3 ${conColeccion ? '' : 'justify-center'}`}>
+                <Link
+                  href="/catalogo"
+                  className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
+                >
+                  Explorar catálogo
+                </Link>
+                <Link
+                  href="/catalogo?oferta=1"
+                  className="rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-lavender-magenta-800 ring-1 ring-lavender-magenta-200 hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
+                >
+                  Ver ofertas
+                </Link>
+              </div>
             </div>
 
-            <div className="mx-auto mt-9 flex max-w-2xl flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs font-medium text-gray-500">
-              <span>✓ Atención por WhatsApp</span>
-              <span>✓ Pedido consolidado</span>
-              <span>✓ Envíos a todo el país</span>
-            </div>
-
-            <div className="mt-9 flex items-center justify-center gap-3 text-lavender-magenta-300">
-              <span className="h-px w-16 bg-lavender-magenta-200" />
-              <span className="text-lg">✦</span>
-              <span className="h-px w-16 bg-lavender-magenta-200" />
-            </div>
+            {conColeccion && (
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                <TarjetaPortada producto={portada[0]} imagenUrl={imagenes[portada[0].id]} alta />
+                <TarjetaPortada producto={portada[1]} imagenUrl={imagenes[portada[1].id]} />
+                <TarjetaPortada producto={portada[2]} imagenUrl={imagenes[portada[2].id]} />
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      <section className="section-shell pt-6 sm:pt-8">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ['01', 'Atención personalizada', 'Te ayudamos por WhatsApp a elegir.'],
-            ['02', 'Envíos a todo el país', 'Compra desde donde estés.'],
-            ['03', 'Selección cuidada', 'Productos pensados para tu rutina.'],
-            ['04', 'Un solo pedido', 'Agrega varios productos al carrito.'],
-          ].map(([n, title, copy]) => (
-            <div key={n} className="rounded-2xl bg-white/90 p-4 ring-1 ring-lavender-magenta-100 sm:p-5">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-lavender-magenta-700">{n}</span>
-              <p className="mt-2 text-sm font-semibold text-lavender-magenta-950">{title}</p>
-              <p className="mt-1 text-xs leading-5 text-gray-500">{copy}</p>
-            </div>
+      <section className="section-shell pt-6 sm:pt-8" aria-label="Por qué comprar en Zoar">
+        <ul className="grid grid-cols-1 gap-5 rounded-3xl bg-white px-6 py-6 ring-1 ring-lavender-magenta-100 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-lavender-magenta-100 lg:px-8">
+          {GARANTIAS.map((g) => (
+            <li key={g.titulo} className="flex items-start gap-3.5 lg:px-6 lg:first:pl-0 lg:last:pr-0">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
+                <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
+                  <path d={g.icono} />
+                </svg>
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{g.titulo}</p>
+                <p className="mt-0.5 text-sm leading-5 text-gray-600">{g.texto}</p>
+              </div>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       {categorias.length > 0 && (
-        <section className="section-shell pt-14 sm:pt-16">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <span className="eyebrow">Explora por categoría</span>
-              <h2 className="section-title mt-3">Encuentra lo que necesitas</h2>
-            </div>
-            <Link href="/catalogo" className="hidden text-sm font-semibold text-lavender-magenta-700 hover:text-lavender-magenta-900 sm:block">
-              Ver catálogo →
-            </Link>
-          </div>
-          <div className="mt-6 flex gap-4 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <section className="section-shell pt-16 sm:pt-24">
+          <Encabezado
+            titulo="Encuentra lo que necesitas"
+            descripcion="Explora la tienda por categoría."
+            href="/catalogo"
+            enlace="Ver catálogo"
+          />
+          <div className="-mx-4 mt-8 flex snap-x gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:gap-4 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {categorias.map((c) => (
               <CategoryCard key={c.id} categoria={c} />
             ))}
@@ -109,16 +143,24 @@ export default async function HomePage() {
         </section>
       )}
 
-      {masVendidos.length > 0 && <Section title="Favoritos de la tienda" eyebrow="Recomendados" productos={masVendidos} imagenes={imagenes} />}
-      {novedades.length > 0 && <Section title="Recién llegados" eyebrow="Lo nuevo" productos={novedades} imagenes={imagenes} />}
-      {ofertas.length > 0 && <Section title="Ofertas especiales" eyebrow="Precio especial" productos={ofertas} imagenes={imagenes} />}
-      {destacados.length > 0 && <Section title="Destacados" eyebrow="Selección Zoar" productos={destacados} imagenes={imagenes} />}
+      {masVendidos.length > 0 && (
+        <Seccion titulo="Favoritos de la tienda" descripcion="Lo que más eligen nuestras clientas." productos={masVendidos} imagenes={imagenes} />
+      )}
+      {novedades.length > 0 && (
+        <Seccion titulo="Recién llegados" descripcion="Productos que acaban de llegar a la tienda." productos={novedades} imagenes={imagenes} />
+      )}
+      {ofertas.length > 0 && (
+        <Seccion titulo="Ofertas especiales" descripcion="Productos con precio rebajado." productos={ofertas} imagenes={imagenes} resaltada />
+      )}
+      {destacados.length > 0 && (
+        <Seccion titulo="Destacados" descripcion="Una selección elegida por el equipo de Zoar." productos={destacados} imagenes={imagenes} />
+      )}
 
       {masVendidos.length === 0 && novedades.length === 0 && ofertas.length === 0 && destacados.length === 0 && (
         <div className="section-shell py-20">
           <div className="premium-card px-6 py-14 text-center">
-            <p className="font-display text-2xl text-lavender-magenta-950">Tu catálogo está listo para crecer ✨</p>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+            <p className="font-display text-2xl font-semibold text-lavender-magenta-950">Tu catálogo está listo para crecer</p>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-600">
               Activa productos destacados, nuevos u ofertas desde el panel administrativo para mostrarlos aquí.
             </p>
           </div>
@@ -128,33 +170,100 @@ export default async function HomePage() {
   )
 }
 
-function Section({
-  title,
-  eyebrow,
-  productos,
-  imagenes,
+function Encabezado({
+  titulo,
+  descripcion,
+  href,
+  enlace,
 }: {
-  title: string
-  eyebrow: string
-  productos: Producto[]
-  imagenes: Record<string, string>
+  titulo: string
+  descripcion?: string
+  href: string
+  enlace: string
 }) {
   return (
-    <section className="section-shell pt-14 sm:pt-16">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <span className="eyebrow">{eyebrow}</span>
-          <h2 className="section-title mt-3">{title}</h2>
-        </div>
-        <Link href="/catalogo" className="text-sm font-semibold text-lavender-magenta-700 hover:text-lavender-magenta-900">
-          Ver todo →
-        </Link>
+    <div className="flex items-end justify-between gap-4">
+      <div>
+        <h2 className="section-title">{titulo}</h2>
+        {descripcion && <p className="section-copy">{descripcion}</p>}
       </div>
-      <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <Link
+        href={href}
+        className="shrink-0 pb-1 text-sm font-semibold text-lavender-magenta-700 underline-offset-4 hover:text-lavender-magenta-900 hover:underline"
+      >
+        {enlace}
+      </Link>
+    </div>
+  )
+}
+
+function Seccion({
+  titulo,
+  descripcion,
+  productos,
+  imagenes,
+  resaltada = false,
+}: {
+  titulo: string
+  descripcion: string
+  productos: Producto[]
+  imagenes: Record<string, string>
+  resaltada?: boolean
+}) {
+  const contenido = (
+    <>
+      <Encabezado titulo={titulo} descripcion={descripcion} href="/catalogo" enlace="Ver todo" />
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
         {productos.map((p) => (
           <ProductCard key={p.id} producto={p} imagenUrl={imagenes[p.id]} />
         ))}
       </div>
-    </section>
+    </>
+  )
+
+  // La sección resaltada va sobre un fondo suave para darle ritmo a la página.
+  if (resaltada) {
+    return (
+      <section className="section-shell pt-16 sm:pt-24">
+        <div className="rounded-[32px] bg-lavender-magenta-100/60 px-4 py-8 ring-1 ring-lavender-magenta-100 sm:px-8 sm:py-12">
+          {contenido}
+        </div>
+      </section>
+    )
+  }
+
+  return <section className="section-shell pt-16 sm:pt-24">{contenido}</section>
+}
+
+function TarjetaPortada({
+  producto,
+  imagenUrl,
+  alta = false,
+}: {
+  producto: Producto
+  imagenUrl: string
+  alta?: boolean
+}) {
+  return (
+    <Link
+      href={rutaProducto(producto.slug)}
+      className={`group relative block overflow-hidden rounded-3xl bg-white shadow-soft-card ring-1 ring-lavender-magenta-100 ${
+        alta ? 'row-span-2' : ''
+      }`}
+    >
+      <div className={alta ? 'absolute inset-0' : 'relative aspect-square'}>
+        <Image
+          src={imagenUrl}
+          alt={producto.nombre}
+          fill
+          sizes="(max-width: 1024px) 45vw, 22vw"
+          className="object-contain p-4 pb-16 transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+      <div className="absolute inset-x-2 bottom-2 rounded-2xl bg-white/90 px-3 py-2 backdrop-blur-sm">
+        <p className="truncate text-xs font-semibold text-gray-900">{producto.nombre}</p>
+        <p className="text-xs font-bold text-lavender-magenta-700">{formatPrecio(producto.precio, producto.moneda)}</p>
+      </div>
+    </Link>
   )
 }

@@ -18,11 +18,11 @@ export default async function Header() {
   const config = await getConfiguracion()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/95">
+    <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/95 backdrop-blur">
       <div className="border-b border-lavender-magenta-900 bg-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-1.5 sm:py-2">
-          <p className="min-w-0 truncate text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">
-            Belleza que se siente · Detalles que enamoran
+          <p className="min-w-0 truncate text-[11px] font-medium tracking-wide sm:text-xs">
+            Belleza que se siente, detalles que enamoran
           </p>
           <RedesSociales config={config} variant="header" />
         </div>
@@ -73,7 +73,7 @@ export default async function Header() {
       </form>
 
       <div className="hidden border-t border-lavender-magenta-100/80 md:block">
-        <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-8 py-2.5 text-sm font-medium text-gray-600">
+        <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-9 py-3 text-sm font-medium text-gray-700">
           <Link href="/" className="hover:text-lavender-magenta-700">Inicio</Link>
           <Link href="/catalogo" className="hover:text-lavender-magenta-700">Catálogo</Link>
           <Link href="/catalogo?oferta=1" className="hover:text-lavender-magenta-700">Ofertas</Link>

@@ -1,3 +1,13 @@
+# Mejora estética (octubre 2026)
+
+- **Color:** grises con matiz ciruela (reemplazan al gris puro), fondo crema más neutro (#fdf8fc), dorado solo como acento mínimo (filete de los rótulos y la firma "Shop" del pie).
+- **Títulos:** Playfair en peso 600 con espaciado más ajustado, titulares equilibrados y rótulos en minúscula (sin mayúsculas separadas).
+- **Inicio:** portada alineada a la izquierda con tres productos reales; los cuatro beneficios pasan a una sola franja con íconos (sin numeración); "Ofertas especiales" va sobre un fondo suave para dar ritmo; más aire entre secciones.
+- **Tarjetas:** máximo dos etiquetas, un solo indicador de descuento, nombre en Inter para leer mejor, precio en ciruela (magenta solo cuando hay oferta), sin barra "Ver detalles".
+- **Pie de página:** fondo ciruela oscuro con texto claro.
+
+---
+
 # Zoar Beauty Shop — actualización visual
 
 Esta versión mantiene la arquitectura existente (Next.js 14 + React + TypeScript + Tailwind + Supabase) y cambia principalmente la capa visual.
@@ -101,3 +111,15 @@ La compilación completa de Next.js no pudo ejecutarse porque la instalación de
 - **Accesibilidad:** enlace «Saltar al contenido»; foco de teclado visible (#781765); carrito y filtros atrapan y devuelven el foco; etiquetas asociadas y `autocomplete` en el login; mensaje de error anunciado; texto alternativo en miniaturas; buscadores con etiqueta; navegaciones con nombre.
 - **Contraste:** el magenta 600 pasó de `#d920bf` a `#d11fb8` (texto blanco ≥ 4.5:1); textos `gray-400` → `gray-500/600` y `magenta-500/600` en texto pequeño → `magenta-700`.
 - **Seguridad:** cabeceras HTTP básicas en `next.config.mjs`.
+
+## Corrección: productos con signos (+, &, %, #, tildes) en el slug
+
+- **Causa:** el slug de cada producto se escribía a mano y el enlace `/producto/<slug>` se armaba sin codificar. Con signos como `+ & % # ?`, espacios o tildes, la URL no coincidía con el slug guardado y la ficha daba «no encontrado».
+- **Arreglo:** `lib/slug.ts` (nuevo) codifica el slug al crear el enlace (`rutaProducto`), lo decodifica al leerlo (`decodificarSlug`) y lo limpia al guardar (`slugify`). `getProductoPorSlug` prueba el slug decodificado y el original.
+- **Productos que ya existían** con signos en el slug funcionan sin tocarlos. Al editar un producto, el slug solo se limpia si lo cambias; el campo ahora es opcional (si lo dejas vacío se crea desde el nombre).
+- Categorías y marcas también limpian su slug al guardar y el enlace de categoría ahora va codificado.
+- El enlace del producto en el mensaje de WhatsApp también va codificado.
+
+## Animación del carrito en celular
+
+- Ahora se reproduce una vez al cargar la página y luego **cada 60 segundos** (`app/globals.css`, ciclo de 60 s con el meneo en el primer ~1.2 s).

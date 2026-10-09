@@ -2,12 +2,13 @@
 
 import { revalidatePath } from 'next/cache'
 import { createServerSupabase } from '@/lib/supabase/server'
+import { slugify } from '@/lib/slug'
 
 export async function crearMarca(formData: FormData) {
   const supabase = createServerSupabase()
   const { error } = await supabase.from('marcas').insert({
     nombre: String(formData.get('nombre') ?? '').trim(),
-    slug: String(formData.get('slug') ?? '').trim(),
+    slug: slugify(String(formData.get('slug') ?? '') || String(formData.get('nombre') ?? '')),
   })
   if (error) throw new Error(error.message)
   revalidatePath('/admin/marcas')
@@ -20,7 +21,7 @@ export async function actualizarMarca(id: string, formData: FormData) {
     .from('marcas')
     .update({
       nombre: String(formData.get('nombre') ?? '').trim(),
-      slug: String(formData.get('slug') ?? '').trim(),
+      slug: slugify(String(formData.get('slug') ?? '') || String(formData.get('nombre') ?? '')),
       activa: formData.get('activa') === 'on',
     })
     .eq('id', id)

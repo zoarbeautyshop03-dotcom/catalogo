@@ -1,4 +1,5 @@
 import type { Producto } from './types'
+import { rutaProducto } from './slug'
 
 export function formatPrecio(precio: number, moneda = 'COP'): string {
   return new Intl.NumberFormat('es-CO', {
@@ -28,7 +29,7 @@ export function buildWhatsappLink(producto: Producto): string {
   const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
   const precio = formatPrecio(producto.precio, producto.moneda)
-  const url = `${siteUrl}/producto/${producto.slug}`
+  const url = `${siteUrl}${rutaProducto(producto.slug)}`
   const mensaje =
     `Hola, Zoar Beauty. Estoy interesada en el producto ${producto.nombre} ` +
     `(${precio}). Lo vi en su catálogo: ${url}`

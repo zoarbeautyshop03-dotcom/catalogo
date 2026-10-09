@@ -3,21 +3,22 @@
 @tailwind utilities;
 
 /* Pista visual del botón "agregar al carrito" (solo celular, donde el botón
-   es únicamente el ícono). Cada ~3.5 s la bolsita se menea y sale un halo
-   suave; el resto del ciclo queda quieta para no cansar la vista.
+   es únicamente el ícono). La bolsita se menea y sale un halo suave una vez
+   al cargar la página y luego cada 60 segundos; el resto del tiempo queda
+   quieta para no cansar la vista. El meneo dura ~1.2 s (2% de 60 s).
    No aplica en pantallas >= 640px (ahí el botón ya dice "Agregar"). */
 @media (prefers-reduced-motion: no-preference) and (max-width: 639px) {
   @keyframes carrito-meneo {
-    0%, 32%, 100% { transform: rotate(0) scale(1); }
-    5%  { transform: rotate(-16deg) scale(1.18); }
-    11% { transform: rotate(14deg) scale(1.18); }
-    17% { transform: rotate(-10deg) scale(1.1); }
-    23% { transform: rotate(7deg) scale(1.05); }
-    28% { transform: rotate(-3deg) scale(1); }
+    0%, 2.1%, 100% { transform: rotate(0) scale(1); }
+    0.35% { transform: rotate(-16deg) scale(1.18); }
+    0.75% { transform: rotate(14deg) scale(1.18); }
+    1.15% { transform: rotate(-10deg) scale(1.1); }
+    1.55% { transform: rotate(7deg) scale(1.05); }
+    1.85% { transform: rotate(-3deg) scale(1); }
   }
   @keyframes carrito-halo {
     0%   { transform: scale(1); opacity: 0.55; }
-    40%  { transform: scale(1.75); opacity: 0; }
+    2.6% { transform: scale(1.75); opacity: 0; }
     100% { transform: scale(1.75); opacity: 0; }
   }
 
@@ -30,17 +31,17 @@
     background: var(--color-lavender-magenta-400);
     pointer-events: none;
     opacity: 0;
-    animation: carrito-halo 3.6s ease-out 1.2s infinite;
+    animation: carrito-halo 60s ease-out 1.2s infinite;
   }
   .pista-agregar-icono {
     transform-origin: 50% 20%;
-    animation: carrito-meneo 3.6s ease-in-out 1.2s infinite;
+    animation: carrito-meneo 60s ease-in-out 1.2s infinite;
   }
 
-  /* Desfase en las tarjetas pares para que no latan todas a la vez. */
+  /* Desfase en las tarjetas pares para que no se muevan todas a la vez. */
   article:nth-child(even) > .pista-agregar-carrito::after,
   article:nth-child(even) > .pista-agregar-carrito .pista-agregar-icono {
-    animation-delay: 2.4s;
+    animation-delay: 2.6s;
   }
 }
 
@@ -73,11 +74,17 @@ body {
   margin: 0;
   color: var(--color-ink);
   background:
-    radial-gradient(circle at 90% 0%, rgba(255, 148, 244, 0.13), transparent 26%),
-    radial-gradient(circle at 0% 100%, rgba(255, 206, 252, 0.18), transparent 30%),
-    var(--color-lavender-magenta-50);
+    radial-gradient(ellipse at 100% 0%, rgba(255, 148, 244, 0.10), transparent 32%),
+    #fdf8fc;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+/* Titulares equilibrados (sin palabras sueltas en la última línea). */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
 
 ::selection {
@@ -146,7 +153,7 @@ input:focus-visible,
 
 @layer components {
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em];
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-semibold tracking-wide;
   }
 
   .section-shell {
@@ -154,19 +161,27 @@ input:focus-visible,
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-lavender-magenta-700 shadow-sm ring-1 ring-lavender-magenta-100;
+    @apply inline-flex items-center gap-2 text-sm font-semibold text-lavender-magenta-700;
+  }
+
+  /* Filete dorado: el único toque del color secundario en los rótulos. */
+  .eyebrow::before {
+    content: '';
+    width: 1.5rem;
+    height: 1px;
+    background: theme('colors.dorado.DEFAULT');
   }
 
   .section-title {
-    @apply font-display text-2xl font-bold tracking-tight text-lavender-magenta-950 sm:text-3xl;
+    @apply font-display text-[1.65rem] font-semibold leading-tight tracking-[-0.015em] text-lavender-magenta-950 sm:text-4xl;
   }
 
   .section-copy {
-    @apply mt-2 max-w-xl text-sm leading-6 text-gray-500 sm:text-base;
+    @apply mt-2 max-w-xl text-sm leading-6 text-gray-600 sm:text-base sm:leading-7;
   }
 
   .premium-card {
-    @apply rounded-[28px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100/80;
+    @apply rounded-3xl bg-white shadow-soft-card ring-1 ring-lavender-magenta-100/70;
   }
 
 
@@ -295,13 +310,13 @@ input:focus-visible,
   }
 
   .catalog-product-card {
-    box-shadow: 0 10px 28px rgba(81, 1, 65, 0.055);
-    transition: transform 220ms ease, box-shadow 220ms ease, ring-color 220ms ease;
+    box-shadow: 0 1px 2px rgba(81, 1, 65, 0.04), 0 6px 20px rgba(81, 1, 65, 0.05);
+    transition: transform 220ms ease, box-shadow 220ms ease;
   }
 
   .catalog-product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 42px rgba(81, 1, 65, 0.11);
+    transform: translateY(-3px);
+    box-shadow: 0 1px 2px rgba(81, 1, 65, 0.05), 0 18px 40px rgba(81, 1, 65, 0.10);
   }
 
   .catalog-product-media {

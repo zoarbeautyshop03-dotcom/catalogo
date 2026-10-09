@@ -1,3 +1,4 @@
+import { decodificarSlug } from './slug'
 import { supabase } from './supabase/public'
 import type { Producto, Categoria, Marca, ProductoImagen, Configuracion } from './types'
 
@@ -77,13 +78,20 @@ export async function getOfertas(limit = 8): Promise<Producto[]> {
 }
 
 export async function getProductoPorSlug(slug: string): Promise<Producto | null> {
-  const { data, error } = await supabase
-    .from('productos_publicos')
-    .select(PRODUCTO_PUBLICO_SELECT)
-    .eq('slug', slug)
-    .maybeSingle()
-  if (error) throw error
-  return data as Producto | null
+  // El parámetro de la URL llega codificado ("a%2Bb"): probamos primero el slug
+  // decodificado y, por si acaso, el valor tal cual llegó.
+  const candidatos = Array.from(new Set([decodificarSlug(slug), slug]))
+
+  for (const candidato of candidatos) {
+    const { data, error } = await supabase
+      .from('productos_publicos')
+      .select(PRODUCTO_PUBLICO_SELECT)
+      .eq('slug', candidato)
+      .maybeSingle()
+    if (error) throw error
+    if (data) return data as Producto
+  }
+  return null
 }
 
 export async function getImagenesDeProducto(productoId: string): Promise<ProductoImagen[]> {
