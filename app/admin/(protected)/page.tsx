@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabase/server'
+import { Icono, type NombreIcono } from '@/components/admin/Iconos'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,10 +49,10 @@ export default async function DashboardPage() {
   const alertCount = agotados + bajoMinimo.length + sinPrecio
 
   const stats = [
-    { label: 'Productos', value: items.length, note: `${publicados} publicados · ${borradores} borradores`, href: '/admin/productos', icon: '◇' },
-    { label: 'Inventario', value: disponibles, note: `${bajoMinimo.length} bajo mínimo · ${agotados} agotados`, href: '/admin/inventario', icon: '▦' },
-    { label: 'Agotados', value: agotados, note: 'Requieren reposición', href: '/admin/alertas?tipo=agotados', icon: '!' },
-    { label: 'Bajo mínimo', value: bajoMinimo.length, note: 'Revisar compras', href: '/admin/alertas?tipo=minimo', icon: '⚠' },
+    { label: 'Productos', value: items.length, note: `${publicados} publicados · ${borradores} borradores`, href: '/admin/productos', icon: 'productos' },
+    { label: 'Inventario', value: disponibles, note: `${bajoMinimo.length} bajo mínimo · ${agotados} agotados`, href: '/admin/inventario', icon: 'inventario' },
+    { label: 'Agotados', value: agotados, note: 'Requieren reposición', href: '/admin/alertas?tipo=agotados', icon: 'alerta' },
+    { label: 'Bajo mínimo', value: bajoMinimo.length, note: 'Revisar compras', href: '/admin/alertas?tipo=minimo', icon: 'alertas' },
   ]
 
   return (
@@ -63,7 +64,7 @@ export default async function DashboardPage() {
             <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">Tu tienda, de un vistazo ✦</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-lavender-magenta-100">Controla catálogo, inventario, alertas y actividad desde un solo lugar.</p>
           </div>
-          <Link href="/admin/inventario" className="inline-flex w-fit items-center rounded-2xl bg-white px-5 py-3 text-sm font-bold text-lavender-magenta-800 shadow-lg transition hover:-translate-y-0.5">⚡ Gestionar inventario</Link>
+          <Link href="/admin/inventario" className="inline-flex w-fit items-center rounded-2xl bg-white px-5 py-3 text-sm font-bold text-lavender-magenta-800 shadow-lg transition hover:-translate-y-0.5">Gestionar inventario</Link>
         </div>
       </section>
 
@@ -75,7 +76,7 @@ export default async function DashboardPage() {
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((s) => <Link href={s.href} key={s.label} className="group rounded-[24px] bg-white p-5 shadow-soft-card ring-1 ring-lavender-magenta-100 transition hover:-translate-y-0.5 hover:ring-lavender-magenta-200">
-          <div className="flex items-start justify-between"><p className="text-sm font-semibold text-gray-600">{s.label}</p><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender-magenta-50 font-bold text-lavender-magenta-600">{s.icon}</span></div>
+          <div className="flex items-start justify-between"><p className="text-sm font-semibold text-gray-600">{s.label}</p><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender-magenta-50 font-bold text-lavender-magenta-600"><Icono nombre={s.icon as NombreIcono} className="h-5 w-5" /></span></div>
           <p className="mt-4 font-display text-4xl font-bold text-lavender-magenta-900">{s.value}</p>
           <p className="mt-1 text-xs text-gray-400">{s.note}</p>
         </Link>)}
@@ -119,7 +120,7 @@ export default async function DashboardPage() {
 
       <section className="mt-6 rounded-[26px] bg-white p-5 shadow-soft-card ring-1 ring-lavender-magenta-100 sm:p-6">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-lavender-magenta-500">Administración</p><h2 className="mt-1 text-xl font-bold text-gray-900">Acciones rápidas</h2></div></div>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><Link href="/admin/productos/nuevo" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lg">＋</span><p className="mt-2 text-sm font-bold text-gray-800">Nuevo producto</p><p className="mt-1 text-xs text-gray-400">Añadir al catálogo</p></Link><Link href="/admin/inventario" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lg">▦</span><p className="mt-2 text-sm font-bold text-gray-800">Actualizar inventario</p><p className="mt-1 text-xs text-gray-400">Edición rápida o Excel</p></Link><Link href="/admin/marcas" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lg">✦</span><p className="mt-2 text-sm font-bold text-gray-800">Marcas</p><p className="mt-1 text-xs text-gray-400">Organizar proveedores</p></Link><Link href="/admin/categorias" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lg">◫</span><p className="mt-2 text-sm font-bold text-gray-800">Categorías</p><p className="mt-1 text-xs text-gray-400">Ordenar catálogo</p></Link></div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><Link href="/admin/productos/nuevo" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lavender-magenta-700"><Icono nombre="mas" className="h-5 w-5" /></span><p className="mt-2 text-sm font-bold text-gray-800">Nuevo producto</p><p className="mt-1 text-xs text-gray-400">Añadir al catálogo</p></Link><Link href="/admin/inventario" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lavender-magenta-700"><Icono nombre="inventario" className="h-5 w-5" /></span><p className="mt-2 text-sm font-bold text-gray-800">Actualizar inventario</p><p className="mt-1 text-xs text-gray-400">Edición rápida o Excel</p></Link><Link href="/admin/marcas" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lavender-magenta-700"><Icono nombre="marcas" className="h-5 w-5" /></span><p className="mt-2 text-sm font-bold text-gray-800">Marcas</p><p className="mt-1 text-xs text-gray-400">Organizar proveedores</p></Link><Link href="/admin/categorias" className="rounded-2xl border border-lavender-magenta-100 p-4 transition hover:bg-lavender-magenta-50"><span className="text-lavender-magenta-700"><Icono nombre="categorias" className="h-5 w-5" /></span><p className="mt-2 text-sm font-bold text-gray-800">Categorías</p><p className="mt-1 text-xs text-gray-400">Ordenar catálogo</p></Link></div>
       </section>
     </div>
   )

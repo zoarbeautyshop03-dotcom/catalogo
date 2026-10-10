@@ -454,3 +454,98 @@ input:focus-visible,
 main:focus-visible {
   outline: none !important;
 }
+
+/* ===================== Panel de administración ===================== */
+
+/* Cajón del menú en celular */
+@keyframes adm-cajon-in {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+.adm-cajon {
+  animation: adm-cajon-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .adm-cajon { animation: none; }
+}
+
+/* Contraste en el panel (modo claro): los textos grises muy claros y el
+   magenta 500 en texto pequeño no llegaban a 4.5:1. */
+.admin-root .text-gray-400 { color: #725f6f; }
+.admin-root .text-lavender-magenta-500 { color: #b4179a; }
+
+/* Modo oscuro del panel, con la paleta de Zoar (ciruela profundo + magenta).
+   Se activa con la clase `dark` del contenedor `.admin-root`; las pantallas
+   existentes se adaptan sin reescribirlas. */
+.admin-root.dark { color-scheme: dark; }
+
+.admin-root.dark .bg-white,
+.admin-root.dark [class*="bg-white/"] { background-color: #231b23; }
+.admin-root.dark .adm-lateral,
+.admin-root.dark .adm-barra { background-color: #1d171d; }
+.admin-root.dark .adm-barra { background-color: rgba(29, 23, 29, 0.92); }
+
+.admin-root.dark .bg-gray-50,
+.admin-root.dark .hover\:bg-gray-50:hover { background-color: #2b212b; }
+.admin-root.dark .bg-gray-100 { background-color: #33283a; }
+/* Ojo: se usa ~= y "/" para no confundir bg-...-50 con bg-...-500 */
+.admin-root.dark [class~="bg-lavender-magenta-50"],
+.admin-root.dark [class*="bg-lavender-magenta-50/"],
+.admin-root.dark .hover\:bg-lavender-magenta-50:hover,
+.admin-root.dark [class*="hover:bg-lavender-magenta-50/"]:hover { background-color: rgba(245, 64, 223, 0.10); }
+.admin-root.dark [class~="bg-lavender-magenta-100"],
+.admin-root.dark [class*="bg-lavender-magenta-100/"] { background-color: rgba(245, 64, 223, 0.16); }
+.admin-root.dark .adm-item-activo { background-color: rgba(245, 64, 223, 0.16); color: #ffcefc; }
+
+.admin-root.dark .text-gray-900,
+.admin-root.dark .text-gray-800 { color: #f6eef6; }
+.admin-root.dark .text-gray-700 { color: #e6dae6; }
+.admin-root.dark .text-gray-600 { color: #cdbfcd; }
+.admin-root.dark .text-gray-500,
+.admin-root.dark .text-gray-400 { color: #b3a4b3; }
+.admin-root.dark .text-lavender-magenta-950,
+.admin-root.dark .text-lavender-magenta-900 { color: #ffe7fe; }
+.admin-root.dark .text-lavender-magenta-800,
+.admin-root.dark .text-lavender-magenta-700 { color: #ffb8f6; }
+.admin-root.dark .text-lavender-magenta-600,
+.admin-root.dark .text-lavender-magenta-500,
+.admin-root.dark .text-fucsia { color: #ff94f4; }
+
+.admin-root.dark .border-gray-50,
+.admin-root.dark .border-gray-100,
+.admin-root.dark .border-gray-200,
+.admin-root.dark .border-lavender-magenta-100,
+.admin-root.dark .border-rosa-pastel,
+.admin-root.dark [class*="border-rosa-pastel/"],
+.admin-root.dark .adm-separador { border-color: rgba(255, 255, 255, 0.12); }
+.admin-root.dark .ring-gray-200,
+.admin-root.dark .ring-lavender-magenta-100,
+.admin-root.dark .ring-lavender-magenta-200 { --tw-ring-color: rgba(255, 255, 255, 0.12); }
+.admin-root.dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(255, 255, 255, 0.1); }
+
+.admin-root.dark input:not([type='checkbox']):not([type='radio']),
+.admin-root.dark select,
+.admin-root.dark textarea {
+  background-color: #2b212b;
+  color: #f6eef6;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.admin-root.dark ::placeholder { color: #9d8d9d; }
+
+/* Etiquetas de estado (rojo / ámbar / verde) en versión translúcida */
+.admin-root.dark .bg-red-50,
+.admin-root.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.16); }
+.admin-root.dark .bg-amber-50,
+.admin-root.dark .bg-amber-100 { background-color: rgba(245, 158, 11, 0.16); }
+.admin-root.dark .bg-green-50,
+.admin-root.dark .bg-green-100 { background-color: rgba(34, 197, 94, 0.16); }
+.admin-root.dark .text-red-600,
+.admin-root.dark .text-red-700,
+.admin-root.dark .text-red-800 { color: #fca5a5; }
+.admin-root.dark .text-amber-700,
+.admin-root.dark .text-amber-800,
+.admin-root.dark .text-amber-900 { color: #fcd34d; }
+.admin-root.dark .text-green-600,
+.admin-root.dark .text-green-700,
+.admin-root.dark .text-green-800 { color: #86efac; }
+.admin-root.dark .shadow-soft-card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35); }

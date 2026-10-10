@@ -246,7 +246,7 @@ export default function InventarioClient({
       )}
 
       {tieneCambios && (
-        <section className="sticky top-3 z-20 rounded-2xl bg-white/95 p-3 shadow-xl ring-1 ring-lavender-magenta-100 backdrop-blur sm:p-4">
+        <section className="sticky top-[4.25rem] z-20 rounded-2xl bg-white/95 p-3 shadow-xl ring-1 ring-lavender-magenta-100 backdrop-blur sm:p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div><strong className="text-fucsia">{Object.keys(borradores).length}</strong> cambios pendientes de guardar.</div>
             <div className="flex gap-2">

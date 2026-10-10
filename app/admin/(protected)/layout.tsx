@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabase/server'
-import AdminSidebar from '@/components/admin/AdminSidebar'
+import AdminShell from '@/components/admin/AdminShell'
 import BotonVolver from '@/components/admin/BotonVolver'
 
 export default async function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
@@ -11,13 +11,26 @@ export default async function AdminProtectedLayout({ children }: { children: Rea
 
   if (!session) redirect('/admin/login')
 
+  // Cantidad de productos que necesitan atención (misma regla que /admin/alertas)
+  // para mostrarla como globo en el menú y en la campana.
+  let alertas = 0
+  try {
+    const { data } = await supabase.from('productos').select('cantidad_stock, stock_minimo, precio, estado_inventario')
+    for (const p of data ?? []) {
+      const stock = Number(p.cantidad_stock ?? 0)
+      const agotado = stock <= 0 || p.estado_inventario === 'agotado'
+      const bajoMinimo = stock > 0 && p.stock_minimo != null && stock <= Number(p.stock_minimo)
+      const sinPrecio = !p.precio || Number(p.precio) <= 0
+      if (agotado || bajoMinimo || sinPrecio) alertas++
+    }
+  } catch {
+    alertas = 0
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lavender-magenta-50 via-white to-lavender-magenta-100/50 md:flex">
-      <AdminSidebar email={session.user.email ?? ''} />
-      <div className="min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-7 lg:px-10">
-        <BotonVolver />
-        {children}
-      </div>
-    </div>
+    <AdminShell email={session.user.email ?? ''} alertas={alertas}>
+      <BotonVolver />
+      {children}
+    </AdminShell>
   )
 }

@@ -123,3 +123,20 @@ La compilación completa de Next.js no pudo ejecutarse porque la instalación de
 ## Animación del carrito en celular
 
 - Ahora se reproduce una vez al cargar la página y luego **cada 60 segundos** (`app/globals.css`, ciclo de 60 s con el meneo en el primer ~1.2 s).
+
+## Ideas tomadas de repositorios de GitHub (octubre de 2026)
+
+Se revisaron repositorios de código abierto con más de 1.000 estrellas y licencia MIT; solo se tomaron **ideas de diseño y experiencia de uso**, no se copió código.
+
+| Repositorio | Estrellas | Idea aplicada |
+|---|---|---|
+| vercel/commerce (plantilla de tienda con Next.js) | 14,2 mil | Pantallas de carga con «esqueletos» (`loading.tsx`) para catálogo y producto; galería de producto interactiva; enfoque en rendimiento y SEO |
+| medusajs/nextjs-starter-medusa (archivado en jul. 2026) | 2,8 mil | Ficha de producto completa: ruta de navegación (breadcrumb) y sugerencias de productos de la misma categoría |
+| satnaing/shadcn-admin (panel de administración) | 15,7 mil | Menú lateral que se contrae a íconos, modo claro/oscuro, barra superior, globos de alerta y versión accesible |
+
+### Qué cambió
+
+- **Ficha de producto:** `ProductGallery` (miniaturas tocables, flechas, deslizar con el dedo, contador), `Breadcrumb` (Inicio › Catálogo › Categoría › Producto) y sección «También te puede interesar».
+- **Carga:** `components/Skeletons.tsx` + `loading.tsx` en `/catalogo` y `/producto/[slug]`.
+- **Panel admin:** nuevo marco `components/admin/AdminShell.tsx` — menú lateral plegable (se recuerda por dispositivo), cajón con foco controlado en celular, barra superior con «Ver tienda», campana de alertas con contador y **modo oscuro** con la paleta de Zoar. Íconos propios en `components/admin/Iconos.tsx` (sin librerías nuevas).
+- **Estructura:** la tienda pasó al grupo de rutas `app/(tienda)/` con su propio `layout.tsx`. Antes el panel `/admin` se dibujaba debajo de la cabecera y el pie de la tienda; ahora tiene su marco propio. Las direcciones (URLs) no cambian.

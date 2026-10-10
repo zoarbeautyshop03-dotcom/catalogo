@@ -94,6 +94,21 @@ export async function getProductoPorSlug(slug: string): Promise<Producto | null>
   return null
 }
 
+// Otros productos de la misma categoría (sin contar el actual), para sugerir
+// qué mirar a continuación en la ficha de un producto.
+export async function getProductosRelacionados(categoriaId: string | null, excluirId: string, limit = 4): Promise<Producto[]> {
+  if (!categoriaId) return []
+  const { data, error } = await supabase
+    .from('productos_publicos')
+    .select(PRODUCTO_PUBLICO_SELECT)
+    .eq('categoria_id', categoriaId)
+    .neq('id', excluirId)
+    .neq('estado_inventario', 'agotado')
+    .limit(limit)
+  if (error) return []
+  return (data ?? []) as Producto[]
+}
+
 export async function getImagenesDeProducto(productoId: string): Promise<ProductoImagen[]> {
   const { data, error } = await supabase
     .from('producto_imagenes')
