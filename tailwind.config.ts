@@ -26,7 +26,7 @@ const config: Config = {
           nude: '#fff4fe',
         },
         fucsia: '#d11fb8',
-        crema: '#fdf8fc',
+        crema: '#ffeefc',
         lavanda: '#ffcefc',
         // Dorado: acento secundario, solo para pequeños detalles (filetes, firma).
         dorado: { DEFAULT: '#b78b3c', claro: '#e8cf9a' },

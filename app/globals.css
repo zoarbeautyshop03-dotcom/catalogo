@@ -80,6 +80,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Fondo de la tienda: rosa pastel dominante con luces suaves. Se aplica solo al
+   <main> de la tienda pública, así el panel de administración no cambia. */
+.fondo-tienda {
+  background:
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(255, 148, 244, 0.28), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 0% 45%, rgba(255, 206, 252, 0.55), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 100% 80%, rgba(255, 206, 252, 0.5), transparent 70%),
+    #ffe9fc;
+}
+
 /* Titulares equilibrados (sin palabras sueltas en la última línea). */
 h1,
 h2,

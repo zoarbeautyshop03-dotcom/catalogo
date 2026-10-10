@@ -24,9 +24,9 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
   if (producto.mas_vendido) etiquetas.push({ texto: 'Favorito', clase: 'bg-white text-lavender-magenta-800 ring-1 ring-lavender-magenta-100' })
 
   return (
-    <article className="catalog-product-card group relative overflow-hidden rounded-3xl bg-white ring-1 ring-lavender-magenta-100">
+    <article className="catalog-product-card group relative overflow-hidden rounded-3xl bg-white ring-1 ring-lavender-magenta-200/80">
       <Link href={rutaProducto(producto.slug)} className="block h-full">
-        <div className="catalog-product-media relative aspect-[0.96] overflow-hidden bg-lavender-magenta-50/70">
+        <div className="catalog-product-media relative aspect-[0.96] overflow-hidden bg-gradient-to-b from-lavender-magenta-50 to-lavender-magenta-100/70">
           {imagenUrl ? (
             <Image
               src={imagenUrl}

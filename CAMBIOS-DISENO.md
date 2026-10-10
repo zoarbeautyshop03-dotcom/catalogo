@@ -1,3 +1,13 @@
+# Rosa pastel dominante + portada con imagen (octubre 2026)
+
+- **Fondo:** las páginas de la tienda usan un rosa pastel con luces suaves (clase `fondo-tienda`, solo en la tienda; el panel de administración no cambia). Las tarjetas son blancas con borde rosa para destacar sobre el fondo.
+- **Portada:** el título y el texto van sobre una imagen de fondo (`public/hero-fondo.svg`: degradado rosa, hebras de seda, mariposas y brillos). Para usar una foto propia, súbela a `public/` y cambia `HERO_IMAGEN` al inicio de `app/(tienda)/page.tsx`.
+- **Selección Zoar:** nueva sección con tres destacados en tamaños distintos y una etiqueta con nombre y precio sobre la foto (solo aparece si hay tres destacados con foto).
+- **Header y footer:** ambos en rosa pastel (la franja superior queda en ciruela como acento).
+- **Tarjetas:** fondo degradado rosa en la foto, bordes rosa más marcados, categorías con ícono sobre rosa; "Ofertas especiales" sobre un panel rosa más intenso.
+
+---
+
 # Mejora estética (octubre 2026)
 
 - **Color:** grises con matiz ciruela (reemplazan al gris puro), fondo crema más neutro (#fdf8fc), dorado solo como acento mínimo (filete de los rótulos y la firma "Shop" del pie).

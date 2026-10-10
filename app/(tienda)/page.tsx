@@ -16,6 +16,10 @@ import {
 
 export const revalidate = 300
 
+// Imagen de fondo de la portada (carpeta /public). Para usar una foto propia,
+// súbela a /public (por ejemplo hero.jpg) y cambia esta línea por '/hero.jpg'.
+const HERO_IMAGEN = '/hero-fondo.svg'
+
 const GARANTIAS = [
   {
     titulo: 'Atención personalizada',
@@ -53,67 +57,61 @@ export default async function HomePage() {
   )
   const imagenes = await getImagenesPrincipales(idsUnicos)
 
-  // Tres productos con foto para la portada. Si no hay suficientes, la portada
-  // queda centrada y solo con texto.
-  const vistos = new Set<string>()
-  const portada = [...destacados, ...masVendidos, ...novedades, ...ofertas]
-    .filter((p) => {
-      if (!imagenes[p.id] || vistos.has(p.id)) return false
-      vistos.add(p.id)
-      return true
-    })
-    .slice(0, 3)
-  const conColeccion = portada.length === 3
+  // Selección Zoar: tres destacados con foto, en una cuadrícula de tamaños
+  // distintos. Si no hay tres con foto, se omite y los destacados van en la
+  // cuadrícula normal del final.
+  const conFoto = destacados.filter((p) => imagenes[p.id]).slice(0, 3)
+  const mostrarSeleccion = conFoto.length === 3
+  const idsSeleccion = new Set(conFoto.map((p) => p.id))
+  const destacadosRestantes = mostrarSeleccion
+    ? destacados.filter((p) => !idsSeleccion.has(p.id))
+    : destacados
 
   return (
     <div className="pb-8">
       <section className="section-shell pt-4 sm:pt-8">
-        <div className="relative overflow-hidden rounded-[32px] bg-gradient-to-br from-white via-white to-lavender-magenta-100/70 ring-1 ring-lavender-magenta-100">
+        <div
+          className="relative overflow-hidden rounded-[32px] shadow-soft-pink ring-1 ring-lavender-magenta-200"
+          style={{ backgroundImage: `url(${HERO_IMAGEN})`, backgroundSize: 'cover', backgroundPosition: '72% center' }}
+        >
+          {/* Velo claro a la izquierda para que el texto siempre se lea sobre la imagen. */}
           <div
-            className={`grid items-center gap-10 px-6 py-12 sm:px-12 sm:py-16 lg:px-16 lg:py-20 ${
-              conColeccion ? 'lg:grid-cols-[1.05fr_0.95fr] lg:gap-14' : ''
-            }`}
-          >
-            <div className={conColeccion ? '' : 'mx-auto max-w-3xl text-center'}>
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-lavender-magenta-50/90 via-lavender-magenta-50/60 to-transparent lg:via-lavender-magenta-50/35"
+          />
+          <div className="relative px-6 py-16 sm:px-12 sm:py-24 lg:px-16 lg:py-32">
+            <div className="max-w-xl lg:max-w-2xl">
               <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-[-0.02em] text-lavender-magenta-950 sm:text-5xl lg:text-[3.5rem]">
                 Tu cabello merece sentirse tan bien como se ve.
               </h1>
-              <p className={`mt-5 max-w-xl text-base leading-7 text-gray-600 sm:text-lg sm:leading-8 ${conColeccion ? '' : 'mx-auto'}`}>
+              <p className="mt-5 max-w-xl text-base leading-7 text-gray-700 sm:text-lg sm:leading-8">
                 Descubre una selección de productos de belleza y cuidado capilar para crear una rutina que disfrutes de principio a fin.
               </p>
 
-              <div className={`mt-8 flex flex-wrap gap-3 ${conColeccion ? '' : 'justify-center'}`}>
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/catalogo"
-                  className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/20 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
+                  className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/25 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
                 >
                   Explorar catálogo
                 </Link>
                 <Link
                   href="/catalogo?oferta=1"
-                  className="rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-lavender-magenta-800 ring-1 ring-lavender-magenta-200 hover:-translate-y-0.5 hover:bg-lavender-magenta-50"
+                  className="rounded-full bg-white/90 px-7 py-3.5 text-sm font-semibold text-lavender-magenta-800 ring-1 ring-lavender-magenta-200 backdrop-blur-sm hover:-translate-y-0.5 hover:bg-white"
                 >
                   Ver ofertas
                 </Link>
               </div>
             </div>
-
-            {conColeccion && (
-              <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                <TarjetaPortada producto={portada[0]} imagenUrl={imagenes[portada[0].id]} alta />
-                <TarjetaPortada producto={portada[1]} imagenUrl={imagenes[portada[1].id]} />
-                <TarjetaPortada producto={portada[2]} imagenUrl={imagenes[portada[2].id]} />
-              </div>
-            )}
           </div>
         </div>
       </section>
 
       <section className="section-shell pt-6 sm:pt-8" aria-label="Por qué comprar en Zoar">
-        <ul className="grid grid-cols-1 gap-5 rounded-3xl bg-white px-6 py-6 ring-1 ring-lavender-magenta-100 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-lavender-magenta-100 lg:px-8">
+        <ul className="grid grid-cols-1 gap-5 rounded-3xl bg-white/90 px-6 py-6 shadow-soft-card ring-1 ring-lavender-magenta-200/80 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0 lg:divide-x lg:divide-lavender-magenta-200 lg:px-8">
           {GARANTIAS.map((g) => (
             <li key={g.titulo} className="flex items-start gap-3.5 lg:px-6 lg:first:pl-0 lg:last:pr-0">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-lavender-magenta-100 text-lavender-magenta-700 ring-1 ring-lavender-magenta-200">
                 <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true">
                   <path d={g.icono} />
                 </svg>
@@ -143,6 +141,22 @@ export default async function HomePage() {
         </section>
       )}
 
+      {mostrarSeleccion && (
+        <section className="section-shell pt-16 sm:pt-24">
+          <Encabezado
+            titulo="Selección Zoar"
+            descripcion="Los productos que no pueden faltar en tu rutina."
+            href="/catalogo"
+            enlace="Ver catálogo"
+          />
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:h-[34rem] lg:grid-cols-[1.1fr_1fr] lg:grid-rows-2">
+            <TarjetaSeleccion producto={conFoto[0]} imagenUrl={imagenes[conFoto[0].id]} alta />
+            <TarjetaSeleccion producto={conFoto[1]} imagenUrl={imagenes[conFoto[1].id]} />
+            <TarjetaSeleccion producto={conFoto[2]} imagenUrl={imagenes[conFoto[2].id]} />
+          </div>
+        </section>
+      )}
+
       {masVendidos.length > 0 && (
         <Seccion titulo="Favoritos de la tienda" descripcion="Lo que más eligen nuestras clientas." productos={masVendidos} imagenes={imagenes} />
       )}
@@ -152,8 +166,13 @@ export default async function HomePage() {
       {ofertas.length > 0 && (
         <Seccion titulo="Ofertas especiales" descripcion="Productos con precio rebajado." productos={ofertas} imagenes={imagenes} resaltada />
       )}
-      {destacados.length > 0 && (
-        <Seccion titulo="Destacados" descripcion="Una selección elegida por el equipo de Zoar." productos={destacados} imagenes={imagenes} />
+      {destacadosRestantes.length > 0 && (
+        <Seccion
+          titulo={mostrarSeleccion ? 'Más de nuestra selección' : 'Destacados'}
+          descripcion="Elegidos por el equipo de Zoar."
+          productos={destacadosRestantes}
+          imagenes={imagenes}
+        />
       )}
 
       {masVendidos.length === 0 && novedades.length === 0 && ofertas.length === 0 && destacados.length === 0 && (
@@ -225,7 +244,7 @@ function Seccion({
   if (resaltada) {
     return (
       <section className="section-shell pt-16 sm:pt-24">
-        <div className="rounded-[32px] bg-lavender-magenta-100/60 px-4 py-8 ring-1 ring-lavender-magenta-100 sm:px-8 sm:py-12">
+        <div className="rounded-[32px] bg-lavender-magenta-200/50 px-4 py-8 ring-1 ring-lavender-magenta-200 sm:px-8 sm:py-12">
           {contenido}
         </div>
       </section>
@@ -235,7 +254,7 @@ function Seccion({
   return <section className="section-shell pt-16 sm:pt-24">{contenido}</section>
 }
 
-function TarjetaPortada({
+function TarjetaSeleccion({
   producto,
   imagenUrl,
   alta = false,
@@ -247,22 +266,24 @@ function TarjetaPortada({
   return (
     <Link
       href={rutaProducto(producto.slug)}
-      className={`group relative block overflow-hidden rounded-3xl bg-white shadow-soft-card ring-1 ring-lavender-magenta-100 ${
-        alta ? 'row-span-2' : ''
+      className={`group relative block overflow-hidden rounded-3xl bg-gradient-to-br from-white to-lavender-magenta-50 shadow-soft-card ring-1 ring-lavender-magenta-100 hover:shadow-soft-pink ${
+        alta ? 'col-span-2 aspect-[4/3] lg:col-span-1 lg:row-span-2 lg:aspect-auto' : 'aspect-square lg:aspect-auto'
       }`}
     >
-      <div className={alta ? 'absolute inset-0' : 'relative aspect-square'}>
+      <div className="absolute inset-0">
         <Image
           src={imagenUrl}
           alt={producto.nombre}
           fill
-          sizes="(max-width: 1024px) 45vw, 22vw"
-          className="object-contain p-4 pb-16 transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 1024px) 50vw, 40vw"
+          className="object-contain p-6 pb-20 transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <div className="absolute inset-x-2 bottom-2 rounded-2xl bg-white/90 px-3 py-2 backdrop-blur-sm">
-        <p className="truncate text-xs font-semibold text-gray-900">{producto.nombre}</p>
-        <p className="text-xs font-bold text-lavender-magenta-700">{formatPrecio(producto.precio, producto.moneda)}</p>
+      <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-full bg-white/90 py-2 pl-4 pr-2 shadow-sm ring-1 ring-lavender-magenta-100 backdrop-blur-sm sm:inset-x-4 sm:bottom-4">
+        <p className="min-w-0 truncate text-xs font-semibold text-gray-900 sm:text-sm">{producto.nombre}</p>
+        <span className="shrink-0 rounded-full bg-lavender-magenta-600 px-3 py-1.5 text-xs font-bold text-white">
+          {formatPrecio(producto.precio, producto.moneda)}
+        </span>
       </div>
     </Link>
   )

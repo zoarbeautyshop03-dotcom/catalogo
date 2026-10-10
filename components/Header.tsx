@@ -18,7 +18,7 @@ export default async function Header() {
   const config = await getConfiguracion()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lavender-magenta-100/80 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-lavender-magenta-200 bg-lavender-magenta-50/95 backdrop-blur">
       <div className="border-b border-lavender-magenta-900 bg-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-1.5 sm:py-2">
           <p className="min-w-0 truncate text-[11px] font-medium tracking-wide sm:text-xs">
@@ -34,7 +34,7 @@ export default async function Header() {
         </Link>
 
         <form action="/catalogo" className="hidden min-w-0 md:block">
-          <label className="campo-pill mx-auto flex max-w-xl items-center gap-2 rounded-full border border-lavender-magenta-100 bg-lavender-magenta-50/75 px-4 py-2.5 text-sm text-gray-600 shadow-inner">
+          <label className="campo-pill mx-auto flex max-w-xl items-center gap-2 rounded-full border border-lavender-magenta-200 bg-white px-4 py-2.5 text-sm text-gray-600 shadow-sm">
             <SearchIcon />
             <span className="sr-only">Buscar productos, marcas o categorías</span>
             <input
@@ -54,7 +54,7 @@ export default async function Header() {
 
       {/* Buscador siempre visible en celular (en escritorio va en la fila de arriba). */}
       <form action="/catalogo" role="search" className="section-shell pb-2.5 md:hidden">
-        <label className="campo-pill flex items-center gap-2 rounded-full border border-lavender-magenta-100 bg-lavender-magenta-50/75 py-1 pl-4 pr-1 shadow-inner">
+        <label className="campo-pill flex items-center gap-2 rounded-full border border-lavender-magenta-200 bg-white py-1 pl-4 pr-1 shadow-sm">
           <SearchIcon />
           <span className="sr-only">Buscar productos</span>
           {/* text-base (16px) evita que iPhone haga zoom al tocar el campo */}
@@ -72,7 +72,7 @@ export default async function Header() {
         </label>
       </form>
 
-      <div className="hidden border-t border-lavender-magenta-100/80 md:block">
+      <div className="hidden border-t border-lavender-magenta-200/70 md:block">
         <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-9 py-3 text-sm font-medium text-gray-700">
           <Link href="/" className="hover:text-lavender-magenta-700">Inicio</Link>
           <Link href="/catalogo" className="hover:text-lavender-magenta-700">Catálogo</Link>

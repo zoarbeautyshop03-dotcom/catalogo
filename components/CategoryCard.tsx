@@ -21,9 +21,9 @@ export default function CategoryCard({ categoria }: { categoria: Categoria }) {
   return (
     <Link
       href={`/catalogo?categoria=${encodeURIComponent(categoria.slug)}`}
-      className="group block w-40 shrink-0 snap-start rounded-3xl bg-white p-4 shadow-soft-card ring-1 ring-lavender-magenta-100 hover:shadow-soft-pink hover:ring-lavender-magenta-300 sm:w-44"
+      className="group block w-40 shrink-0 snap-start rounded-3xl bg-white p-4 shadow-soft-card ring-1 ring-lavender-magenta-200/80 hover:shadow-soft-pink hover:ring-lavender-magenta-300 sm:w-44"
     >
-      <div className="flex h-20 items-center justify-center rounded-2xl bg-lavender-magenta-50 transition-colors group-hover:bg-lavender-magenta-100/70">
+      <div className="flex h-20 items-center justify-center rounded-2xl bg-lavender-magenta-100 transition-colors group-hover:bg-lavender-magenta-200/70">
         {categoria.imagen_url ? (
           <span className="relative block h-14 w-14">
             <Image src={categoria.imagen_url} alt="" fill className="object-contain" />

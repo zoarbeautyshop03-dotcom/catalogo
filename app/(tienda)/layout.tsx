@@ -9,7 +9,7 @@ export default function TiendaLayout({ children }: { children: React.ReactNode }
     <>
       <a href="#contenido" className="saltar-contenido">Saltar al contenido</a>
       <Header />
-      <main id="contenido" tabIndex={-1} className="flex-1">{children}</main>
+      <main id="contenido" tabIndex={-1} className="fondo-tienda flex-1 pb-14">{children}</main>
       <Footer />
       <BarraCarritoMovil />
     </>
