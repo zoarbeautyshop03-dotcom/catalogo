@@ -9,6 +9,8 @@ import BotonVolver from '@/components/BotonVolver'
 import ProductGallery from '@/components/ProductGallery'
 import Breadcrumb from '@/components/Breadcrumb'
 import ProductCard from '@/components/ProductCard'
+import { Badge } from '@/components/ui/badge'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 export const revalidate = 300
 
@@ -66,9 +68,7 @@ export default async function ProductoPage({ params }: Props) {
             {tieneDescuento && <span className="text-sm text-gray-500 line-through">{formatPrecio(producto.precio_anterior as number, producto.moneda)}</span>}
             <span className="font-display text-3xl font-semibold text-lavender-magenta-950">{formatPrecio(producto.precio, producto.moneda)}</span>
             {tieneDescuento && porcentaje != null && (
-              <span className="mb-1 rounded-full bg-lavender-magenta-600 px-2.5 py-1 text-xs font-bold text-white">
-                -{porcentaje}%
-              </span>
+              <Badge className="mb-1 text-xs font-bold">-{porcentaje}%</Badge>
             )}
           </div>
 
@@ -84,30 +84,35 @@ export default async function ProductoPage({ params }: Props) {
             <Link href="/devoluciones" className="font-semibold text-lavender-magenta-700 underline underline-offset-2">derecho de retracto</Link>.
           </p>
 
-          <div className="mt-5 inline-flex rounded-full bg-lavender-magenta-50 px-3 py-1.5 text-xs font-semibold text-lavender-magenta-800">
+          <Badge
+            variant={producto.estado_inventario === 'disponible' ? 'success' : producto.estado_inventario === 'ultimas_unidades' ? 'warning' : 'dark'}
+            className="mt-5 px-3 py-1.5 text-xs"
+          >
             {producto.estado_inventario === 'disponible' && 'Disponible'}
             {producto.estado_inventario === 'ultimas_unidades' && 'Últimas unidades'}
             {producto.estado_inventario === 'agotado' && 'Agotado'}
-          </div>
+          </Badge>
 
           {producto.descripcion_completa && <p className="mt-6 text-sm leading-7 text-gray-600">{producto.descripcion_completa}</p>}
           {producto.contenido && <p className="mt-4 text-sm font-medium text-gray-500">Contenido: {producto.contenido}</p>}
 
-          <div className="mt-7 space-y-4">
-            {producto.modo_uso && (
-              <div className="rounded-2xl bg-lavender-magenta-50/70 p-4">
-                <h2 className="text-sm font-semibold text-lavender-magenta-950">Modo de uso</h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">{producto.modo_uso}</p>
-              </div>
-            )}
-            {producto.ingredientes_destacados && (
-              <div className="rounded-2xl bg-white p-4 ring-1 ring-lavender-magenta-100">
-                <h2 className="text-sm font-semibold text-lavender-magenta-950">Ingredientes destacados</h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">{producto.ingredientes_destacados}</p>
-              </div>
-            )}
-            {producto.advertencias && <p className="text-xs leading-5 text-gray-500">{producto.advertencias}</p>}
-          </div>
+          {(producto.modo_uso || producto.ingredientes_destacados) && (
+            <Accordion type="multiple" defaultValue={['uso']} className="mt-7 space-y-3">
+              {producto.modo_uso && (
+                <AccordionItem value="uso">
+                  <AccordionTrigger>Modo de uso</AccordionTrigger>
+                  <AccordionContent>{producto.modo_uso}</AccordionContent>
+                </AccordionItem>
+              )}
+              {producto.ingredientes_destacados && (
+                <AccordionItem value="ingredientes">
+                  <AccordionTrigger>Ingredientes destacados</AccordionTrigger>
+                  <AccordionContent>{producto.ingredientes_destacados}</AccordionContent>
+                </AccordionItem>
+              )}
+            </Accordion>
+          )}
+          {producto.advertencias && <p className="mt-4 text-xs leading-5 text-gray-500">{producto.advertencias}</p>}
         </div>
       </div>
 

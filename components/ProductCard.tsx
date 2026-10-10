@@ -4,6 +4,7 @@ import Image from 'next/image'
 import type { Producto } from '@/lib/types'
 import { formatPrecio, porcentajeDescuento } from '@/lib/whatsapp'
 import AddToCartButton from './AddToCartButton'
+import { Badge, type BadgeProps } from '@/components/ui/badge'
 
 type Props = {
   producto: Producto
@@ -18,10 +19,10 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
   const ultimasUnidades = producto.estado_inventario === 'ultimas_unidades'
 
   // Máximo dos etiquetas por tarjeta, en orden de importancia, para que la foto respire.
-  const etiquetas: { texto: string; clase: string }[] = []
-  if (producto.oferta) etiquetas.push({ texto: 'Oferta', clase: 'bg-lavender-magenta-600 text-white' })
-  if (producto.nuevo) etiquetas.push({ texto: 'Nuevo', clase: 'bg-lavender-magenta-950 text-white' })
-  if (producto.mas_vendido) etiquetas.push({ texto: 'Favorito', clase: 'bg-white text-lavender-magenta-800 ring-1 ring-lavender-magenta-100' })
+  const etiquetas: { texto: string; variante: BadgeProps['variant'] }[] = []
+  if (producto.oferta) etiquetas.push({ texto: 'Oferta', variante: 'default' })
+  if (producto.nuevo) etiquetas.push({ texto: 'Nuevo', variante: 'dark' })
+  if (producto.mas_vendido) etiquetas.push({ texto: 'Favorito', variante: 'outline' })
 
   return (
     <article className="catalog-product-card group relative overflow-hidden rounded-3xl bg-white ring-1 ring-lavender-magenta-200/80">
@@ -45,14 +46,14 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
           {etiquetas.length > 0 && (
             <div className="absolute left-3 top-3 z-20 flex max-w-[68%] flex-wrap gap-1.5">
               {etiquetas.slice(0, 2).map((e) => (
-                <span key={e.texto} className={`badge shadow-sm ${e.clase}`}>{e.texto}</span>
+                <Badge key={e.texto} variant={e.variante} className="shadow-sm">{e.texto}</Badge>
               ))}
             </div>
           )}
 
           {agotado && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/80">
-              <span className="rounded-full bg-lavender-magenta-950 px-4 py-2 text-xs font-semibold text-white shadow-lg">Agotado</span>
+              <Badge variant="dark" className="px-4 py-2 text-xs shadow-lg">Agotado</Badge>
             </div>
           )}
         </div>
@@ -72,9 +73,9 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
                   {formatPrecio(producto.precio_anterior as number, producto.moneda)}
                 </span>
                 {porcentaje != null && (
-                  <span className="rounded-full bg-lavender-magenta-50 px-1.5 py-0.5 text-[11px] font-bold text-lavender-magenta-700 ring-1 ring-lavender-magenta-100">
+                  <Badge variant="soft" className="px-1.5 py-0.5 font-bold">
                     -{porcentaje}%
-                  </span>
+                  </Badge>
                 )}
               </div>
             )}

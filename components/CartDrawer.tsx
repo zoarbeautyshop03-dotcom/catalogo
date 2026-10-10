@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import Image from 'next/image'
+import { X } from 'lucide-react'
 import { useCarrito } from '@/lib/cart-context'
-import { useDialogoAccesible } from '@/lib/use-dialogo'
 import { formatPrecio, buildWhatsappCarritoLink } from '@/lib/whatsapp'
+import { Button } from '@/components/ui/button'
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet'
 
 function BagIcon({ className = 'h-5 w-5' }: { className?: string }) {
   return (
@@ -17,48 +17,12 @@ function BagIcon({ className = 'h-5 w-5' }: { className?: string }) {
   )
 }
 
-function CloseIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-      <path d="m7 7 10 10M17 7 7 17" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 export default function CartDrawer() {
-  const [montado, setMontado] = useState(false)
-  const panelRef = useRef<HTMLElement>(null)
   const { items, quitar, cambiarCantidad, vaciar, totalItems, totalPrecio, carritoAbierto: abierto, setCarritoAbierto: setAbierto } = useCarrito()
 
-  // El carrito se renderiza en un portal (ver más abajo) porque el <header>
-  // tiene backdrop-blur, y cualquier ancestro con backdrop-filter/filter/
-  // transform crea un "containing block" para los hijos con position:fixed.
-  // Eso encerraba el overlay del carrito dentro de la altura del header en
-  // vez de cubrir toda la pantalla (por eso se veía chiquito, recortado y
-  // sin el botón de WhatsApp). document.body solo existe en el navegador,
-  // así que esperamos a montar antes de crear el portal.
-  useEffect(() => {
-    setMontado(true)
-  }, [])
-
-  useEffect(() => {
-    if (!abierto) return
-
-    const previo = document.body.style.overflow
-    const manejarEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setAbierto(false)
-    }
-
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', manejarEscape)
-
-    return () => {
-      document.body.style.overflow = previo
-      window.removeEventListener('keydown', manejarEscape)
-    }
-  }, [abierto, setAbierto])
-
-  useDialogoAccesible(panelRef, abierto && montado)
+  // El panel es un Sheet de shadcn/ui (Radix Dialog): se dibuja en un portal a
+  // <body> (así no lo encierra el backdrop-blur del header) y Radix se encarga
+  // del foco, la tecla Escape, el bloqueo del scroll y los atributos ARIA.
 
   const linkWhatsapp = buildWhatsappCarritoLink(
     items.map((i) => ({ nombre: i.nombre, precio: i.precio, cantidad: i.cantidad }))
@@ -81,165 +45,146 @@ export default function CartDrawer() {
         )}
       </button>
 
-      {montado && abierto && createPortal(
-        <div className="fixed inset-0 z-[60]" role="presentation">
-          <button
-            aria-label="Cerrar carrito"
-            onClick={() => setAbierto(false)}
-            className="cart-backdrop absolute inset-0 h-full w-full bg-black/72 backdrop-blur-[3px]"
-          />
+      <Sheet open={abierto} onOpenChange={setAbierto}>
+        <SheetContent
+          side="right"
+          showClose={false}
+          className="flex h-full min-h-0 w-full flex-col gap-0 overflow-hidden border-l border-white/10 bg-[#1d171d] p-0 text-white sm:max-w-lg"
+        >
+          <SheetDescription className="sr-only">
+            Revisa los productos de tu pedido, cambia cantidades y envíalo por WhatsApp.
+          </SheetDescription>
+          <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-lavender-magenta-500/12 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 -left-24 h-64 w-64 rounded-full bg-lavender-magenta-500/10 blur-3xl" />
 
-          <aside
-            ref={panelRef}
-            tabIndex={-1}
-            className="cart-panel absolute right-0 top-0 flex h-full min-h-0 w-full max-w-lg flex-col overflow-hidden border-l border-white/10 bg-[#1d171d] text-white shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="cart-title"
-          >
-            <div className="pointer-events-none absolute -right-24 -top-28 h-72 w-72 rounded-full bg-lavender-magenta-500/12 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-28 -left-24 h-64 w-64 rounded-full bg-lavender-magenta-500/10 blur-3xl" />
-
-            <div className="relative flex shrink-0 items-center justify-between border-b border-white/10 px-5 py-4 sm:px-7 sm:py-5">
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-lavender-magenta-300">Zoar Beauty Shop</p>
-                <div className="mt-1 flex items-baseline gap-2">
-                  <h2 id="cart-title" className="font-display text-2xl font-bold tracking-tight text-white sm:text-[28px]">
-                    Tu carrito
-                  </h2>
-                  <span className="text-xs font-medium text-white/45">{totalItems} {totalItems === 1 ? 'producto' : 'productos'}</span>
-                </div>
+          <div className="relative flex shrink-0 items-center justify-between border-b border-white/10 px-5 py-4 sm:px-7 sm:py-5">
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-lavender-magenta-300">Zoar Beauty Shop</p>
+              <div className="mt-1 flex items-baseline gap-2">
+                <SheetTitle className="font-display text-2xl font-bold tracking-tight text-white sm:text-[28px]">
+                  Tu carrito
+                </SheetTitle>
+                <span className="text-xs font-medium text-white/45">{totalItems} {totalItems === 1 ? 'producto' : 'productos'}</span>
               </div>
-
-              <button
-                onClick={() => setAbierto(false)}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:text-white"
-                aria-label="Cerrar carrito"
-              >
-                <CloseIcon />
-              </button>
             </div>
 
-            {items.length === 0 ? (
-              <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-[24px] border border-lavender-magenta-400/20 bg-lavender-magenta-500/10 text-lavender-magenta-300 shadow-lg shadow-black/10">
-                  <BagIcon className="h-8 w-8" />
-                </div>
-                <p className="mt-5 font-display text-2xl text-white">Tu carrito está vacío</p>
-                <p className="mt-2 max-w-sm text-sm leading-6 text-white/50">
-                  Agrega tus favoritos y aquí podrás revisar cantidades, precios y tu total antes de enviar el pedido.
-                </p>
-                <Link
-                  href="/catalogo"
-                  onClick={() => setAbierto(false)}
-                  className="mt-6 rounded-full bg-lavender-magenta-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-500/20 hover:bg-lavender-magenta-700"
-                >
+            <SheetClose asChild>
+              <Button variant="dark" size="icon" aria-label="Cerrar carrito" className="shrink-0">
+                <X className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            </SheetClose>
+          </div>
+
+          {items.length === 0 ? (
+            <div className="relative flex flex-1 flex-col items-center justify-center px-6 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-[24px] border border-lavender-magenta-400/20 bg-lavender-magenta-500/10 text-lavender-magenta-300 shadow-lg shadow-black/10">
+                <BagIcon className="h-8 w-8" />
+              </div>
+              <p className="mt-5 font-display text-2xl text-white">Tu carrito está vacío</p>
+              <p className="mt-2 max-w-sm text-sm leading-6 text-white/50">
+                Agrega tus favoritos y aquí podrás revisar cantidades, precios y tu total antes de enviar el pedido.
+              </p>
+              <Button asChild size="lg" className="mt-6">
+                <Link href="/catalogo" onClick={() => setAbierto(false)}>
                   Explorar catálogo
                 </Link>
-              </div>
-            ) : (
-              <div className="relative flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-7">
-                <div className="space-y-3">
-                  {items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="rounded-[22px] border border-white/10 bg-white/[0.045] p-3.5 shadow-lg shadow-black/5 backdrop-blur-sm sm:p-4"
-                    >
-                      <div className="flex gap-3.5">
-                        <div className="relative h-[74px] w-[74px] shrink-0 overflow-hidden rounded-[18px] bg-white/5 ring-1 ring-white/10">
-                          {item.imagenUrl ? (
-                            <Image src={item.imagenUrl} alt={item.nombre} fill sizes="74px" className="object-cover" />
-                          ) : (
-                            <div className="flex h-full items-center justify-center text-xl text-lavender-magenta-300">✦</div>
-                          )}
+              </Button>
+            </div>
+          ) : (
+            <div className="relative flex-1 min-h-0 overflow-y-auto px-5 py-5 sm:px-7">
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="rounded-[22px] border border-white/10 bg-white/[0.045] p-3.5 shadow-lg shadow-black/5 backdrop-blur-sm sm:p-4"
+                  >
+                    <div className="flex gap-3.5">
+                      <div className="relative h-[74px] w-[74px] shrink-0 overflow-hidden rounded-[18px] bg-white/5 ring-1 ring-white/10">
+                        {item.imagenUrl ? (
+                          <Image src={item.imagenUrl} alt={item.nombre} fill sizes="74px" className="object-cover" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-xl text-lavender-magenta-300">✦</div>
+                        )}
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="line-clamp-2 text-sm font-semibold leading-5 text-white sm:text-[15px]">{item.nombre}</p>
+                          <span className="shrink-0 text-sm font-bold text-lavender-magenta-300">{formatPrecio(item.precio * item.cantidad)}</span>
                         </div>
+                        <p className="mt-1 text-xs text-white/45">{formatPrecio(item.precio)} por unidad</p>
 
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-start justify-between gap-3">
-                            <p className="line-clamp-2 text-sm font-semibold leading-5 text-white sm:text-[15px]">{item.nombre}</p>
-                            <span className="shrink-0 text-sm font-bold text-lavender-magenta-300">{formatPrecio(item.precio * item.cantidad)}</span>
-                          </div>
-                          <p className="mt-1 text-xs text-white/45">{formatPrecio(item.precio)} por unidad</p>
-
-                          <div className="mt-3 flex items-center justify-between gap-3">
-                            <div className="inline-flex items-center rounded-full border border-white/10 bg-black/15 p-1">
-                              <button
-                                onClick={() => cambiarCantidad(item.id, item.cantidad - 1)}
-                                className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white"
-                                aria-label={`Reducir cantidad de ${item.nombre}`}
-                              >
-                                −
-                              </button>
-                              <span className="w-8 text-center text-sm font-semibold text-white">{item.cantidad}</span>
-                              <button
-                                onClick={() => cambiarCantidad(item.id, item.cantidad + 1)}
-                                className="flex h-7 w-7 items-center justify-center rounded-full bg-lavender-magenta-500/15 text-sm font-semibold text-lavender-magenta-200 hover:bg-lavender-magenta-500/25"
-                                aria-label={`Aumentar cantidad de ${item.nombre}`}
-                              >
-                                +
-                              </button>
-                            </div>
+                        <div className="mt-3 flex items-center justify-between gap-3">
+                          <div className="inline-flex items-center rounded-full border border-white/10 bg-black/15 p-1">
                             <button
-                              onClick={() => quitar(item.id)}
-                              className="text-[11px] font-medium text-white/35 underline-offset-4 hover:text-lavender-magenta-300 hover:underline"
+                              onClick={() => cambiarCantidad(item.id, item.cantidad - 1)}
+                              className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white"
+                              aria-label={`Reducir cantidad de ${item.nombre}`}
                             >
-                              Quitar
+                              −
+                            </button>
+                            <span className="w-8 text-center text-sm font-semibold text-white">{item.cantidad}</span>
+                            <button
+                              onClick={() => cambiarCantidad(item.id, item.cantidad + 1)}
+                              className="flex h-7 w-7 items-center justify-center rounded-full bg-lavender-magenta-500/15 text-sm font-semibold text-lavender-magenta-200 hover:bg-lavender-magenta-500/25"
+                              aria-label={`Aumentar cantidad de ${item.nombre}`}
+                            >
+                              +
                             </button>
                           </div>
+                          <button
+                            onClick={() => quitar(item.id)}
+                            className="text-[11px] font-medium text-white/35 underline-offset-4 hover:text-lavender-magenta-300 hover:underline"
+                          >
+                            Quitar
+                          </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {items.length > 0 && (
-              <div className="relative shrink-0 border-t border-white/10 bg-[#181318] px-5 pb-5 pt-4 sm:px-7 sm:pb-6 sm:pt-5">
-                <div className="mb-4 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">Resumen del pedido</p>
-                    <span className="mt-1 block text-sm text-white/55">Total a pagar</span>
                   </div>
-                  <span className="font-display text-2xl font-bold text-white sm:text-3xl">{formatPrecio(totalPrecio)}</span>
-                </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-                <p className="mb-3 text-[11px] leading-5 text-white/65">
-                  Al enviar tu pedido se abrirá WhatsApp con el resumen; allí nos compartirás tu nombre, ciudad y dirección solo para gestionarlo. Al continuar
-                  aceptas la{' '}
-                  <Link href="/privacidad" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
-                    Política de privacidad
-                  </Link>{' '}
-                  y los{' '}
-                  <Link href="/terminos" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
-                    Términos
-                  </Link>
-                  . Tienes{' '}
-                  <Link href="/devoluciones" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
-                    derecho de retracto
-                  </Link>
-                  .
-                </p>
-                <a
-                  href={linkWhatsapp}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-2xl bg-lavender-magenta-600 px-5 py-3.5 text-center text-sm font-bold text-white shadow-xl shadow-lavender-magenta-500/15 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
-                >
+          {items.length > 0 && (
+            <div className="relative shrink-0 border-t border-white/10 bg-[#181318] px-5 pb-5 pt-4 sm:px-7 sm:pb-6 sm:pt-5">
+              <div className="mb-4 flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/35">Resumen del pedido</p>
+                  <span className="mt-1 block text-sm text-white/55">Total a pagar</span>
+                </div>
+                <span className="font-display text-2xl font-bold text-white sm:text-3xl">{formatPrecio(totalPrecio)}</span>
+              </div>
+
+              <p className="mb-3 text-[11px] leading-5 text-white/65">
+                Al enviar tu pedido se abrirá WhatsApp con el resumen; allí nos compartirás tu nombre, ciudad y dirección solo para gestionarlo. Al continuar
+                aceptas la{' '}
+                <Link href="/privacidad" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                  Política de privacidad
+                </Link>{' '}
+                y los{' '}
+                <Link href="/terminos" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                  Términos
+                </Link>
+                . Tienes{' '}
+                <Link href="/devoluciones" onClick={() => setAbierto(false)} className="font-semibold text-lavender-magenta-300 underline underline-offset-2">
+                  derecho de retracto
+                </Link>
+                .
+              </p>
+              <Button asChild size="lg" className="w-full rounded-2xl font-bold">
+                <a href={linkWhatsapp} target="_blank" rel="noopener noreferrer">
                   Enviar pedido por WhatsApp
                 </a>
-                <button
-                  onClick={vaciar}
-                  className="mt-3 w-full rounded-full py-2 text-xs font-medium text-white/35 hover:text-white/65"
-                >
-                  Vaciar carrito
-                </button>
-              </div>
-            )}
-          </aside>
-        </div>,
-        document.body
-      )}
+              </Button>
+              <Button variant="link" size="sm" onClick={vaciar} className="mt-2 h-auto w-full py-2 font-medium text-white/45 hover:text-white/80 hover:no-underline">
+                Vaciar carrito
+              </Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </>
   )
 }

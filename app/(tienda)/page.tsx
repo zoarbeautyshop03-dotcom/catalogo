@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 import ProductCard from '@/components/ProductCard'
 import CategoryCard from '@/components/CategoryCard'
 import type { Producto } from '@/lib/types'
@@ -90,12 +91,14 @@ export default async function HomePage() {
                 Encuentra tus favoritos de belleza y cuidado capilar. Productos elegidos para acompañarte y hacer de tu rutina algo especial.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link href="/catalogo" className="zoar-button-primary inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold">
-                  Descubrir productos <span aria-hidden="true">↗</span>
-                </Link>
-                <Link href="/catalogo?oferta=1" className="inline-flex items-center rounded-full border border-white/80 bg-white/70 px-6 py-3.5 text-sm font-bold text-lavender-magenta-900 shadow-sm backdrop-blur-md hover:bg-white">
-                  Ver ofertas
-                </Link>
+                <Button asChild variant="brand" size="lg" className="px-6 font-bold">
+                  <Link href="/catalogo">
+                    Descubrir productos <span aria-hidden="true">↗</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="glass" size="lg" className="px-6 font-bold">
+                  <Link href="/catalogo?oferta=1">Ver ofertas</Link>
+                </Button>
               </div>
               <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-gray-700 sm:text-sm">
                 <span className="inline-flex items-center gap-2"><span className="text-lavender-magenta-700">✦</span> Selección especial</span>

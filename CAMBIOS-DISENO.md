@@ -170,3 +170,25 @@ Se añadió la paleta exacta `blush-pink` (50–950) a Tailwind y a las variable
 - [Vercel Commerce](https://github.com/vercel/commerce) — más de 10.000 estrellas. Referencia de estructura de tienda moderna basada en Next.js.
 
 Las referencias se usaron como inspiración de patrones; no se copiaron repositorios completos ni se añadió código de terceros como dependencia.
+
+
+## shadcn/ui aplicado a la tienda (octubre de 2026)
+
+Se incorporó shadcn/ui (componentes copiados al proyecto en `components/ui/`, sobre Radix UI) solo donde cambia de verdad lo que se ve y cómo se siente la tienda. Los colores de shadcn (`primary`, `secondary`, `accent`, `border`, `ring`…) están conectados a la paleta Zoar en `app/globals.css` y `tailwind.config.ts`.
+
+**Después de descomprimir hay que ejecutar `npm install`** (se agregaron dependencias nuevas: `@radix-ui/react-dialog`, `@radix-ui/react-accordion`, `@radix-ui/react-slot`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, `sonner`, `tailwindcss-animate`).
+
+| Componente | Dónde se usa | Qué mejora |
+|---|---|---|
+| **Sheet** | Carrito, filtros del celular, menú del celular | Paneles que se deslizan con animación fluida; Radix maneja foco, Escape, bloqueo del scroll y accesibilidad. El menú pasa de un desplegable pequeño a un panel lateral con enlaces grandes. |
+| **Sonner (toast)** | Al agregar un producto | Aviso «Agregado al carrito» con botón «Ver carrito», arriba y centrado. |
+| **Button** | Botones de portada, carrito, ficha, filtros, WhatsApp | Un solo estilo coherente con variantes (principal, degradado Zoar, contorno, cristal, oscuro). |
+| **Badge** | Etiquetas de tarjetas, descuento, disponibilidad | Etiquetas uniformes; la disponibilidad ahora usa color (verde / ámbar / oscuro). |
+| **Accordion** | Ficha de producto | «Modo de uso» e «Ingredientes destacados» como secciones plegables; la ficha queda más corta en celular. |
+| **Skeleton** | Pantallas de carga | Marcadores de carga con el mismo componente. |
+
+- `CartDrawer`, `FiltrosMovil` y `MenuMovil` ya no necesitan su propio código de foco/Escape/scroll (lo hace Radix). `lib/use-dialogo.ts` se conserva porque el panel de administración todavía lo usa.
+- Se agregó `components.json` para poder sumar más componentes con `npx shadcn@latest add <nombre>`.
+- El panel de administración **no se tocó**: su modo oscuro depende de clases CSS y los paneles de Radix salen en un portal fuera de ese contenedor.
+- Se dejó el selector «Ordenar por» nativo a propósito: en el celular abre el selector del sistema, que es más cómodo que una lista personalizada.
+- Validación: revisión sintáctica de los 79 archivos TS/TSX sin errores. No se pudo ejecutar `npm run build` en este entorno (sin acceso a internet para instalar dependencias).

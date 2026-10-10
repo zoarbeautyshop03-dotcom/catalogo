@@ -46,6 +46,22 @@
 }
 
  :root {
+  /* Tokens de shadcn/ui (canales RGB) con la paleta Zoar. */
+  --background: 253 248 252;
+  --foreground: 43 29 41;
+  --primary: 209 31 184;
+  --primary-foreground: 255 255 255;
+  --secondary: 255 244 254;
+  --secondary-foreground: 147 21 125;
+  --muted: 250 247 250;
+  --muted-foreground: 114 95 111;
+  --accent: 255 231 254;
+  --accent-foreground: 120 23 101;
+  --destructive: 220 38 38;
+  --destructive-foreground: 255 255 255;
+  --border: 255 231 254;
+  --input: 255 206 252;
+  --ring: 120 23 101;
   --color-blush-pink-50: #fff3fd;
   --color-blush-pink-100: #ffe7fc;
   --color-blush-pink-200: #ffcef8;
@@ -261,28 +277,12 @@ input:focus-visible,
   to { opacity: 1; }
 }
 
-@keyframes cart-panel-in {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
 .cart-backdrop {
   animation: cart-backdrop-in 180ms ease-out both;
 }
 
-.cart-panel {
-  animation: cart-panel-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@media (max-width: 639px) {
-  .cart-panel {
-    width: min(100%, 30rem);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .cart-backdrop,
-  .cart-panel {
+  .cart-backdrop {
     animation: none;
   }
 }
@@ -390,11 +390,6 @@ input:focus-visible,
 
 
 /* Panel de filtros que sube desde abajo (celular) y barra inferior del carrito. */
-@keyframes hoja-in {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
 @keyframes barra-carrito-in {
   from { transform: translateY(120%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -406,12 +401,6 @@ input:focus-visible,
   100% { transform: scale(1); }
 }
 
-.hoja-panel {
-  max-height: 88vh;
-  max-height: 88dvh;
-  animation: hoja-in 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
 .barra-carrito {
   animation: barra-carrito-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -421,7 +410,6 @@ input:focus-visible,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hoja-panel,
   .barra-carrito,
   .barra-carrito-pop {
     animation: none;
@@ -651,4 +639,10 @@ main:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .catalog-product-card, .zoar-button-primary { transition: none; }
   .catalog-product-card:hover, .zoar-button-primary:hover { transform: none; }
+}
+
+/* Los paneles de Radix (carrito, filtros, menú) reciben el foco al abrirse; no
+   dibujamos contorno alrededor de todo el panel (los botones internos sí lo muestran). */
+[role='dialog']:focus-visible {
+  outline: none !important;
 }

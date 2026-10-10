@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useCarrito } from '@/lib/cart-context'
+import { Button } from '@/components/ui/button'
 
 type Props = {
   producto: { id: string; nombre: string; slug: string; precio: number }
@@ -20,7 +22,7 @@ function BagIcon({ className = '' }: { className?: string }) {
 }
 
 export default function AddToCartButton({ producto, imagenUrl, agotado, variante = 'icono' }: Props) {
-  const { agregar } = useCarrito()
+  const { agregar, setCarritoAbierto } = useCarrito()
   const [agregado, setAgregado] = useState(false)
 
   function handleClick(e: React.MouseEvent) {
@@ -30,18 +32,21 @@ export default function AddToCartButton({ producto, imagenUrl, agotado, variante
     agregar({ id: producto.id, nombre: producto.nombre, slug: producto.slug, precio: producto.precio, imagenUrl })
     setAgregado(true)
     setTimeout(() => setAgregado(false), 1500)
+    // Aviso con acceso directo al carrito (mismo id: si agregan varios seguidos
+    // se actualiza el mismo aviso en vez de apilarse).
+    toast.success('Agregado al carrito', {
+      id: 'carrito-agregado',
+      description: producto.nombre,
+      action: { label: 'Ver carrito', onClick: () => setCarritoAbierto(true) },
+    })
   }
 
   if (variante === 'completo') {
     return (
-      <button
-        onClick={handleClick}
-        disabled={agotado}
-        className="inline-flex items-center justify-center gap-2 rounded-full bg-lavender-magenta-600 px-6 py-3 font-semibold text-white shadow-lg shadow-lavender-magenta-600/15 hover:-translate-y-0.5 hover:bg-lavender-magenta-700 disabled:cursor-not-allowed disabled:opacity-40"
-      >
+      <Button onClick={handleClick} disabled={agotado}>
         <BagIcon />
         {agotado ? 'Agotado' : agregado ? '✓ Agregado al carrito' : 'Agregar al carrito'}
-      </button>
+      </Button>
     )
   }
 
