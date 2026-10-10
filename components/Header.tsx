@@ -18,8 +18,8 @@ export default async function Header() {
   const config = await getConfiguracion()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-lavender-magenta-200 bg-lavender-magenta-50/95 backdrop-blur">
-      <div className="border-b border-lavender-magenta-900 bg-lavender-magenta-950 text-lavender-magenta-100">
+    <header className="sticky top-0 z-40 border-b border-lavender-magenta-200/80 bg-white/90 shadow-[0_4px_24px_rgba(81,1,65,0.045)] backdrop-blur-xl">
+      <div className="border-b border-lavender-magenta-900 bg-gradient-to-r from-lavender-magenta-950 via-lavender-magenta-900 to-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-1.5 sm:py-2">
           <p className="min-w-0 truncate text-[11px] font-medium tracking-wide sm:text-xs">
             Belleza que se siente, detalles que enamoran
@@ -28,7 +28,7 @@ export default async function Header() {
         </div>
       </div>
 
-      <div className="section-shell grid grid-cols-[auto_1fr_auto] items-center gap-3 py-2.5 sm:gap-5 sm:py-3">
+      <div className="section-shell grid grid-cols-[auto_1fr_auto] items-center gap-3 py-3 sm:gap-6 sm:py-4">
         <Link href="/" className="shrink-0 rounded-xl" aria-label="Zoar Beauty Shop — Inicio">
           <Logo size="md" />
         </Link>
@@ -72,8 +72,8 @@ export default async function Header() {
         </label>
       </form>
 
-      <div className="hidden border-t border-lavender-magenta-200/70 md:block">
-        <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-9 py-3 text-sm font-medium text-gray-700">
+      <div className="hidden border-t border-lavender-magenta-100 bg-white/70 md:block">
+        <nav aria-label="Principal" className="section-shell flex items-center justify-center gap-9 py-3.5 text-sm font-semibold text-gray-700">
           <Link href="/" className="hover:text-lavender-magenta-700">Inicio</Link>
           <Link href="/catalogo" className="hover:text-lavender-magenta-700">Catálogo</Link>
           <Link href="/catalogo?oferta=1" className="hover:text-lavender-magenta-700">Ofertas</Link>

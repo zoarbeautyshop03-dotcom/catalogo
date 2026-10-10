@@ -6,6 +6,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        'blush-pink': {
+          50: '#fff3fd',
+          100: '#ffe7fc',
+          200: '#ffcef8',
+          300: '#ffa7ef',
+          400: '#ff6ee2',
+          500: '#f73ed2',
+          600: '#db1eb1',
+          700: '#b6158f',
+          800: '#951374',
+          900: '#79165d',
+          950: '#51013b',
+        },
         'lavender-magenta': {
           50: '#fff4fe',
           100: '#ffe7fe',

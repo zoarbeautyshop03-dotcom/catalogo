@@ -150,3 +150,23 @@ Se revisaron repositorios de código abierto con más de 1.000 estrellas y licen
 - **Carga:** `components/Skeletons.tsx` + `loading.tsx` en `/catalogo` y `/producto/[slug]`.
 - **Panel admin:** nuevo marco `components/admin/AdminShell.tsx` — menú lateral plegable (se recuerda por dispositivo), cajón con foco controlado en celular, barra superior con «Ver tienda», campana de alertas con contador y **modo oscuro** con la paleta de Zoar. Íconos propios en `components/admin/Iconos.tsx` (sin librerías nuevas).
 - **Estructura:** la tienda pasó al grupo de rutas `app/(tienda)/` con su propio `layout.tsx`. Antes el panel `/admin` se dibujaba debajo de la cabecera y el pie de la tienda; ahora tiene su marco propio. Las direcciones (URLs) no cambian.
+
+
+## Rediseño visual — octubre de 2026
+
+Se añadió la paleta exacta `blush-pink` (50–950) a Tailwind y a las variables CSS, manteniendo los nombres anteriores como compatibilidad. También se actualizó la portada pública con una dirección visual más editorial y contemporánea, inspirada en patrones de tiendas modernas y sistemas de componentes de código abierto:
+
+- Hero con titular de mayor impacto, etiqueta superior, botones con jerarquía clara y panel decorativo de marca en escritorio.
+- Degradados suaves y formas ambientales que mantienen el rosa como identidad sin saturar toda la pantalla.
+- Cabecera más limpia, translúcida y con una sombra discreta para separar la navegación del contenido.
+- Tarjetas de producto con superficie más delicada, bordes menos pesados y elevación al pasar el cursor.
+- Adaptación del hero a móvil, con animaciones reducidas para usuarios que así lo prefieren.
+- No se agregaron dependencias y no se cambió la lógica de Supabase, precios, inventario, carrito ni rutas.
+
+### Referencias de código abierto consultadas
+
+- [shadcn/ui](https://github.com/shadcn-ui/ui) — más de 100.000 estrellas. Referencia para jerarquía visual, componentes personalizables, estados de interacción y accesibilidad.
+- [Tailwind CSS](https://github.com/tailwindlabs/tailwindcss) — más de 90.000 estrellas. Referencia para composición responsive y estilos mediante utilidades.
+- [Vercel Commerce](https://github.com/vercel/commerce) — más de 10.000 estrellas. Referencia de estructura de tienda moderna basada en Next.js.
+
+Las referencias se usaron como inspiración de patrones; no se copiaron repositorios completos ni se añadió código de terceros como dependencia.

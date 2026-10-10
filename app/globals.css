@@ -45,7 +45,18 @@
   }
 }
 
-:root {
+ :root {
+  --color-blush-pink-50: #fff3fd;
+  --color-blush-pink-100: #ffe7fc;
+  --color-blush-pink-200: #ffcef8;
+  --color-blush-pink-300: #ffa7ef;
+  --color-blush-pink-400: #ff6ee2;
+  --color-blush-pink-500: #f73ed2;
+  --color-blush-pink-600: #db1eb1;
+  --color-blush-pink-700: #b6158f;
+  --color-blush-pink-800: #951374;
+  --color-blush-pink-900: #79165d;
+  --color-blush-pink-950: #51013b;
   --color-lavender-magenta-50: #fff4fe;
   --color-lavender-magenta-100: #ffe7fe;
   --color-lavender-magenta-200: #ffcefc;
@@ -559,3 +570,85 @@ main:focus-visible {
 .admin-root.dark .text-green-700,
 .admin-root.dark .text-green-800 { color: #86efac; }
 .admin-root.dark .shadow-soft-card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 28px rgba(0, 0, 0, 0.35); }
+
+
+/* Zoar Beauty — refresh visual 2026 */
+.zoar-hero {
+  isolation: isolate;
+  border: 1px solid rgba(219, 30, 177, .16);
+  box-shadow: 0 24px 70px rgba(81, 1, 65, .12), 0 3px 12px rgba(81, 1, 65, .04);
+  background-color: #fff3fd;
+}
+.zoar-hero-wash {
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(255, 243, 253, .97) 0%, rgba(255, 243, 253, .89) 43%, rgba(255, 231, 252, .34) 100%),
+    radial-gradient(ellipse at 78% 48%, rgba(255, 110, 226, .22), transparent 43%);
+}
+.zoar-orb {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(1px);
+}
+.zoar-orb-one {
+  width: 260px;
+  height: 260px;
+  right: 5%;
+  top: -110px;
+  background: rgba(255, 110, 226, .15);
+}
+.zoar-orb-two {
+  width: 180px;
+  height: 180px;
+  right: 23%;
+  bottom: -95px;
+  background: rgba(219, 30, 177, .10);
+}
+.zoar-hero-emphasis {
+  color: var(--color-blush-pink-700);
+  text-shadow: 0 8px 30px rgba(219, 30, 177, .12);
+}
+.zoar-button-primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--color-blush-pink-600) 0%, var(--color-blush-pink-800) 100%);
+  box-shadow: 0 10px 24px rgba(149, 19, 116, .24);
+  transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+.zoar-button-primary:hover {
+  transform: translateY(-2px);
+  filter: saturate(1.08);
+  box-shadow: 0 14px 28px rgba(149, 19, 116, .28);
+}
+.zoar-hero-note {
+  border: 1px solid rgba(255,255,255,.82);
+  background: rgba(255,255,255,.64);
+  box-shadow: 0 24px 60px rgba(81, 1, 65, .13);
+  backdrop-filter: blur(18px);
+  transform: rotate(2deg);
+}
+.catalog-product-card {
+  border-color: rgba(219, 30, 177, .14);
+  box-shadow: 0 4px 16px rgba(81, 1, 65, .035);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+.catalog-product-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(219, 30, 177, .3);
+  box-shadow: 0 18px 36px rgba(81, 1, 65, .10);
+}
+.catalog-product-media {
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(255,255,255,.95), transparent 65%),
+    linear-gradient(145deg, #fff8fe 0%, #ffe7fc 100%);
+}
+@media (max-width: 639px) {
+  .zoar-hero-wash {
+    background: linear-gradient(115deg, rgba(255,243,253,.97), rgba(255,243,253,.84));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-product-card, .zoar-button-primary { transition: none; }
+  .catalog-product-card:hover, .zoar-button-primary:hover { transform: none; }
+}

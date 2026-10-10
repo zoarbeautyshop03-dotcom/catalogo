@@ -69,38 +69,51 @@ export default async function HomePage() {
 
   return (
     <div className="pb-8">
-      <section className="section-shell pt-4 sm:pt-8">
+      <section className="section-shell pt-4 sm:pt-7">
         <div
-          className="relative overflow-hidden rounded-[32px] shadow-soft-pink ring-1 ring-lavender-magenta-200"
+          className="zoar-hero relative isolate overflow-hidden rounded-[28px] sm:rounded-[36px]"
           style={{ backgroundImage: `url(${HERO_IMAGEN})`, backgroundSize: 'cover', backgroundPosition: '72% center' }}
         >
-          {/* Velo claro a la izquierda para que el texto siempre se lea sobre la imagen. */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-lavender-magenta-50/90 via-lavender-magenta-50/60 to-transparent lg:via-lavender-magenta-50/35"
-          />
-          <div className="relative px-6 py-16 sm:px-12 sm:py-24 lg:px-16 lg:py-32">
-            <div className="max-w-xl lg:max-w-2xl">
-              <h1 className="font-display text-4xl font-semibold leading-[1.08] tracking-[-0.02em] text-lavender-magenta-950 sm:text-5xl lg:text-[3.5rem]">
-                Tu cabello merece sentirse tan bien como se ve.
+          <div aria-hidden="true" className="zoar-hero-wash absolute inset-0" />
+          <div aria-hidden="true" className="zoar-orb zoar-orb-one" />
+          <div aria-hidden="true" className="zoar-orb zoar-orb-two" />
+          <div className="relative z-10 grid min-h-[430px] items-center gap-8 px-6 py-12 sm:min-h-[490px] sm:px-10 sm:py-16 lg:min-h-[530px] lg:grid-cols-[1.05fr_.95fr] lg:px-16 lg:py-20">
+            <div className="max-w-2xl">
+              <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/70 bg-white/65 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[.18em] text-lavender-magenta-800 shadow-sm backdrop-blur-md sm:text-xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-lavender-magenta-600" />
+                Tu ritual, tu momento
+              </span>
+              <h1 className="font-display text-[2.55rem] font-semibold leading-[1.04] tracking-[-.045em] text-lavender-magenta-950 sm:text-6xl lg:text-[4.25rem]">
+                La belleza está en los <span className="zoar-hero-emphasis">detalles.</span>
               </h1>
-              <p className="mt-5 max-w-xl text-base leading-7 text-gray-700 sm:text-lg sm:leading-8">
-                Descubre una selección de productos de belleza y cuidado capilar para crear una rutina que disfrutes de principio a fin.
+              <p className="mt-5 max-w-lg text-sm leading-7 text-gray-700 sm:text-base sm:leading-8">
+                Encuentra tus favoritos de belleza y cuidado capilar. Productos elegidos para acompañarte y hacer de tu rutina algo especial.
               </p>
-
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href="/catalogo"
-                  className="rounded-full bg-lavender-magenta-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-lavender-magenta-600/25 hover:-translate-y-0.5 hover:bg-lavender-magenta-700"
-                >
-                  Explorar catálogo
+                <Link href="/catalogo" className="zoar-button-primary inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold">
+                  Descubrir productos <span aria-hidden="true">↗</span>
                 </Link>
-                <Link
-                  href="/catalogo?oferta=1"
-                  className="rounded-full bg-white/90 px-7 py-3.5 text-sm font-semibold text-lavender-magenta-800 ring-1 ring-lavender-magenta-200 backdrop-blur-sm hover:-translate-y-0.5 hover:bg-white"
-                >
+                <Link href="/catalogo?oferta=1" className="inline-flex items-center rounded-full border border-white/80 bg-white/70 px-6 py-3.5 text-sm font-bold text-lavender-magenta-900 shadow-sm backdrop-blur-md hover:bg-white">
                   Ver ofertas
                 </Link>
+              </div>
+              <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-medium text-gray-700 sm:text-sm">
+                <span className="inline-flex items-center gap-2"><span className="text-lavender-magenta-700">✦</span> Selección especial</span>
+                <span className="inline-flex items-center gap-2"><span className="text-lavender-magenta-700">♡</span> Atención cercana</span>
+              </div>
+            </div>
+            <div className="hidden min-h-[290px] items-center justify-center lg:flex">
+              <div className="zoar-hero-note w-[min(100%,330px)] rounded-[28px] p-6">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-[.16em] text-lavender-magenta-800">Zoar Beauty</span>
+                  <span className="text-xl text-lavender-magenta-600">✧</span>
+                </div>
+                <div className="my-7 flex h-36 items-center justify-center rounded-2xl bg-gradient-to-br from-white/80 to-lavender-magenta-100/80">
+                  <span className="font-script text-5xl text-lavender-magenta-700">Shop</span>
+                  <span className="ml-2 text-4xl text-lavender-magenta-400">✿</span>
+                </div>
+                <p className="font-display text-2xl font-semibold leading-tight text-lavender-magenta-950">Un toque de cuidado, todos los días.</p>
+                <p className="mt-2 text-sm leading-6 text-gray-600">Pequeños detalles que hacen especial tu rutina.</p>
               </div>
             </div>
           </div>
