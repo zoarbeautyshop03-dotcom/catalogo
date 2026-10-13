@@ -6,10 +6,10 @@ import BotonVolver from '@/components/admin/BotonVolver'
 export default async function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
   const supabase = createServerSupabase()
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) redirect('/admin/login')
+  if (!user) redirect('/admin/login')
 
   // Cantidad de productos que necesitan atención (misma regla que /admin/alertas)
   // para mostrarla como globo en el menú y en la campana.
@@ -28,7 +28,7 @@ export default async function AdminProtectedLayout({ children }: { children: Rea
   }
 
   return (
-    <AdminShell email={session.user.email ?? ''} alertas={alertas}>
+    <AdminShell email={user.email ?? ''} alertas={alertas}>
       <BotonVolver />
       {children}
     </AdminShell>

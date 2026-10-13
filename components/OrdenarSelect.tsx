@@ -10,6 +10,14 @@ const OPCIONES: [string, string][] = [
   ['precio-desc', 'Precio: mayor a menor'],
 ]
 
+function SortIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 // Lista nativa: en el celular abre el selector del sistema, que la gente ya
 // sabe usar.
 export default function OrdenarSelect({
@@ -29,13 +37,16 @@ export default function OrdenarSelect({
   return (
     <label className="relative inline-flex min-w-0 flex-1 items-center sm:flex-none">
       <span className="sr-only">Ordenar por</span>
+      <span className="pointer-events-none absolute left-4 flex items-center text-lavender-magenta-600" aria-hidden="true">
+        <SortIcon />
+      </span>
       <select
         value={valor}
         onChange={(e) => {
           setValor(e.target.value)
           router.push(construirUrl(searchParams, { orden: e.target.value }))
         }}
-        className="h-11 w-full min-w-0 appearance-none rounded-full border border-lavender-magenta-100 bg-white py-2 pl-4 pr-9 text-xs font-bold text-lavender-magenta-800 shadow-sm focus:outline-none sm:w-auto"
+        className="h-11 w-full min-w-0 appearance-none rounded-full border border-lavender-magenta-100 bg-white py-2 pl-11 pr-9 text-xs font-bold text-lavender-magenta-800 shadow-soft-card transition ease-boutique hover:border-lavender-magenta-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-lavender-magenta-400 sm:w-auto"
       >
         {OPCIONES.map(([v, etiqueta]) => (
           <option key={v} value={v}>

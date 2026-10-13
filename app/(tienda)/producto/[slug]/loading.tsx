@@ -1,15 +1,31 @@
 export default function CargandoProducto() {
   return (
     <div className="section-shell py-7 sm:py-10" role="status" aria-label="Cargando producto">
-      <div className="mb-5 h-4 w-56 animate-pulse rounded-full bg-lavender-magenta-100" aria-hidden="true" />
-      <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:gap-10" aria-hidden="true">
-        <div className="aspect-square animate-pulse rounded-[32px] bg-lavender-magenta-50" />
-        <div className="space-y-4 rounded-3xl bg-white p-6 ring-1 ring-lavender-magenta-100 sm:p-8">
-          <div className="h-4 w-32 animate-pulse rounded-full bg-lavender-magenta-100" />
-          <div className="h-9 w-3/4 animate-pulse rounded-full bg-lavender-magenta-100" />
-          <div className="h-8 w-40 animate-pulse rounded-full bg-lavender-magenta-100" />
-          <div className="h-12 w-full animate-pulse rounded-full bg-lavender-magenta-100" />
-          <div className="h-24 w-full animate-pulse rounded-2xl bg-lavender-magenta-50" />
+      <div className="mb-6 flex flex-wrap items-center gap-3" aria-hidden="true">
+        <div className="h-3 w-14 animate-pulse rounded-full bg-lavender-magenta-100" />
+        <div className="h-3 w-20 animate-pulse rounded-full bg-lavender-magenta-100" />
+        <div className="h-3 w-28 animate-pulse rounded-full bg-lavender-magenta-100" />
+      </div>
+
+      <div className="grid gap-8 lg:grid-cols-[1.05fr_.95fr] lg:items-start lg:gap-10" aria-hidden="true">
+        <div className="catalog-product-media aspect-square animate-pulse rounded-boutique-lg border border-lavender-magenta-100" />
+
+        <div className="premium-card space-y-5 p-6 sm:p-8 lg:p-9">
+          <div className="flex items-center justify-between gap-3">
+            <div className="h-3 w-28 animate-pulse rounded-full bg-lavender-magenta-100" />
+            <div className="h-6 w-24 animate-pulse rounded-full bg-lavender-magenta-100" />
+          </div>
+          <div className="space-y-3">
+            <div className="h-8 w-4/5 animate-pulse rounded-full bg-lavender-magenta-100" />
+            <div className="h-8 w-3/5 animate-pulse rounded-full bg-lavender-magenta-100" />
+          </div>
+          <div className="h-9 w-40 animate-pulse rounded-full bg-lavender-magenta-100" />
+          <div className="hairline-magenta" />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="h-11 flex-1 animate-pulse rounded-full bg-lavender-magenta-100" />
+            <div className="h-11 flex-1 animate-pulse rounded-full bg-lavender-magenta-100" />
+          </div>
+          <div className="h-24 w-full animate-pulse rounded-boutique bg-lavender-magenta-50" />
         </div>
       </div>
     </div>

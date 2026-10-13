@@ -43,25 +43,27 @@ export default function BarraCarritoMovil() {
             type="button"
             onClick={() => setCarritoAbierto(true)}
             aria-label={`Ver carrito, ${textoProductos}, total ${formatPrecio(totalPrecio)}`}
-            className="barra-carrito flex w-full items-center gap-3 rounded-2xl bg-lavender-magenta-600 px-4 py-3 text-left text-white shadow-[0_12px_30px_rgba(81,1,65,0.28)] ring-1 ring-white/20 active:bg-lavender-magenta-700"
+            className="barra-carrito glass-panel flex w-full items-center gap-3 rounded-full py-2.5 pl-2.5 pr-3 text-left shadow-float ring-1 ring-white/60 transition duration-200 ease-boutique active:scale-[0.99]"
           >
-            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
+            <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-white shadow-card">
               <BagIcon />
               <span
                 key={totalItems}
-                className="barra-carrito-pop absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-extrabold text-lavender-magenta-700"
+                className="barra-carrito-pop absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-extrabold text-lavender-magenta-700 ring-1 ring-lavender-magenta-100"
               >
                 {totalItems > 99 ? '99+' : totalItems}
               </span>
             </span>
 
             <span className="min-w-0 flex-1">
-              <span className="block text-sm font-bold leading-5">Ver mi carrito</span>
-              <span className="block truncate text-[11px] leading-4 text-white/80">{textoProductos} · envía tu pedido por WhatsApp</span>
+              <span className="block text-sm font-bold leading-5 text-lavender-magenta-950">Ver mi carrito</span>
+              <span className="block truncate text-[11px] leading-4 text-gray-500">{textoProductos} · envía tu pedido por WhatsApp</span>
             </span>
 
-            <span className="shrink-0 text-base font-extrabold">{formatPrecio(totalPrecio)}</span>
-            <ArrowIcon />
+            <span className="shrink-0 font-display text-lg font-bold tracking-tight text-lavender-magenta-950">{formatPrecio(totalPrecio)}</span>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-lavender-magenta-600 text-white shadow-card">
+              <ArrowIcon />
+            </span>
           </button>
         </div>
       )}

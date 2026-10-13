@@ -25,8 +25,11 @@ export function porcentajeDescuento(producto: {
   return null
 }
 
-export function buildWhatsappLink(producto: Producto): string {
-  const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
+export function buildWhatsappLink(producto: Producto, numeroOverride?: string | null): string {
+  // El número se toma de la configuración de la tienda (lo que el admin escribe
+  // en /admin/configuracion). Si por lo que sea no llega, se usa la variable de
+  // entorno como respaldo para no generar un link roto.
+  const numero = (numeroOverride ?? '').trim() || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ''
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? ''
   const precio = formatPrecio(producto.precio, producto.moneda)
   const url = `${siteUrl}${rutaProducto(producto.slug)}`
@@ -42,8 +45,8 @@ type ItemParaWhatsapp = {
   cantidad: number
 }
 
-export function buildWhatsappCarritoLink(items: ItemParaWhatsapp[], moneda = 'COP'): string {
-  const numero = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? ''
+export function buildWhatsappCarritoLink(items: ItemParaWhatsapp[], moneda = 'COP', numeroOverride?: string | null): string {
+  const numero = (numeroOverride ?? '').trim() || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ''
   const lineas = items.map(
     (i, idx) => `${idx + 1}. ${i.nombre} x${i.cantidad} - ${formatPrecio(i.precio * i.cantidad, moneda)}`
   )

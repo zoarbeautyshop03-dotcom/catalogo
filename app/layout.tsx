@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Inter, Playball } from 'next/font/google'
 import './globals.css'
 import { CarritoProvider } from '@/lib/cart-context'
@@ -25,6 +25,13 @@ const playball = Playball({
 export const metadata: Metadata = {
   title: 'Zoar Beauty Shop',
   description: 'Catálogo de belleza y cuidado capilar Zoar Beauty Shop.',
+  applicationName: 'Zoar Beauty Shop',
+}
+
+// Color de la barra del navegador en móvil, alineado con la marca.
+export const viewport: Viewport = {
+  themeColor: '#d11fb8',
+  colorScheme: 'light',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

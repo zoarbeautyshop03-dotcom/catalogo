@@ -32,7 +32,7 @@ export default function RedesSociales({
   if (redes.length === 0) return null
 
   return (
-    <div className={variant === 'header' ? 'flex items-center gap-1' : 'flex items-center gap-2.5'}>
+    <div className={variant === 'header' ? 'flex items-center gap-2' : 'flex items-center gap-2.5'}>
       {redes.map((r) => (
         <a
           key={r.key}
@@ -41,12 +41,13 @@ export default function RedesSociales({
           rel="noopener noreferrer"
           aria-label={r.label}
           title={r.label}
-          className={variant === 'header'
-            ? 'flex h-7 w-7 items-center justify-center rounded-full text-lavender-magenta-100/90 transition hover:bg-white/10 hover:text-white sm:h-8 sm:w-8'
-            : 'flex h-9 w-9 items-center justify-center rounded-full bg-lavender-magenta-50 text-lavender-magenta-700 ring-1 ring-lavender-magenta-100 transition hover:bg-lavender-magenta-600 hover:text-white'
-          }
+          className={`relative flex items-center justify-center rounded-full transition-all duration-200 ease-boutique after:absolute after:content-[''] ${
+            variant === 'header'
+              ? 'h-8 w-8 after:-inset-1.5 text-lavender-magenta-100/90 hover:bg-white/15 hover:text-white'
+              : 'h-10 w-10 border border-lavender-magenta-100 bg-white/70 text-lavender-magenta-700 shadow-card after:-inset-1 hover:border-transparent hover:bg-brand-gradient hover:text-white'
+          }`}
         >
-          <span className={variant === 'header' ? 'scale-90 sm:scale-100' : ''}>{r.icono}</span>
+          {r.icono}
         </a>
       ))}
     </div>
@@ -55,7 +56,7 @@ export default function RedesSociales({
 
 function IconoInstagram() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
@@ -65,7 +66,7 @@ function IconoInstagram() {
 
 function IconoFacebook() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M14 9h3V5h-3c-2.2 0-4 1.8-4 4v2H7v4h3v7h4v-7h3l1-4h-4V9c0-.6.4-1 1-1z" />
     </svg>
   )
@@ -73,7 +74,7 @@ function IconoFacebook() {
 
 function IconoTikTok() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M14 3c.4 2.2 2 3.7 4.2 3.9V10c-1.5 0-2.9-.5-4-1.3v6.2c0 3.4-2.8 6-6.1 5.7-2.8-.3-5-2.7-5-5.6 0-3.1 2.5-5.6 5.6-5.6.3 0 .6 0 .9.1v3.3a2.4 2.4 0 1 0 1.7 2.3V3h2.7z" />
     </svg>
   )

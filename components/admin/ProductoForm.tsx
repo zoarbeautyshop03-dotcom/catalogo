@@ -47,11 +47,14 @@ export default function ProductoForm({ producto, categorias, marcas, subcategori
   return (
     <form action={action} className="space-y-6">
       <input type="hidden" name="return_to" value={returnTo} />
-      <section className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-        <h2 className="font-medium text-gray-700">Información básica</h2>
+      <section className="rounded-boutique-lg border border-lavender-magenta-100 bg-white space-y-4 p-5 shadow-card sm:p-6">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Información básica</h2>
+          <div className="hairline-gold mt-3" aria-hidden="true" />
+        </div>
         <Campo label="Nombre" name="nombre" defaultValue={v?.nombre} required />
         <Campo label="Slug (URL)" name="slug" defaultValue={v?.slug} hint="Opcional. Si lo dejas vacío se crea solo desde el nombre. Se limpia automáticamente: sin tildes, espacios ni signos como + & % #." />
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Select label="Categoría" name="categoria_id" defaultValue={v?.categoria_id ?? ''}>
             <option value="">— Sin categoría —</option>
             {categorias.map((c) => (
@@ -77,31 +80,37 @@ export default function ProductoForm({ producto, categorias, marcas, subcategori
             </option>
           ))}
         </Select>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Campo label="SKU" name="sku" defaultValue={v?.sku ?? ''} />
           <Campo label="Código de barras" name="codigo_barras" defaultValue={v?.codigo_barras ?? ''} />
         </div>
       </section>
 
-      <section className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-        <h2 className="font-medium text-gray-700">Precio e inventario</h2>
-        <div className="grid grid-cols-3 gap-4">
+      <section className="rounded-boutique-lg border border-lavender-magenta-100 bg-white space-y-4 p-5 shadow-card sm:p-6">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Precio e inventario</h2>
+          <div className="hairline-gold mt-3" aria-hidden="true" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Campo label="Precio (COP)" name="precio" type="number" defaultValue={v?.precio} required />
           <Campo label="Precio anterior" name="precio_anterior" type="number" defaultValue={v?.precio_anterior ?? ''} />
           <Campo label="Descuento (%)" name="descuento" type="number" defaultValue={v?.descuento ?? ''} />
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Campo label="Costo (privado)" name="costo" type="number" defaultValue={v?.costo ?? ''} />
           <Campo label="Cantidad en stock" name="cantidad_stock" type="number" defaultValue={v?.cantidad_stock ?? 0} />
           <Campo label="Stock mínimo" name="stock_minimo" type="number" defaultValue={v?.stock_minimo ?? 3} />
         </div>
-        <p className="text-xs text-gray-400">
+        <p className="text-xs leading-5 text-gray-400">
           El estado (disponible / últimas unidades / agotado) se calcula solo a partir de estos dos últimos campos.
         </p>
       </section>
 
-      <section className="bg-white rounded-2xl shadow-sm p-5 space-y-4">
-        <h2 className="font-medium text-gray-700">Descripción y detalle</h2>
+      <section className="rounded-boutique-lg border border-lavender-magenta-100 bg-white space-y-4 p-5 shadow-card sm:p-6">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Descripción y detalle</h2>
+          <div className="hairline-gold mt-3" aria-hidden="true" />
+        </div>
         <Campo label="Contenido (ej. 500 ml)" name="contenido" defaultValue={v?.contenido ?? ''} />
         <Textarea label="Descripción corta" name="descripcion_corta" defaultValue={v?.descripcion_corta ?? ''} />
         <Textarea label="Descripción completa" name="descripcion_completa" defaultValue={v?.descripcion_completa ?? ''} />
@@ -110,9 +119,12 @@ export default function ProductoForm({ producto, categorias, marcas, subcategori
         <Textarea label="Advertencias" name="advertencias" defaultValue={v?.advertencias ?? ''} />
       </section>
 
-      <section className="bg-white rounded-2xl shadow-sm p-5 space-y-3">
-        <h2 className="font-medium text-gray-700">Visibilidad</h2>
-        <div className="grid grid-cols-2 gap-2">
+      <section className="rounded-boutique-lg border border-lavender-magenta-100 bg-white space-y-4 p-5 shadow-card sm:p-6">
+        <div>
+          <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Visibilidad</h2>
+          <div className="hairline-gold mt-3" aria-hidden="true" />
+        </div>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <Check label="Destacado" name="destacado" defaultChecked={v?.destacado} />
           <Check label="Nuevo" name="nuevo" defaultChecked={v?.nuevo} />
           <Check label="Más vendido" name="mas_vendido" defaultChecked={v?.mas_vendido} />
@@ -126,7 +138,7 @@ export default function ProductoForm({ producto, categorias, marcas, subcategori
         </Select>
       </section>
 
-      <button type="submit" className="rounded-full bg-fucsia text-white px-6 py-2.5 font-medium">
+      <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-lavender-magenta-700 px-6 py-2.5 font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">
         {producto ? 'Guardar cambios' : 'Crear producto'}
       </button>
     </form>
@@ -150,15 +162,15 @@ function Campo({
 }) {
   return (
     <label className="block text-sm">
-      <span className="text-gray-600">{label}</span>
+      <span className="font-medium text-gray-600">{label}</span>
       <input
         name={name}
         type={type}
         defaultValue={defaultValue ?? ''}
         required={required}
-        className="mt-1 w-full rounded-lg border border-rosa-pastel px-3 py-2"
+        className="mt-1.5 w-full rounded-2xl border border-rosa-pastel bg-white px-3 py-2 text-sm text-gray-700 transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400 focus:outline-none"
       />
-      {hint && <span className="mt-1 block text-xs text-gray-500">{hint}</span>}
+      {hint && <span className="mt-1 block text-xs leading-5 text-gray-500">{hint}</span>}
     </label>
   )
 }
@@ -166,12 +178,12 @@ function Campo({
 function Textarea({ label, name, defaultValue }: { label: string; name: string; defaultValue?: string }) {
   return (
     <label className="block text-sm">
-      <span className="text-gray-600">{label}</span>
+      <span className="font-medium text-gray-600">{label}</span>
       <textarea
         name={name}
         defaultValue={defaultValue}
         rows={3}
-        className="mt-1 w-full rounded-lg border border-rosa-pastel px-3 py-2"
+        className="mt-1.5 w-full rounded-2xl border border-rosa-pastel bg-white px-3 py-2 text-sm text-gray-700 transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400 focus:outline-none"
       />
     </label>
   )
@@ -190,8 +202,8 @@ function Select({
 }) {
   return (
     <label className="block text-sm">
-      <span className="text-gray-600">{label}</span>
-      <select name={name} defaultValue={defaultValue} className="mt-1 w-full rounded-lg border border-rosa-pastel px-3 py-2">
+      <span className="font-medium text-gray-600">{label}</span>
+      <select name={name} defaultValue={defaultValue} className="mt-1.5 w-full rounded-2xl border border-rosa-pastel bg-white px-3 py-2 text-sm text-gray-700 transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400 focus:outline-none">
         {children}
       </select>
     </label>
@@ -200,8 +212,8 @@ function Select({
 
 function Check({ label, name, defaultChecked }: { label: string; name: string; defaultChecked?: boolean }) {
   return (
-    <label className="flex items-center gap-2 text-sm text-gray-600">
-      <input type="checkbox" name={name} defaultChecked={defaultChecked} />
+    <label className="flex items-center gap-2 rounded-2xl bg-gray-50 px-3 py-2.5 text-sm text-gray-600">
+      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="h-4 w-4 accent-lavender-magenta-600" />
       {label}
     </label>
   )

@@ -228,7 +228,7 @@ input:focus-visible,
   }
 
   .catalog-chip {
-    @apply inline-flex items-center rounded-full font-semibold shadow-sm ring-1;
+    @apply inline-flex items-center rounded-full font-semibold shadow-sm ring-1 ring-lavender-magenta-100;
   }
 
   .scroll-brand {
@@ -646,3 +646,308 @@ main:focus-visible {
 [role='dialog']:focus-visible {
   outline: none !important;
 }
+
+/* =========================================================================
+   REDISENO EDITORIAL 2026 - "Boutique Zoar"
+   -------------------------------------------------------------------------
+   Capa de refinamiento escrita al final del archivo para tomar prioridad por
+   orden de aparicion (misma especificidad). Conserva la paleta original
+   rosa/magenta/dorado y eleva: jerarquia tipografica, ritmo, radios, sombras,
+   filetes, movimiento y el acabado general tipo boutique editorial.
+   ========================================================================= */
+
+:root {
+  --background: 255 246 251;
+  --border: 253 236 251;
+  --muted-foreground: 107 90 106;
+  --zoar-radius: 1.75rem;
+  --zoar-radius-lg: 2.25rem;
+  --zoar-hairline: rgba(183, 139, 60, 0.55);
+  --zoar-border: rgba(219, 30, 177, 0.14);
+  --zoar-shadow-sm: 0 1px 2px rgba(81, 1, 65, 0.04), 0 12px 28px -16px rgba(81, 1, 65, 0.18);
+  --zoar-shadow-lg: 0 2px 6px rgba(81, 1, 65, 0.05), 0 34px 64px -24px rgba(149, 19, 116, 0.30);
+  --zoar-ink: #2b1d29;
+  --zoar-plum: #510141;
+  --zoar-gold: #b78b3c;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 70% 50% at 100% 0%, rgba(255, 148, 244, 0.16), transparent 62%),
+    radial-gradient(ellipse 58% 48% at 0% 28%, rgba(255, 206, 252, 0.42), transparent 66%),
+    #fff6fb;
+  color: var(--zoar-ink);
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+.fondo-tienda {
+  background:
+    radial-gradient(ellipse 60% 42% at 100% 2%, rgba(255, 148, 244, 0.30), transparent 68%),
+    radial-gradient(ellipse 48% 40% at 0% 40%, rgba(255, 206, 252, 0.55), transparent 70%),
+    radial-gradient(ellipse 42% 30% at 88% 84%, rgba(232, 207, 154, 0.30), transparent 72%),
+    linear-gradient(180deg, #fff4fb 0%, #ffe9fc 55%, #fff1fb 100%);
+}
+
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+* { scrollbar-width: thin; scrollbar-color: rgba(219, 30, 177, 0.35) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(219, 30, 177, 0.45), rgba(81, 1, 65, 0.5));
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background-color: rgba(149, 19, 116, 0.6); }
+
+/* ---------- Primitivas de seccion ---------- */
+.section-shell { max-width: 82rem; }
+
+.eyebrow {
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #93157d;
+}
+.eyebrow::before {
+  width: 1.75rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(183, 139, 60, 0.85));
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 3.4vw, 2.9rem);
+  letter-spacing: -0.03em;
+  color: #3a0f30;
+}
+.section-copy {
+  color: #6b5a6a;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.hairline-gold {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(183, 139, 60, 0.55) 18%, rgba(183, 139, 60, 0.55) 82%, transparent);
+}
+.hairline-magenta {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(219, 30, 177, 0.32), transparent);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: 0 20px 50px -26px rgba(81, 1, 65, 0.38);
+}
+
+/* ---------- Tarjetas ---------- */
+.premium-card {
+  border-radius: var(--zoar-radius-lg);
+  background: linear-gradient(180deg, #ffffff 0%, #fffafd 100%);
+  border: 1px solid var(--zoar-border);
+  box-shadow: var(--zoar-shadow-sm);
+}
+
+.card-editorial {
+  border-radius: var(--zoar-radius-lg);
+  background: #ffffff;
+  border: 1px solid var(--zoar-border);
+  box-shadow: var(--zoar-shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card-editorial:hover {
+  transform: translateY(-4px);
+  border-color: rgba(183, 139, 60, 0.5);
+  box-shadow: var(--zoar-shadow-lg);
+}
+
+/* ---------- Tarjeta de producto ---------- */
+.catalog-product-card {
+  border-radius: var(--zoar-radius);
+  border: 1px solid rgba(219, 30, 177, 0.13);
+  background: linear-gradient(180deg, #ffffff 0%, #fff9fd 100%);
+  box-shadow: var(--zoar-shadow-sm);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.catalog-product-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(219, 30, 177, 0.34);
+  box-shadow: 0 2px 6px rgba(81, 1, 65, 0.06), 0 34px 62px -24px rgba(149, 19, 116, 0.30);
+}
+.catalog-product-media {
+  background:
+    radial-gradient(ellipse at 50% 18%, rgba(255, 255, 255, 0.96), transparent 62%),
+    linear-gradient(150deg, #fff9fe 0%, #ffe7fc 55%, #fff2fb 100%);
+}
+.catalog-product-hover { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.catalog-product-grid { gap: 1.1rem; }
+@media (min-width: 640px) { .catalog-product-grid { gap: 1.35rem; } }
+@media (min-width: 1024px) { .catalog-product-grid { gap: 1.6rem; } }
+
+.catalog-status-pill,
+.catalog-active-filter {
+  border-radius: 9999px;
+  border: 1px solid rgba(219, 30, 177, 0.18);
+  background: rgba(255, 255, 255, 0.86);
+  color: #93157d;
+  box-shadow: 0 6px 16px -8px rgba(81, 1, 65, 0.30);
+}
+
+/* ---------- Chips y filtros ---------- */
+.catalog-chip {
+  border-radius: 9999px;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+.catalog-chip-muted {
+  border: 1px solid rgba(219, 30, 177, 0.14);
+  background: rgba(255, 255, 255, 0.9);
+  color: #5a4859;
+}
+.catalog-chip-muted:hover {
+  transform: translateY(-2px);
+  border-color: rgba(219, 30, 177, 0.32);
+  background: #fff4fe;
+  color: #93157d;
+  box-shadow: 0 12px 24px -12px rgba(149, 19, 116, 0.40);
+}
+.catalog-chip-active {
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, #db1eb1, #951374);
+  color: #ffffff;
+  box-shadow: 0 12px 26px -10px rgba(219, 30, 177, 0.55);
+}
+.catalog-brand-chip {
+  border-radius: 9999px;
+  border: 1px solid rgba(219, 30, 177, 0.14);
+}
+.catalog-brand-chip-active {
+  background: linear-gradient(135deg, #510141, #93157d);
+  border-color: transparent;
+  box-shadow: 0 12px 26px -12px rgba(81, 1, 65, 0.50);
+}
+.catalog-filter-card {
+  border-radius: var(--zoar-radius);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 24px 60px -28px rgba(81, 1, 65, 0.35);
+}
+.catalog-hero {
+  border-radius: var(--zoar-radius-lg);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.96), transparent 36%),
+    radial-gradient(ellipse at 88% 100%, rgba(232, 207, 154, 0.28), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 254, 0.96) 50%, rgba(255, 231, 254, 0.92));
+  box-shadow: 0 1px 2px rgba(81, 1, 65, 0.05), 0 34px 74px -34px rgba(81, 1, 65, 0.34);
+}
+
+/* ---------- Portada (hero) ---------- */
+.zoar-hero {
+  border-radius: var(--zoar-radius-lg);
+  border: 1px solid rgba(219, 30, 177, 0.16);
+  box-shadow: 0 1px 2px rgba(81, 1, 65, 0.05), 0 40px 90px -40px rgba(81, 1, 65, 0.40);
+  background-color: #fff3fd;
+  overflow: hidden;
+}
+.zoar-hero-wash {
+  background:
+    linear-gradient(105deg, rgba(255, 243, 253, 0.98) 0%, rgba(255, 243, 253, 0.90) 42%, rgba(255, 231, 252, 0.35) 100%),
+    radial-gradient(ellipse at 80% 46%, rgba(255, 110, 226, 0.26), transparent 46%),
+    radial-gradient(ellipse at 92% 90%, rgba(232, 207, 154, 0.35), transparent 55%);
+}
+.zoar-orb { filter: blur(6px); }
+.zoar-orb-one {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 110, 226, 0.22), transparent 70%);
+}
+.zoar-orb-two {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(219, 30, 177, 0.16), transparent 70%);
+}
+.zoar-hero-emphasis {
+  color: #b6158f;
+  background-image: linear-gradient(transparent 74%, rgba(183, 139, 60, 0.35) 74%, rgba(183, 139, 60, 0.35) 90%, transparent 90%);
+  background-repeat: no-repeat;
+}
+.zoar-button-primary {
+  background: linear-gradient(135deg, #db1eb1 0%, #951374 62%, #510141 100%);
+  box-shadow: 0 14px 30px -10px rgba(149, 19, 116, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.zoar-button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -12px rgba(149, 19, 116, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.zoar-hero-note {
+  border-radius: var(--zoar-radius);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 30px 70px -24px rgba(81, 1, 65, 0.40);
+}
+
+/* ---------- Paginas legales ---------- */
+.legal-texto h2 { font-size: 1.4rem; color: #3a0f30; letter-spacing: -0.01em; }
+.legal-texto h3 { color: #93157d; }
+.legal-texto p,
+.legal-texto li { color: #4b3a49; line-height: 1.8; }
+.legal-texto a { color: #b6158f; }
+
+/* ---------- Movimiento ---------- */
+@keyframes zoar-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes zoar-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.reveal-up { animation: zoar-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-float-soft { animation: zoar-float 7s ease-in-out infinite; }
+
+@supports (animation-timeline: view()) {
+  .reveal-on-scroll {
+    animation: zoar-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-on-scroll,
+  .animate-float-soft {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .card-editorial:hover,
+  .catalog-product-card:hover,
+  .zoar-button-primary:hover,
+  .catalog-chip-muted:hover {
+    transform: none;
+  }
+}
+
+/* ---------- Panel de filtros: secciones plegables ---------- */
+/* Cada grupo (<details>) se ve como una fila con título y un chevron que gira
+   al abrirse. Sin marcador nativo y con foco visible en el resumen. */
+.filtro-seccion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+.filtro-seccion > summary::-webkit-details-marker { display: none; }
+.filtro-seccion > summary::marker { content: ''; }
+.filtro-seccion > summary:focus-visible {
+  outline: 3px solid #781765;
+  outline-offset: 3px;
+  border-radius: 1rem;
+}
+.filtro-chevron { transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
+.filtro-seccion[open] .filtro-chevron { transform: rotate(90deg); }

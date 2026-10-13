@@ -2,12 +2,15 @@ import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabase/server'
 import { crearMarca, actualizarMarca, eliminarMarca, aplicarDescuentoMarca, quitarDescuentoMarca } from '@/lib/actions/marcas'
 import DeleteButton from '@/components/admin/DeleteButton'
+import { Icono } from '@/components/admin/Iconos'
 
 export const dynamic = 'force-dynamic'
 
 type SearchParams = { q?: string; page?: string }
 
 const PAGE_SIZE = 25
+
+const INPUT = 'rounded-2xl border border-rosa-pastel bg-white px-3 py-2 text-sm text-gray-700 transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400 focus:outline-none'
 
 export default async function MarcasPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = createServerSupabase()
@@ -45,14 +48,20 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
 
   return (
     <div>
-      <h1 className="font-display text-2xl mb-6">Marcas</h1>
+      <header className="mb-6">
+        <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700"><span aria-hidden="true" className="h-px w-6 bg-dorado" />Catálogo</p>
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-lavender-magenta-950">Marcas</h1>
+        <p className="mt-1 max-w-xl text-sm leading-6 text-gray-500">Administra proveedores y aplica descuentos a toda una marca.</p>
+        <div className="hairline-gold mt-5" aria-hidden="true" />
+      </header>
 
-      <section className="bg-white rounded-2xl shadow-sm p-5 mb-6">
-        <h2 className="font-medium text-gray-700 mb-3">Nueva marca</h2>
+      <section className="mb-6 rounded-boutique-lg border border-lavender-magenta-100 bg-white p-5 shadow-card sm:p-6">
+        <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Nueva marca</h2>
+        <div className="hairline-gold mt-3 mb-4" aria-hidden="true" />
         <form action={crearMarca} className="flex flex-wrap gap-2">
-          <input name="nombre" placeholder="Nombre" required className="rounded-lg border border-rosa-pastel px-3 py-2 text-sm flex-1 min-w-[160px]" />
-          <input name="slug" placeholder="slug" required className="rounded-lg border border-rosa-pastel px-3 py-2 text-sm flex-1 min-w-[160px]" />
-          <button className="rounded-lg bg-fucsia text-white px-4 py-2 text-sm">Crear</button>
+          <input name="nombre" placeholder="Nombre" required className={`${INPUT} flex-1 min-w-[160px]`} />
+          <input name="slug" placeholder="slug" required className={`${INPUT} flex-1 min-w-[160px]`} />
+          <button className="rounded-full bg-lavender-magenta-700 px-4 py-2 text-sm font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">Crear</button>
         </form>
       </section>
 
@@ -62,7 +71,7 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
           name="q"
           defaultValue={searchParams.q}
           placeholder="Buscar por nombre..."
-          className="w-full max-w-sm rounded-full border border-rosa-pastel px-4 py-2 text-sm"
+          className={`${INPUT} w-full max-w-sm rounded-full`}
         />
       </form>
 
@@ -73,29 +82,29 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
         {totalPages > 1 && <span>Página {currentPage} de {totalPages}</span>}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm divide-y divide-rosa-pastel/40">
+      <div className="divide-y divide-gray-100 rounded-boutique-lg border border-lavender-magenta-100 bg-white shadow-card">
         {marcas.map((m) => {
           const actualizarConId = actualizarMarca.bind(null, m.id)
           const eliminarConId = eliminarMarca.bind(null, m.id)
           const aplicarDescuentoConId = aplicarDescuentoMarca.bind(null, m.id)
           const quitarDescuentoConId = quitarDescuentoMarca.bind(null, m.id)
           return (
-            <div key={m.id} className="flex flex-col gap-2 p-4">
+            <div key={m.id} className="flex flex-col gap-3 p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <form action={actualizarConId} className="flex flex-wrap items-center gap-2 flex-1">
-                  <input name="nombre" defaultValue={m.nombre} className="rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm flex-1 min-w-[140px]" />
-                  <input name="slug" defaultValue={m.slug} className="rounded-lg border border-rosa-pastel px-3 py-1.5 text-sm flex-1 min-w-[140px]" />
-                  <label className="flex items-center gap-1 text-xs text-gray-600">
-                    <input type="checkbox" name="activa" defaultChecked={m.activa} /> Activa
+                  <input name="nombre" defaultValue={m.nombre} className={`${INPUT} flex-1 min-w-[140px]`} />
+                  <input name="slug" defaultValue={m.slug} className={`${INPUT} flex-1 min-w-[140px]`} />
+                  <label className="flex items-center gap-1.5 text-xs text-gray-600">
+                    <input type="checkbox" name="activa" defaultChecked={m.activa} className="h-4 w-4 accent-lavender-magenta-600" /> Activa
                   </label>
-                  <button className="text-xs text-fucsia hover:underline">Guardar</button>
+                  <button className="text-xs font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Guardar</button>
                 </form>
                 <form action={eliminarConId}>
                   <DeleteButton />
                 </form>
               </div>
 
-              <div className="flex flex-wrap items-center gap-2 rounded-lg bg-rosa-pastel/20 px-3 py-2">
+              <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-gray-50 px-3 py-2.5">
                 <span className="text-xs font-medium text-gray-500">Descuento para toda la marca:</span>
                 <form action={aplicarDescuentoConId} className="flex items-center gap-1.5">
                   <input
@@ -105,12 +114,12 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
                     max={99}
                     placeholder="%"
                     required
-                    className="w-16 rounded-lg border border-rosa-pastel px-2 py-1 text-sm"
+                    className={`${INPUT} w-16 px-2 py-1`}
                   />
-                  <button className="rounded-lg bg-fucsia px-3 py-1 text-xs font-medium text-white">Aplicar a todos</button>
+                  <button className="rounded-full bg-lavender-magenta-700 px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800">Aplicar a todos</button>
                 </form>
                 <form action={quitarDescuentoConId}>
-                  <button className="text-xs text-gray-500 hover:text-fucsia hover:underline">Quitar descuento</button>
+                  <button className="text-xs text-gray-500 transition-colors duration-200 ease-boutique hover:text-lavender-magenta-700 hover:underline">Quitar descuento</button>
                 </form>
               </div>
             </div>
@@ -124,12 +133,12 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
           {currentPage > 1 ? (
             <Link
               href={buildPageUrl(currentPage - 1)}
-              className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia transition"
+              className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700"
             >
-              ← Anterior
+              <Icono nombre="flechaIzq" className="h-4 w-4" /> Anterior
             </Link>
           ) : (
-            <span className="rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">← Anterior</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300"><Icono nombre="flechaIzq" className="h-4 w-4" /> Anterior</span>
           )}
 
           <div className="flex items-center gap-1">
@@ -144,10 +153,10 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
                     <Link
                       href={buildPageUrl(page)}
                       aria-current={page === currentPage ? 'page' : undefined}
-                      className={`min-w-9 rounded-full px-3 py-2 text-sm text-center transition ${
+                      className={`min-w-9 rounded-full px-3 py-2 text-sm text-center transition-colors duration-200 ease-boutique ${
                         page === currentPage
-                          ? 'bg-fucsia text-white'
-                          : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+                          ? 'bg-lavender-magenta-700 text-white'
+                          : 'bg-white border border-rosa-pastel text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'
                       }`}
                     >
                       {page}
@@ -160,12 +169,12 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
           {currentPage < totalPages ? (
             <Link
               href={buildPageUrl(currentPage + 1)}
-              className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia transition"
+              className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700"
             >
-              Siguiente →
+              Siguiente <Icono nombre="flecha" className="h-4 w-4" />
             </Link>
           ) : (
-            <span className="rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">Siguiente →</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">Siguiente <Icono nombre="flecha" className="h-4 w-4" /></span>
           )}
         </nav>
       )}

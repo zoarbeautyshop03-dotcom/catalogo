@@ -25,20 +25,33 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
   if (producto.mas_vendido) etiquetas.push({ texto: 'Favorito', variante: 'outline' })
 
   return (
-    <article className="catalog-product-card group relative overflow-hidden rounded-3xl bg-white ring-1 ring-lavender-magenta-200/80">
+    <article className="catalog-product-card group relative overflow-hidden">
       <Link href={rutaProducto(producto.slug)} className="block h-full">
-        <div className="catalog-product-media relative aspect-[0.96] overflow-hidden bg-gradient-to-b from-lavender-magenta-50 to-lavender-magenta-100/70">
+        <div className="catalog-product-media relative aspect-[0.8] overflow-hidden">
           {imagenUrl ? (
             <Image
               src={imagenUrl}
               alt={producto.nombre}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="relative z-10 object-contain p-4 transition duration-500 ease-out group-hover:scale-[1.04] sm:p-5"
+              className="relative z-10 object-contain p-4 transition duration-500 ease-boutique group-hover:scale-[1.06] sm:p-5"
             />
           ) : (
-            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-lavender-magenta-700">
-              <span className="text-4xl">✦</span>
+            <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-lavender-magenta-400">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-8 w-8"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+              </svg>
               <span className="text-xs font-medium text-gray-500">Foto pendiente</span>
             </div>
           )}
@@ -51,6 +64,25 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
             </div>
           )}
 
+          <div
+            aria-hidden="true"
+            className="catalog-product-hover pointer-events-none absolute inset-x-3 bottom-3 z-20 flex translate-y-1.5 items-center justify-center gap-1.5 rounded-full bg-white/90 py-2 text-[11px] font-bold uppercase tracking-[.14em] text-lavender-magenta-700 shadow-sm ring-1 ring-lavender-magenta-100"
+          >
+            Ver producto
+            <svg
+              viewBox="0 0 24 24"
+              className="h-3.5 w-3.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m13 6 6 6-6 6" />
+            </svg>
+          </div>
+
           {agotado && (
             <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/80">
               <Badge variant="dark" className="px-4 py-2 text-xs shadow-lg">Agotado</Badge>
@@ -58,11 +90,13 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
           )}
         </div>
 
-        <div className="flex min-h-[132px] flex-col p-4 sm:p-5">
+        <div className="flex min-h-[152px] flex-col p-4 sm:p-5">
           {marcaNombre && (
-            <p className="truncate text-xs font-medium text-lavender-magenta-700">{marcaNombre}</p>
+            <p className="truncate text-[11px] font-semibold uppercase tracking-[.16em] text-lavender-magenta-600">
+              {marcaNombre}
+            </p>
           )}
-          <h3 className={`line-clamp-2 text-sm font-semibold leading-snug text-gray-900 sm:text-[15px] ${marcaNombre ? 'mt-1' : ''}`}>
+          <h3 className={`line-clamp-2 font-display text-[15px] font-semibold leading-snug text-gray-900 sm:text-base ${marcaNombre ? 'mt-1.5' : ''}`}>
             {producto.nombre}
           </h3>
 
@@ -80,12 +114,12 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
               </div>
             )}
             <div className="flex items-end justify-between gap-2">
-              <span className={`block text-lg font-bold tracking-tight sm:text-xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
+              <span className={`block text-xl font-extrabold tracking-tight sm:text-2xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
                 {formatPrecio(producto.precio, producto.moneda)}
               </span>
               {ultimasUnidades && (
-                <span className="mb-1 inline-flex shrink-0 items-center gap-1.5 text-[11px] font-semibold text-amber-700">
-                  <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                <span className="catalog-status-pill mb-1 shrink-0 gap-1.5">
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                   Últimas unidades
                 </span>
               )}

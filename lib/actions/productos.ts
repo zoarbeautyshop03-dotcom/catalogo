@@ -35,8 +35,8 @@ function extraerPayload(formData: FormData) {
     nuevo: formData.get('nuevo') === 'on',
     mas_vendido: formData.get('mas_vendido') === 'on',
     oferta: formData.get('oferta') === 'on',
-    whatsapp_activo: formData.get('whatsapp_activo') !== 'off',
-    activo: formData.get('activo') !== 'off',
+    whatsapp_activo: formData.get('whatsapp_activo') === 'on',
+    activo: formData.get('activo') === 'on',
     estado_publicacion: String(formData.get('estado_publicacion') ?? 'borrador'),
   }
 }

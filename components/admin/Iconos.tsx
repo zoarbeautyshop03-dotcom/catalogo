@@ -20,7 +20,21 @@ const TRAZOS: Record<string, ReactNode> = {
   cerrar: <path d="m7 7 10 10M17 7 7 17" />,
   salir: <><path d="M10 4H5.5A1.5 1.5 0 0 0 4 5.5v13A1.5 1.5 0 0 0 5.5 20H10" /><path d="m16 8 4 4-4 4M20 12H9" /></>,
   mas: <path d="M12 5v14M5 12h14" />,
+  menos: <path d="M5 12h14" />,
   flecha: <path d="M5 12h14M13 6l6 6-6 6" />,
+  flechaIzq: <path d="M19 12H5M11 6l-6 6 6 6" />,
+  chevronIzq: <path d="m15 18-6-6 6-6" />,
+  chevronDer: <path d="m9 18 6-6-6-6" />,
+  buscar: <><circle cx="11" cy="11" r="7" /><path d="m20.5 20.5-3.6-3.6" /></>,
+  check: <path d="m5 13 4 4L19 7" />,
+  descargar: <><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></>,
+  importar: <><path d="M12 15V3" /><path d="m7 8 5-5 5 5" /><path d="M5 21h14" /></>,
+  intercambio: <><path d="M8 4v13M8 17l-3-3M8 17l3-3" /><path d="M16 20V7M16 7l3 3M16 7l-3 3" /></>,
+  hoja: <><path d="M6 3h9l4 4v14H6Z" /><path d="M15 3v4h4" /><path d="M9 13h6M9 17h6" /></>,
+  etiqueta: <><path d="M4 7V4h3l11 11-3 3Z" /><circle cx="7" cy="7" r="0.8" /></>,
+  estrella: <path d="m12 4 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 9.7l5.4-.8Z" />,
+  papelera: <><path d="M4 7h16" /><path d="M9 7V4.5h6V7" /><path d="M6 7v13h12V7" /><path d="M10 11v5M14 11v5" /></>,
+  agotado: <><circle cx="12" cy="12" r="8" /><path d="m6.4 6.4 11.2 11.2" /></>,
 }
 
 export type NombreIcono = keyof typeof TRAZOS

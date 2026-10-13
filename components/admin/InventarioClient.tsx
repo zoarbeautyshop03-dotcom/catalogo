@@ -12,6 +12,7 @@ import {
   type ResultadoMovimiento,
   type ResultadoPrevisualizacion,
 } from '@/lib/actions/inventario'
+import { Icono, type NombreIcono } from './Iconos'
 
 export type InventarioProducto = {
   id: string
@@ -46,6 +47,8 @@ function formatearFecha(iso: string) {
   const dos = (n: number) => String(n).padStart(2, '0')
   return `${dos(d.getUTCDate())}/${dos(d.getUTCMonth() + 1)}/${d.getUTCFullYear()} ${dos(d.getUTCHours())}:${dos(d.getUTCMinutes())}`
 }
+
+const CAMPO = 'rounded-2xl border border-rosa-pastel bg-white px-4 py-3 text-sm text-gray-700 outline-none transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400'
 
 export default function InventarioClient({
   productos,
@@ -148,48 +151,58 @@ export default function InventarioClient({
   return (
     <div className="space-y-6 pb-12">
       <header>
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700">
+          <span aria-hidden="true" className="h-px w-6 bg-dorado" />
+          Control de existencias
+        </p>
+        <div className="mt-3 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <span className="eyebrow">Control de existencias</span>
-            <h1 className="mt-3 font-display text-3xl font-bold text-lavender-magenta-950">Inventario</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-500">
+            <h1 className="font-display text-3xl font-bold tracking-tight text-lavender-magenta-950">Inventario</h1>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
               Actualiza cantidades en segundos, aplica movimientos a varios productos y conserva Excel para cargas grandes.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href="/admin/inventario/plantilla" className="rounded-full border border-fucsia bg-white px-4 py-2 text-sm font-semibold text-fucsia hover:bg-rosa-pastel/30">⬇️ Excel</a>
-            <a href="#importar" className="rounded-full bg-fucsia px-4 py-2 text-sm font-semibold text-white shadow-soft-pink hover:-translate-y-0.5">📊 Importar</a>
+            <a href="/admin/inventario/plantilla" className="inline-flex items-center gap-2 rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50">
+              <Icono nombre="descargar" className="h-4 w-4" />
+              Excel
+            </a>
+            <a href="#importar" className="inline-flex items-center gap-2 rounded-full bg-lavender-magenta-700 px-4 py-2 text-sm font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">
+              <Icono nombre="importar" className="h-4 w-4" />
+              Importar
+            </a>
           </div>
         </div>
+        <div className="hairline-gold mt-5" aria-hidden="true" />
       </header>
 
       {mensajeOk && (
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700 ring-1 ring-green-100">
-          <span>✓ {mensajeOk}</span>
-          <button type="button" onClick={() => setMensajeOk('')} className="text-xs font-semibold hover:underline">Cerrar</button>
+          <span className="flex items-center gap-2"><Icono nombre="check" className="h-4 w-4 shrink-0" />{mensajeOk}</span>
+          <button type="button" onClick={() => setMensajeOk('')} className="text-xs font-semibold transition-colors duration-200 ease-boutique hover:underline">Cerrar</button>
         </div>
       )}
-      {errorInicial && <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">No pude cargar el inventario: {errorInicial}</div>}
+      {errorInicial && <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600 ring-1 ring-red-100">No pude cargar el inventario: {errorInicial}</div>}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Resumen label="Productos" value={resumen.total} icon="📦" />
-        <Resumen label="Disponibles" value={resumen.disponibles} icon="🟢" />
-        <Resumen label="Bajo mínimo" value={resumen.bajos} icon="⚠️" />
-        <Resumen label="Agotados" value={resumen.agotados} icon="🔴" />
+        <Resumen label="Productos" value={resumen.total} icono="productos" />
+        <Resumen label="Disponibles" value={resumen.disponibles} icono="check" />
+        <Resumen label="Bajo mínimo" value={resumen.bajos} icono="alerta" />
+        <Resumen label="Agotados" value={resumen.agotados} icono="agotado" />
       </div>
 
-      <section className="premium-card p-4 sm:p-5">
+      <section className="rounded-boutique-lg border border-lavender-magenta-100 bg-white p-4 shadow-card sm:p-5">
         <div className="grid gap-3 lg:grid-cols-[minmax(280px,1fr)_180px_180px]">
           <label className="relative block">
             <span className="sr-only">Buscar</span>
-            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">🔎</span>
-            <input value={busqueda} onChange={(e) => { setBusqueda(e.target.value); setPagina(1) }} placeholder="Buscar nombre, SKU, código o slug..." className="w-full rounded-2xl border border-rosa-pastel bg-white py-3 pl-11 pr-4 text-sm text-gray-700 outline-none focus:border-fucsia" />
+            <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><Icono nombre="buscar" className="h-4 w-4" /></span>
+            <input value={busqueda} onChange={(e) => { setBusqueda(e.target.value); setPagina(1) }} placeholder="Buscar nombre, SKU, código o slug..." className={`w-full ${CAMPO} pl-11 pr-4`} />
           </label>
-          <select value={marca} onChange={(e) => { setMarca(e.target.value); setPagina(1) }} className="rounded-2xl border border-rosa-pastel bg-white px-4 py-3 text-sm text-gray-600 outline-none focus:border-fucsia">
+          <select value={marca} onChange={(e) => { setMarca(e.target.value); setPagina(1) }} className={`${CAMPO} text-gray-600`}>
             <option value="">Todas las marcas</option>
             {marcas.map((m) => <option key={m.id} value={m.id}>{m.nombre}</option>)}
           </select>
-          <select value={categoria} onChange={(e) => { setCategoria(e.target.value); setPagina(1) }} className="rounded-2xl border border-rosa-pastel bg-white px-4 py-3 text-sm text-gray-600 outline-none focus:border-fucsia">
+          <select value={categoria} onChange={(e) => { setCategoria(e.target.value); setPagina(1) }} className={`${CAMPO} text-gray-600`}>
             <option value="">Todas las categorías</option>
             {categorias.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
           </select>
@@ -204,7 +217,7 @@ export default function InventarioClient({
       </section>
 
       {seleccionados.size > 0 && (
-        <section className="rounded-[28px] bg-lavender-magenta-950 p-4 text-white shadow-soft-pink sm:p-5">
+        <section className="rounded-boutique bg-lavender-magenta-950 p-4 text-white shadow-soft-pink sm:p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-lavender-magenta-200">Acciones masivas</p>
@@ -237,7 +250,7 @@ export default function InventarioClient({
                 </div>
                 <PriceButton />
               </form>
-              <button type="button" onClick={() => setSeleccionados(new Set())} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm text-white hover:bg-white/10">Cancelar</button>
+              <button type="button" onClick={() => setSeleccionados(new Set())} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm text-white transition-colors duration-200 ease-boutique hover:bg-white/10">Cancelar</button>
             </div>
           </div>
           {massState.error && <p className="mt-3 text-sm text-red-200">{massState.error}</p>}
@@ -248,23 +261,23 @@ export default function InventarioClient({
       {tieneCambios && (
         <section className="sticky top-[4.25rem] z-20 rounded-2xl bg-white/95 p-3 shadow-xl ring-1 ring-lavender-magenta-100 backdrop-blur sm:p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div><strong className="text-fucsia">{Object.keys(borradores).length}</strong> cambios pendientes de guardar.</div>
+            <div><strong className="text-lavender-magenta-700">{Object.keys(borradores).length}</strong> cambios pendientes de guardar.</div>
             <div className="flex gap-2">
-              <button type="button" onClick={descartarCambios} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600">Descartar</button>
+              <button type="button" onClick={descartarCambios} className="rounded-full border border-gray-200 px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:bg-gray-50">Descartar</button>
               <GuardarCambios cambios={cambiosRapidos} onGuardado={() => { setBorradores({}); setMensajeOk('Stock guardado correctamente.') }} />
             </div>
           </div>
         </section>
       )}
 
-      <section className="premium-card overflow-hidden">
-        <div className="flex flex-col gap-2 border-b border-rosa-pastel/50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div><h2 className="font-semibold text-gray-800">Existencias</h2><p className="text-xs text-gray-400">Mostrando {filtrados.length ? (paginaSegura - 1) * PAGE_SIZE + 1 : 0}-{Math.min(paginaSegura * PAGE_SIZE, filtrados.length)} de {filtrados.length}</p></div>
-          <label className="flex items-center gap-2 text-xs text-gray-500"><input type="checkbox" checked={todosVisibles} onChange={(e) => seleccionarVisible(e.target.checked)} className="h-4 w-4 accent-fucsia" /> Seleccionar página</label>
+      <section className="overflow-hidden rounded-boutique-lg border border-lavender-magenta-100 bg-white shadow-card">
+        <div className="flex flex-col gap-2 border-b border-gray-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div><h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Existencias</h2><p className="text-xs text-gray-400">Mostrando {filtrados.length ? (paginaSegura - 1) * PAGE_SIZE + 1 : 0}-{Math.min(paginaSegura * PAGE_SIZE, filtrados.length)} de {filtrados.length}</p></div>
+          <label className="flex items-center gap-2 text-xs text-gray-500"><input type="checkbox" checked={todosVisibles} onChange={(e) => seleccionarVisible(e.target.checked)} className="h-4 w-4 accent-lavender-magenta-600" /> Seleccionar página</label>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[820px] text-sm">
-            <thead className="bg-rosa-pastel/30 text-left text-xs uppercase tracking-wide text-gray-500">
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
               <tr><th className="px-4 py-3 w-10"></th><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Mínimo</th><th className="px-4 py-3">Estado</th><th className="px-4 py-3 text-right">Acción</th></tr>
             </thead>
             <tbody>
@@ -277,17 +290,22 @@ export default function InventarioClient({
       </section>
 
       {movimientos.length > 0 && (
-        <section id="historial" className="premium-card overflow-hidden">
-          <div className="border-b border-rosa-pastel/50 px-5 py-4"><h2 className="font-semibold text-gray-800">Últimos movimientos</h2><p className="mt-1 text-xs text-gray-400">Historial reciente de entradas, salidas y ajustes.</p></div>
-          <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-sm"><thead className="bg-rosa-pastel/30 text-left text-xs uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Producto</th><th className="px-4 py-3">Movimiento</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Motivo</th></tr></thead><tbody>{movimientos.map((m) => <tr key={m.id} className="border-t border-rosa-pastel/40"><td className="px-4 py-3 text-xs text-gray-500">{formatearFecha(m.creado_en)}</td><td className="px-4 py-3 font-medium text-gray-700">{m.productos?.nombre || 'Producto'}</td><td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${m.tipo === 'entrada' ? 'bg-green-50 text-green-700' : m.tipo === 'salida' ? 'bg-red-50 text-red-600' : 'bg-lavender-magenta-50 text-lavender-magenta-700'}`}>{m.tipo === 'entrada' ? '+' : m.tipo === 'salida' ? '−' : '↕'} {Math.abs(m.cantidad_movimiento)}</span></td><td className="px-4 py-3 text-gray-600">{m.cantidad_anterior} → <strong>{m.cantidad_nueva}</strong></td><td className="px-4 py-3 text-xs text-gray-500">{m.motivo || '—'}</td></tr>)}</tbody></table></div>
+        <section id="historial" className="rounded-boutique-lg border border-lavender-magenta-100 bg-white shadow-card overflow-hidden">
+          <div className="border-b border-gray-100 px-5 py-4"><h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Últimos movimientos</h2><p className="mt-1 text-xs text-gray-400">Historial reciente de entradas, salidas y ajustes.</p></div>
+          <div className="overflow-x-auto"><table className="w-full min-w-[720px] text-sm"><thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Producto</th><th className="px-4 py-3">Movimiento</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Motivo</th></tr></thead><tbody>{movimientos.map((m) => <tr key={m.id} className="border-t border-gray-100"><td className="px-4 py-3 text-xs text-gray-500">{formatearFecha(m.creado_en)}</td><td className="px-4 py-3 font-medium text-gray-700">{m.productos?.nombre || 'Producto'}</td><td className="px-4 py-3"><span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${m.tipo === 'entrada' ? 'bg-green-50 text-green-700' : m.tipo === 'salida' ? 'bg-red-50 text-red-600' : 'bg-lavender-magenta-50 text-lavender-magenta-700'}`}><Icono nombre={m.tipo === 'entrada' ? 'mas' : m.tipo === 'salida' ? 'menos' : 'intercambio'} className="h-3.5 w-3.5" />{Math.abs(m.cantidad_movimiento)}</span></td><td className="px-4 py-3 text-gray-600">{m.cantidad_anterior} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong>{m.cantidad_nueva}</strong></td><td className="px-4 py-3 text-xs text-gray-500">{m.motivo || '—'}</td></tr>)}</tbody></table></div>
         </section>
       )}
 
-      <section id="importar" className="premium-card p-5 sm:p-6">
+      <section id="importar" className="rounded-boutique-lg border border-lavender-magenta-100 bg-white shadow-card p-5 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div><span className="eyebrow">Carga grande</span><h2 className="mt-3 font-display text-2xl font-bold text-gray-800">Importar desde Excel</h2><p className="mt-1 max-w-2xl text-sm text-gray-500">Ideal para actualizar decenas o cientos de productos. Primero previsualizamos y luego confirmas.</p></div>
-          <a href="/admin/inventario/plantilla" className="text-sm font-semibold text-fucsia hover:underline">Descargar plantilla →</a>
+          <div>
+            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700"><span aria-hidden="true" className="h-px w-6 bg-dorado" />Carga grande</p>
+            <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-lavender-magenta-950">Importar desde Excel</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Ideal para actualizar decenas o cientos de productos. Primero previsualizamos y luego confirmas.</p>
+          </div>
+          <a href="/admin/inventario/plantilla" className="shrink-0 text-sm font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Descargar plantilla</a>
         </div>
+        <div className="hairline-gold mt-4" aria-hidden="true" />
         <Importador
           key={importKey}
           onReiniciar={() => setImportKey((k) => k + 1)}
@@ -302,21 +320,21 @@ export default function InventarioClient({
   )
 }
 
-function Resumen({ label, value, icon }: { label: string; value: number; icon: string }) { return <div className="premium-card p-4"><div className="flex items-center justify-between"><span className="text-xl">{icon}</span><span className="text-2xl font-bold text-lavender-magenta-950">{value}</span></div><p className="mt-2 text-xs font-medium uppercase tracking-wide text-gray-400">{label}</p></div> }
-function Filtro({ label, activo, onClick }: { label: string; activo: boolean; onClick: () => void }) { return <button type="button" onClick={onClick} className={`rounded-full px-4 py-2 text-xs font-semibold transition ${activo ? 'bg-fucsia text-white shadow-soft-pink' : 'border border-rosa-pastel bg-white text-gray-600 hover:border-fucsia hover:text-fucsia'}`}>{label}</button> }
+function Resumen({ label, value, icono }: { label: string; value: number; icono: NombreIcono }) { return <div className="rounded-boutique-lg border border-lavender-magenta-100 bg-white shadow-card p-4"><div className="flex items-center justify-between"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender-magenta-50 text-lavender-magenta-700"><Icono nombre={icono} className="h-5 w-5" /></span><span className="font-display text-2xl font-bold text-lavender-magenta-950">{value}</span></div><p className="mt-2 text-xs font-medium uppercase tracking-wide text-gray-400">{label}</p></div> }
+function Filtro({ label, activo, onClick }: { label: string; activo: boolean; onClick: () => void }) { return <button type="button" onClick={onClick} className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors duration-200 ease-boutique ${activo ? 'bg-lavender-magenta-700 text-white shadow-card' : 'border border-rosa-pastel bg-white text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'}`}>{label}</button> }
 
 function Fila({ producto, seleccionado, onSelect, draft, onDraft }: { producto: InventarioProducto; seleccionado: boolean; onSelect: (v: boolean) => void; draft?: number; onDraft: (v: number) => void }) {
   const stock = draft ?? producto.cantidad_stock ?? 0
   const minimo = producto.stock_minimo ?? 0
-  const estado = stock <= 0 ? ['🔴', 'Agotado', 'text-red-600 bg-red-50'] : stock <= minimo ? ['🟡', 'Bajo mínimo', 'text-amber-700 bg-amber-50'] : ['🟢', 'Disponible', 'text-green-700 bg-green-50']
-  return <tr className={`border-t border-rosa-pastel/40 ${seleccionado ? 'bg-lavender-magenta-50/50' : ''}`}>
-    <td className="px-4 py-3"><input type="checkbox" checked={seleccionado} onChange={(e) => onSelect(e.target.checked)} className="h-4 w-4 accent-fucsia" /></td>
+  const estado = stock <= 0 ? ['bg-red-500', 'Agotado', 'text-red-600 bg-red-50'] : stock <= minimo ? ['bg-amber-500', 'Bajo mínimo', 'text-amber-700 bg-amber-50'] : ['bg-green-500', 'Disponible', 'text-green-700 bg-green-50']
+  return <tr className={`border-t border-gray-100 transition-colors duration-150 ease-boutique ${seleccionado ? 'bg-lavender-magenta-50/50' : ''}`}>
+    <td className="px-4 py-3"><input type="checkbox" checked={seleccionado} onChange={(e) => onSelect(e.target.checked)} className="h-4 w-4 accent-lavender-magenta-600" /></td>
     <td className="px-4 py-3"><div className="font-medium text-gray-800">{producto.nombre}</div><div className="mt-0.5 text-[11px] text-gray-400">{producto.codigo_barras || producto.slug}</div></td>
     <td className="px-4 py-3 text-xs text-gray-500">{producto.sku || '—'}</td>
-    <td className="px-4 py-3"><div className="inline-flex items-center rounded-xl border border-rosa-pastel bg-white p-1"><button type="button" onClick={() => onDraft(Math.max(0, stock - 1))} className="h-8 w-8 rounded-lg text-lg text-gray-500 hover:bg-rosa-pastel/50">−</button><input aria-label={`Stock de ${producto.nombre}`} type="number" min="0" step="1" value={stock} onChange={(e) => onDraft(Number(e.target.value))} className="w-14 border-0 bg-transparent text-center text-sm font-bold text-lavender-magenta-950 outline-none" /><button type="button" onClick={() => onDraft(stock + 1)} className="h-8 w-8 rounded-lg text-lg text-fucsia hover:bg-rosa-pastel/50">+</button></div></td>
+    <td className="px-4 py-3"><div className="inline-flex items-center rounded-xl border border-rosa-pastel bg-white p-1"><button type="button" onClick={() => onDraft(Math.max(0, stock - 1))} aria-label={`Quitar una unidad de ${producto.nombre}`} className="grid h-8 w-8 place-content-center rounded-lg text-gray-500 transition-colors duration-150 ease-boutique hover:bg-gray-100"><Icono nombre="menos" className="h-4 w-4" /></button><input aria-label={`Stock de ${producto.nombre}`} type="number" min="0" step="1" value={stock} onChange={(e) => onDraft(Number(e.target.value))} className="w-14 border-0 bg-transparent text-center text-sm font-bold text-lavender-magenta-950 outline-none" /><button type="button" onClick={() => onDraft(stock + 1)} aria-label={`Agregar una unidad a ${producto.nombre}`} className="grid h-8 w-8 place-content-center rounded-lg text-lavender-magenta-700 transition-colors duration-150 ease-boutique hover:bg-gray-100"><Icono nombre="mas" className="h-4 w-4" /></button></div></td>
     <td className="px-4 py-3 text-gray-500">{minimo}</td>
-    <td className="px-4 py-3"><span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${estado[2]}`}><span>{estado[0]}</span>{estado[1]}</span></td>
-    <td className="px-4 py-3 text-right"><a href={`/admin/productos/${producto.id}?returnTo=/admin/inventario`} className="text-xs font-semibold text-fucsia hover:underline">Editar producto</a></td>
+    <td className="px-4 py-3"><span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${estado[2]}`}><span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${estado[0]}`} />{estado[1]}</span></td>
+    <td className="px-4 py-3 text-right"><a href={`/admin/productos/${producto.id}?returnTo=/admin/inventario`} className="text-xs font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Editar producto</a></td>
   </tr>
 }
 
@@ -328,7 +346,7 @@ function GuardarCambios({ cambios, onGuardado }: { cambios: FilaCambio[]; onGuar
   return (
     <form action={action} className="flex items-center">
       <input type="hidden" name="cambios" value={JSON.stringify(cambios)} />
-      <ConfirmarBoton texto="Guardar cambios" cargando="Guardando…" className="rounded-full bg-fucsia px-5 py-2 text-sm font-semibold text-white disabled:opacity-60" />
+      <ConfirmarBoton texto="Guardar cambios" cargando="Guardando…" className="rounded-full bg-lavender-magenta-700 px-5 py-2 text-sm font-semibold text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800 disabled:opacity-60" />
       {state.error && <span className="ml-3 text-xs text-red-500">{state.error}</span>}
     </form>
   )
@@ -339,15 +357,15 @@ function ConfirmarBoton({ texto, cargando, className }: { texto: string; cargand
   return <button disabled={pending} className={className}>{pending ? cargando : texto}</button>
 }
 
-function PriceButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10 disabled:opacity-60">{pending ? 'Guardando…' : 'Cambiar precio'}</button> }
-function MassButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-lavender-magenta-950 disabled:opacity-60">{pending ? 'Aplicando…' : 'Aplicar'}</button> }
-function ImportButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="mt-4 rounded-full bg-fucsia px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60">{pending ? 'Leyendo…' : 'Previsualizar cambios'}</button> }
+function PriceButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl border border-white/20 px-4 py-2.5 text-sm font-bold text-white transition-colors duration-200 ease-boutique hover:bg-white/10 disabled:opacity-60">{pending ? 'Guardando…' : 'Cambiar precio'}</button> }
+function MassButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-lavender-magenta-950 transition-colors duration-200 ease-boutique disabled:opacity-60">{pending ? 'Aplicando…' : 'Aplicar'}</button> }
+function ImportButton() { const { pending } = useFormStatus(); return <button disabled={pending} className="mt-4 inline-flex items-center gap-2 rounded-full bg-lavender-magenta-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800 disabled:opacity-60"><Icono nombre="importar" className="h-4 w-4" />{pending ? 'Leyendo…' : 'Previsualizar cambios'}</button> }
 
 function Importador({ onReiniciar, onTerminado }: { onReiniciar: () => void; onTerminado: (n: number) => void }) {
   const [importState, importAction] = useFormState(previsualizarInventario, INITIAL_IMPORT)
   if (importState.cambios) return <Previsualizacion resultado={importState} onReiniciar={onReiniciar} onTerminado={onTerminado} />
   return (
-    <form action={importAction} className="mt-5 rounded-2xl border border-dashed border-rosa-pastel bg-rosa-pastel/10 p-5">
+    <form action={importAction} className="mt-5 rounded-boutique border border-dashed border-gray-300 bg-gray-50 p-5">
       <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
       <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
       <p className="mt-2 text-xs text-gray-400">La plantilla reconoce <strong>slug</strong> o <strong>SKU</strong>. No cambies esos identificadores.</p>
@@ -367,19 +385,19 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
   return (
     <div className="mt-5 space-y-4">
       <div className="rounded-2xl bg-lavender-magenta-50 p-4 text-sm text-gray-600">
-        <strong className="text-fucsia">{cambios.length}</strong> cambios · {resultado.sinCambios ?? 0} sin cambios · {noReconocidos.length} no reconocidos
+        <strong className="text-lavender-magenta-700">{cambios.length}</strong> cambios · {resultado.sinCambios ?? 0} sin cambios · {noReconocidos.length} no reconocidos
       </div>
       {cambios.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border border-rosa-pastel">
+        <div className="overflow-x-auto rounded-2xl border border-gray-100">
           <table className="w-full min-w-[650px] text-sm">
-            <thead className="bg-rosa-pastel/30 text-left text-gray-600"><tr><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Precio</th></tr></thead>
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Precio</th></tr></thead>
             <tbody>
               {cambios.map((c) => (
-                <tr key={c.id || c.slug} className="border-t border-rosa-pastel/40">
+                <tr key={c.id || c.slug} className="border-t border-gray-100">
                   <td className="px-4 py-2">{c.nombre}</td>
                   <td className="px-4 py-2 text-xs text-gray-500">{c.sku || '—'}</td>
-                  <td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} → <strong className="text-fucsia">{c.stockNuevo}</strong></> : '—'}</td>
-                  <td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} → <strong className="text-fucsia">{c.precioNuevo}</strong></> : '—'}</td>
+                  <td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.stockNuevo}</strong></> : '—'}</td>
+                  <td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.precioNuevo}</strong></> : '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -391,14 +409,14 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
         {cambios.length > 0 && (
           <form action={action} className="flex items-center">
             <input type="hidden" name="cambios" value={JSON.stringify(cambios)} />
-            <ConfirmarBoton texto="Confirmar y actualizar" cargando="Aplicando…" className="rounded-full bg-fucsia px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60" />
+            <ConfirmarBoton texto="Confirmar y actualizar" cargando="Aplicando…" className="rounded-full bg-lavender-magenta-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800 disabled:opacity-60" />
           </form>
         )}
-        <button type="button" onClick={onReiniciar} className="rounded-full border border-rosa-pastel px-5 py-2.5 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia">{cambios.length > 0 ? 'Cancelar' : 'Subir otro archivo'}</button>
+        <button type="button" onClick={onReiniciar} className="rounded-full border border-gray-200 px-5 py-2.5 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700">{cambios.length > 0 ? 'Cancelar' : 'Subir otro archivo'}</button>
       </div>
       {state.error && <p className="text-sm text-red-500">{state.error}</p>}
     </div>
   )
 }
 
-function Paginacion({ pagina, total, onChange }: { pagina: number; total: number; onChange: (p: number) => void }) { return <div className="flex items-center justify-center gap-2 border-t border-rosa-pastel/50 p-4"><button disabled={pagina === 1} onClick={() => onChange(pagina - 1)} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 disabled:opacity-30">← Anterior</button><span className="rounded-full bg-rosa-pastel/40 px-4 py-2 text-xs font-semibold text-lavender-magenta-800">Página {pagina} de {total}</span><button disabled={pagina === total} onClick={() => onChange(pagina + 1)} className="rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 disabled:opacity-30">Siguiente →</button></div> }
+function Paginacion({ pagina, total, onChange }: { pagina: number; total: number; onChange: (p: number) => void }) { return <div className="flex items-center justify-center gap-2 border-t border-gray-100 p-4"><button disabled={pagina === 1} onClick={() => onChange(pagina - 1)} className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700 disabled:opacity-30"><Icono nombre="flechaIzq" className="h-4 w-4" />Anterior</button><span className="rounded-full bg-lavender-magenta-50 px-4 py-2 text-xs font-semibold text-lavender-magenta-700">Página {pagina} de {total}</span><button disabled={pagina === total} onClick={() => onChange(pagina + 1)} className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700 disabled:opacity-30">Siguiente<Icono nombre="flecha" className="h-4 w-4" /></button></div> }

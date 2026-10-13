@@ -48,21 +48,22 @@ function MenuNav({ compacto, pathname, alertas, onNavegar }: { compacto: boolean
   return (
     <nav aria-label="Menú de administración" className="flex-1 overflow-y-auto px-2 py-2">
       {GRUPOS.map((grupo, gi) => (
-        <div key={grupo.titulo} className={gi > 0 ? 'mt-4 border-t border-lavender-magenta-100 pt-3 adm-separador' : ''}>
+        <div key={grupo.titulo} className={gi > 0 ? 'mt-3 pt-3' : ''}>
+          {gi > 0 && <div className="hairline-gold mb-2" aria-hidden="true" />}
           {!compacto && (
-            <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">{grupo.titulo}</p>
+            <p className="px-3 pb-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-500">{grupo.titulo}</p>
           )}
           <ul className="space-y-1">
             {grupo.items.map((item) => {
               const activo = !item.externo && estaActivo(item, pathname)
               const base =
-                'group relative flex h-11 w-full items-center rounded-xl text-sm font-medium transition-colors'
+                'group relative flex h-11 w-full items-center rounded-2xl text-sm font-medium transition-colors duration-200 ease-boutique'
               const estado = activo
-                ? 'adm-item-activo bg-lavender-magenta-50 text-lavender-magenta-800 shadow-sm'
+                ? 'adm-item-activo bg-lavender-magenta-50 font-semibold text-lavender-magenta-800 shadow-sm'
                 : 'text-gray-600 hover:bg-lavender-magenta-50/70 hover:text-lavender-magenta-800'
               const contenido = (
                 <>
-                  {activo && <span aria-hidden="true" className="absolute left-0 h-6 w-1 rounded-r-full bg-lavender-magenta-600" />}
+                  {activo && <span aria-hidden="true" className="absolute left-0 h-6 w-1 rounded-r-full bg-dorado" />}
                   <span className="grid h-full w-11 shrink-0 place-content-center">
                     <Icono nombre={item.icono} className="h-[18px] w-[18px]" />
                   </span>
@@ -114,20 +115,20 @@ function CuentaPie({ email, compacto }: { email: string; compacto: boolean }) {
     <div className="border-t border-lavender-magenta-100 p-2 adm-separador">
       {compacto ? (
         <form action={cerrarSesion}>
-          <button type="submit" title="Cerrar sesión" className="flex h-11 w-full items-center justify-center rounded-xl text-gray-600 hover:bg-lavender-magenta-50 hover:text-lavender-magenta-800">
+          <button type="submit" title="Cerrar sesión" className="flex h-11 w-full items-center justify-center rounded-2xl text-gray-600 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50 hover:text-lavender-magenta-800">
             <Icono nombre="salir" className="h-[18px] w-[18px]" />
             <span className="sr-only">Cerrar sesión</span>
           </button>
         </form>
       ) : (
-        <div className="flex items-center gap-2 rounded-xl bg-lavender-magenta-50/70 p-2.5">
+        <div className="flex items-center gap-2 rounded-2xl bg-lavender-magenta-50/70 p-2.5 ring-1 ring-lavender-magenta-100/70">
           <span aria-hidden="true" className="grid h-9 w-9 shrink-0 place-content-center rounded-full bg-lavender-magenta-700 text-sm font-bold uppercase text-white">
             {(email[0] ?? 'Z').toUpperCase()}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-semibold text-lavender-magenta-950">{email}</p>
             <form action={cerrarSesion}>
-              <button type="submit" className="text-xs font-semibold text-lavender-magenta-700 hover:underline">Cerrar sesión</button>
+              <button type="submit" className="text-xs font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Cerrar sesión</button>
             </form>
           </div>
         </div>
@@ -196,10 +197,11 @@ export default function AdminShell({ email, alertas, children }: { email: string
         <aside
           className={`adm-lateral sticky top-0 hidden h-screen shrink-0 flex-col self-start border-r border-lavender-magenta-100 bg-white transition-[width] duration-300 ease-in-out md:flex ${abierto ? 'w-64' : 'w-[76px]'}`}
         >
-          <div className={`flex h-14 shrink-0 items-center border-b border-lavender-magenta-100 adm-separador ${abierto ? 'px-4' : 'justify-center'}`}>
+          <div className={`relative flex h-14 shrink-0 items-center ${abierto ? 'px-4' : 'justify-center'}`}>
             <Link href="/admin" aria-label="Zoar Beauty Shop, ir al dashboard" className="flex items-center">
               {abierto ? <Logo size="sm" showBy={false} /> : <ButterflyMark className="h-8 w-8" />}
             </Link>
+            <span className="hairline-gold absolute inset-x-0 bottom-0" aria-hidden="true" />
           </div>
 
           <MenuNav compacto={!abierto} pathname={pathname} alertas={alertas} />
@@ -210,10 +212,10 @@ export default function AdminShell({ email, alertas, children }: { email: string
             onClick={alternarMenu}
             aria-expanded={abierto}
             aria-label={abierto ? 'Contraer menú' : 'Expandir menú'}
-            className="flex h-12 shrink-0 items-center border-t border-lavender-magenta-100 text-gray-600 transition-colors hover:bg-lavender-magenta-50 adm-separador"
+            className="flex h-12 shrink-0 items-center border-t border-lavender-magenta-100 text-gray-600 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50 adm-separador"
           >
             <span className="grid h-full w-[76px] shrink-0 place-content-center">
-              <Icono nombre="chevrons" className={`h-[18px] w-[18px] transition-transform duration-300 ${abierto ? 'rotate-180' : ''}`} />
+              <Icono nombre="chevrons" className={`h-[18px] w-[18px] transition-transform duration-300 ease-boutique ${abierto ? 'rotate-180' : ''}`} />
             </span>
             {abierto && <span className="text-sm font-medium">Ocultar menú</span>}
           </button>
@@ -231,11 +233,12 @@ export default function AdminShell({ email, alertas, children }: { email: string
               aria-label="Menú de administración"
               className="adm-lateral adm-cajon absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col bg-white shadow-2xl"
             >
-              <div className="flex h-14 shrink-0 items-center justify-between border-b border-lavender-magenta-100 px-4 adm-separador">
+              <div className="relative flex h-14 shrink-0 items-center justify-between px-4">
                 <Logo size="sm" showBy={false} />
-                <button type="button" onClick={() => setMovil(false)} aria-label="Cerrar menú" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 hover:bg-lavender-magenta-50">
+                <button type="button" onClick={() => setMovil(false)} aria-label="Cerrar menú" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50">
                   <Icono nombre="cerrar" />
                 </button>
+                <span className="hairline-gold absolute inset-x-0 bottom-0" aria-hidden="true" />
               </div>
               <MenuNav compacto={false} pathname={pathname} alertas={alertas} onNavegar={() => setMovil(false)} />
               <CuentaPie email={email} compacto={false} />
@@ -244,22 +247,22 @@ export default function AdminShell({ email, alertas, children }: { email: string
         )}
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="adm-barra sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-lavender-magenta-100/80 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-10">
-            <button type="button" onClick={() => setMovil(true)} aria-haspopup="dialog" aria-label="Abrir menú" className="flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 hover:bg-lavender-magenta-50 md:hidden">
+          <header className="adm-barra relative sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-lavender-magenta-100/80 bg-white/90 px-4 backdrop-blur sm:px-6 lg:px-10">
+            <button type="button" onClick={() => setMovil(true)} aria-haspopup="dialog" aria-label="Abrir menú" className="flex h-10 w-10 items-center justify-center rounded-2xl text-gray-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50 md:hidden">
               <Icono nombre="menu" />
             </button>
             <Link href="/admin" aria-label="Ir al dashboard" className="md:hidden">
               <ButterflyMark className="h-7 w-7" />
             </Link>
-            <p className="min-w-0 truncate font-display text-lg font-semibold text-lavender-magenta-950">{titulo}</p>
+            <p className="min-w-0 truncate font-display text-lg font-semibold tracking-tight text-lavender-magenta-950">{titulo}</p>
 
             <div className="ml-auto flex items-center gap-1.5">
-              <a href="/" target="_blank" rel="noopener noreferrer" className="hidden items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-lavender-magenta-50 sm:inline-flex">
+              <a href="/" target="_blank" rel="noopener noreferrer" className="hidden items-center gap-2 rounded-2xl px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50 sm:inline-flex">
                 <Icono nombre="tienda" className="h-4 w-4" />
                 Ver tienda
                 <span className="sr-only"> (se abre en una pestaña nueva)</span>
               </a>
-              <Link href="/admin/alertas" aria-label={alertas > 0 ? `Alertas: ${alertas} pendientes` : 'Alertas'} className="relative flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 hover:bg-lavender-magenta-50">
+              <Link href="/admin/alertas" aria-label={alertas > 0 ? `Alertas: ${alertas} pendientes` : 'Alertas'} className="relative flex h-10 w-10 items-center justify-center rounded-2xl text-gray-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50">
                 <Icono nombre="alertas" />
                 {alertas > 0 && <span aria-hidden="true" className="absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full bg-red-600 ring-2 ring-white" />}
               </Link>
@@ -268,11 +271,12 @@ export default function AdminShell({ email, alertas, children }: { email: string
                 onClick={alternarTema}
                 aria-pressed={oscuro}
                 aria-label={oscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-gray-700 hover:bg-lavender-magenta-50"
+                className="flex h-10 w-10 items-center justify-center rounded-2xl text-gray-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50"
               >
                 <Icono nombre={oscuro ? 'sol' : 'luna'} />
               </button>
             </div>
+            <span className="hairline-gold absolute inset-x-0 bottom-0" aria-hidden="true" />
           </header>
 
           <main id="contenido" tabIndex={-1} className="min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-7 lg:px-10">

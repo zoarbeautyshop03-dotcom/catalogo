@@ -13,6 +13,17 @@ function Flecha({ lado }: { lado: 'izq' | 'der' }) {
   )
 }
 
+function IconoFotoPendiente() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-12 w-12" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="16" rx="3" />
+      <circle cx="8.5" cy="9.5" r="1.6" />
+      <path d="m4 17 4.8-4.3a1.6 1.6 0 0 1 2.1 0L15 16" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="m13.6 14.2 1.9-1.7a1.6 1.6 0 0 1 2.1 0L20 14.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 // Galería del producto: foto grande + miniaturas que se pueden tocar, flechas
 // y deslizar con el dedo en el celular. Antes las miniaturas eran solo decorativas.
 export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombre: string }) {
@@ -30,10 +41,10 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
 
   if (total === 0) {
     return (
-      <div className="relative aspect-square overflow-hidden rounded-[32px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100">
-        <div className="flex h-full flex-col items-center justify-center gap-2 text-lavender-magenta-700">
-          <span className="text-6xl">✦</span>
-          <span className="text-xs font-medium text-gray-500">Foto pendiente</span>
+      <div className="catalog-product-media relative aspect-square overflow-hidden rounded-boutique-lg border border-lavender-magenta-100 shadow-card">
+        <div className="flex h-full flex-col items-center justify-center gap-3 text-lavender-magenta-400">
+          <IconoFotoPendiente />
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500">Foto pendiente</span>
         </div>
       </div>
     )
@@ -44,7 +55,7 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
   return (
     <div role="group" aria-roledescription="galería" aria-label={`Fotos de ${nombre}`}>
       <div
-        className="group relative aspect-square overflow-hidden rounded-[32px] bg-white shadow-soft-card ring-1 ring-lavender-magenta-100"
+        className="catalog-product-media group relative aspect-square overflow-hidden rounded-boutique-lg border border-lavender-magenta-100 shadow-card"
         onTouchStart={(e) => {
           inicioToque.current = e.touches[0].clientX
         }}
@@ -71,7 +82,7 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
               type="button"
               onClick={() => ir(actual - 1)}
               aria-label="Foto anterior"
-              className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-lavender-magenta-800 shadow-md ring-1 ring-lavender-magenta-100 transition hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+              className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-lavender-magenta-800 shadow-card backdrop-blur-sm transition duration-200 ease-boutique hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             >
               <Flecha lado="izq" />
             </button>
@@ -79,13 +90,13 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
               type="button"
               onClick={() => ir(actual + 1)}
               aria-label="Foto siguiente"
-              className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-lavender-magenta-800 shadow-md ring-1 ring-lavender-magenta-100 transition hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
+              className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/70 bg-white/85 text-lavender-magenta-800 shadow-card backdrop-blur-sm transition duration-200 ease-boutique hover:bg-white sm:opacity-0 sm:group-hover:opacity-100 sm:focus-visible:opacity-100"
             >
               <Flecha lado="der" />
             </button>
             <span
               aria-live="polite"
-              className="absolute bottom-3 right-3 rounded-full bg-lavender-magenta-950/80 px-3 py-1 text-xs font-semibold text-white"
+              className="absolute bottom-3 right-3 rounded-full bg-lavender-magenta-950/80 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-sm"
             >
               {actual + 1} / {total}
             </span>
@@ -105,8 +116,10 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
               onClick={() => ir(i)}
               aria-label={`Ver foto ${i + 1} de ${total}`}
               aria-current={i === actual ? 'true' : undefined}
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white transition ${
-                i === actual ? 'ring-2 ring-lavender-magenta-600' : 'opacity-75 ring-1 ring-lavender-magenta-100 hover:opacity-100'
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white transition duration-200 ease-boutique ${
+                i === actual
+                  ? 'ring-2 ring-lavender-magenta-600 ring-offset-2 ring-offset-white'
+                  : 'opacity-75 ring-1 ring-lavender-magenta-100 hover:opacity-100'
               }`}
             >
               <Image src={f.url} alt="" fill sizes="80px" className="object-cover" />

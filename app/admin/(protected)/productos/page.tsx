@@ -3,6 +3,7 @@ import { createServerSupabase } from '@/lib/supabase/server'
 import { eliminarProducto, duplicarProducto } from '@/lib/actions/productos'
 import DeleteButton from '@/components/admin/DeleteButton'
 import RestaurarScroll from '@/components/admin/RestaurarScroll'
+import { Icono } from '@/components/admin/Iconos'
 import { formatPrecio } from '@/lib/whatsapp'
 
 export const dynamic = 'force-dynamic'
@@ -80,12 +81,19 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
     <div>
       <RestaurarScroll />
 
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl">Productos</h1>
-        <Link href="/admin/productos/nuevo" className="rounded-full bg-fucsia text-white px-4 py-2 text-sm">
-          + Nuevo producto
-        </Link>
-      </div>
+      <header className="mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.16em] text-lavender-magenta-700"><span aria-hidden="true" className="h-px w-6 bg-dorado" />Catálogo</p>
+            <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-lavender-magenta-950">Productos</h1>
+            <p className="mt-1 max-w-xl text-sm leading-6 text-gray-500">Busca, publica y organiza los productos de la tienda.</p>
+          </div>
+          <Link href="/admin/productos/nuevo" className="inline-flex w-fit items-center gap-2 rounded-full bg-lavender-magenta-700 px-4 py-2.5 text-sm font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">
+            <Icono nombre="mas" className="h-4 w-4" /> Nuevo producto
+          </Link>
+        </div>
+        <div className="hairline-gold mt-5" aria-hidden="true" />
+      </header>
 
       <form className="mb-4">
         <input
@@ -93,31 +101,31 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
           name="q"
           defaultValue={searchParams.q}
           placeholder="Buscar por nombre..."
-          className="w-full max-w-sm rounded-full border border-rosa-pastel px-4 py-2 text-sm"
+          className="w-full max-w-sm rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-700 transition-colors duration-200 ease-boutique focus:border-lavender-magenta-400 focus:outline-none"
         />
       </form>
 
       <div className="flex flex-wrap gap-2 mb-4">
         <Link
           href={buildEstadoUrl(undefined)}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-            !estadoFiltro ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ease-boutique ${
+            !estadoFiltro ? 'bg-lavender-magenta-700 text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'
           }`}
         >
           Todos ({resTodos.count ?? 0})
         </Link>
         <Link
           href={buildEstadoUrl('publicado')}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-            estadoFiltro === 'publicado' ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ease-boutique ${
+            estadoFiltro === 'publicado' ? 'bg-lavender-magenta-700 text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'
           }`}
         >
           Publicados ({resPublicados.count ?? 0})
         </Link>
         <Link
           href={buildEstadoUrl('borrador')}
-          className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
-            estadoFiltro === 'borrador' ? 'bg-fucsia text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+          className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ease-boutique ${
+            estadoFiltro === 'borrador' ? 'bg-lavender-magenta-700 text-white' : 'bg-white border border-rosa-pastel text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'
           }`}
         >
           Borradores ({resBorradores.count ?? 0})
@@ -133,33 +141,33 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
 
       {error && <p className="text-red-500 text-sm mb-4">{error.message}</p>}
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="rounded-boutique-lg border border-lavender-magenta-100 bg-white overflow-hidden shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-rosa-pastel/30 text-left text-gray-600">
+            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
               <tr>
-                <th className="px-4 py-2">Nombre</th>
-                <th className="px-4 py-2">Precio</th>
-                <th className="px-4 py-2">Inventario</th>
-                <th className="px-4 py-2">Estado</th>
-                <th className="px-4 py-2"></th>
+                <th className="px-4 py-3">Nombre</th>
+                <th className="px-4 py-3">Precio</th>
+                <th className="px-4 py-3">Inventario</th>
+                <th className="px-4 py-3">Estado</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
               {productosFinal.map((p) => (
-                <tr key={p.id} className="border-t border-rosa-pastel/40">
-                  <td className="px-4 py-2">
-                    <Link href={`/admin/productos/${p.id}?returnTo=${encodeURIComponent(returnTo)}`} data-preserve-scroll="true" className="text-gray-800 hover:text-fucsia">
+                <tr key={p.id} className="border-t border-gray-100 transition-colors duration-150 ease-boutique hover:bg-lavender-magenta-50/50">
+                  <td className="px-4 py-3">
+                    <Link href={`/admin/productos/${p.id}?returnTo=${encodeURIComponent(returnTo)}`} data-preserve-scroll="true" className="font-medium text-gray-800 transition-colors duration-150 ease-boutique hover:text-lavender-magenta-700">
                       {p.nombre}
                     </Link>
                   </td>
-                  <td className="px-4 py-2">{formatPrecio(p.precio)}</td>
-                  <td className="px-4 py-2">
-                    {p.estado_inventario === 'disponible' && <span className="text-green-600">🟢 Disponible</span>}
-                    {p.estado_inventario === 'ultimas_unidades' && <span className="text-amber-600">🟡 Últimas</span>}
-                    {p.estado_inventario === 'agotado' && <span className="text-red-500">🔴 Agotado</span>}
+                  <td className="px-4 py-3 text-gray-700">{formatPrecio(p.precio)}</td>
+                  <td className="px-4 py-3">
+                    {p.estado_inventario === 'disponible' && <span className="inline-flex items-center gap-1.5 text-green-600"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-green-500" />Disponible</span>}
+                    {p.estado_inventario === 'ultimas_unidades' && <span className="inline-flex items-center gap-1.5 text-amber-600"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-amber-500" />Últimas</span>}
+                    {p.estado_inventario === 'agotado' && <span className="inline-flex items-center gap-1.5 text-red-500"><span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-red-500" />Agotado</span>}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-3">
                     {p.estado_publicacion === 'publicado' ? (
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
                         <span className="h-1.5 w-1.5 rounded-full bg-green-500" /> Publicado
@@ -170,13 +178,13 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <Link href={`/admin/productos/${p.id}?returnTo=${encodeURIComponent(returnTo)}`} data-preserve-scroll="true" className="text-xs text-fucsia hover:underline">
+                      <Link href={`/admin/productos/${p.id}?returnTo=${encodeURIComponent(returnTo)}`} data-preserve-scroll="true" className="text-xs font-semibold text-lavender-magenta-700 transition-colors duration-150 ease-boutique hover:underline">
                         Editar
                       </Link>
                       <form action={duplicarProducto.bind(null, p.id)}>
-                        <button type="submit" className="text-xs text-gray-500 hover:underline">
+                        <button type="submit" className="text-xs text-gray-500 transition-colors duration-150 ease-boutique hover:text-lavender-magenta-700 hover:underline">
                           Duplicar
                         </button>
                       </form>
@@ -201,12 +209,12 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
           {currentPage > 1 ? (
             <Link
               href={buildPageUrl(currentPage - 1)}
-              className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia transition"
+              className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700"
             >
-              ← Anterior
+              <Icono nombre="flechaIzq" className="h-4 w-4" /> Anterior
             </Link>
           ) : (
-            <span className="rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">← Anterior</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300"><Icono nombre="flechaIzq" className="h-4 w-4" /> Anterior</span>
           )}
 
           <div className="flex items-center gap-1">
@@ -221,10 +229,10 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
                     <Link
                       href={buildPageUrl(page)}
                       aria-current={page === currentPage ? 'page' : undefined}
-                      className={`min-w-9 rounded-full px-3 py-2 text-sm text-center transition ${
+                      className={`min-w-9 rounded-full px-3 py-2 text-sm text-center transition-colors duration-200 ease-boutique ${
                         page === currentPage
-                          ? 'bg-fucsia text-white'
-                          : 'bg-white border border-rosa-pastel text-gray-600 hover:border-fucsia hover:text-fucsia'
+                          ? 'bg-lavender-magenta-700 text-white'
+                          : 'bg-white border border-rosa-pastel text-gray-600 hover:border-lavender-magenta-400 hover:text-lavender-magenta-700'
                       }`}
                     >
                       {page}
@@ -237,12 +245,12 @@ export default async function ProductosPage({ searchParams }: { searchParams: Se
           {currentPage < totalPages ? (
             <Link
               href={buildPageUrl(currentPage + 1)}
-              className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 hover:border-fucsia hover:text-fucsia transition"
+              className="inline-flex items-center gap-1.5 rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700"
             >
-              Siguiente →
+              Siguiente <Icono nombre="flecha" className="h-4 w-4" />
             </Link>
           ) : (
-            <span className="rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">Siguiente →</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-100 bg-gray-50 px-4 py-2 text-sm text-gray-300">Siguiente <Icono nombre="flecha" className="h-4 w-4" /></span>
           )}
         </nav>
       )}

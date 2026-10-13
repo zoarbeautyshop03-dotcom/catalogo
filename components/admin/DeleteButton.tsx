@@ -1,5 +1,7 @@
 'use client'
 
+import { Icono } from './Iconos'
+
 export default function DeleteButton({ label = 'Eliminar' }: { label?: string }) {
   return (
     <button
@@ -9,8 +11,9 @@ export default function DeleteButton({ label = 'Eliminar' }: { label?: string })
           e.preventDefault()
         }
       }}
-      className="text-xs text-red-500 hover:underline"
+      className="inline-flex items-center gap-1 text-xs font-medium text-red-500 transition-colors duration-200 ease-boutique hover:underline"
     >
+      <Icono nombre="papelera" className="h-3.5 w-3.5" />
       {label}
     </button>
   )

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { decodificarSlug } from './slug'
 import { supabase } from './supabase/public'
 import type { Producto, Categoria, Marca, ProductoImagen, Configuracion } from './types'
@@ -7,7 +8,10 @@ const PRODUCTO_PUBLICO_SELECT = '*'
 // Usa el cliente público (sin sesión), así que si la tabla "configuracion" no
 // tiene una política RLS que permita lectura anónima, esto devuelve null en
 // vez de romper el sitio para cualquier visitante.
-export async function getConfiguracion(): Promise<Configuracion | null> {
+// `cache` deduplica la consulta dentro de la misma petición: la cabecera, el
+// catálogo y las distintas secciones pueden pedir la configuración sin repetir
+// la llamada a Supabase.
+export const getConfiguracion = cache(async (): Promise<Configuracion | null> => {
   try {
     const { data, error } = await supabase.from('configuracion').select('*').eq('id', 1).maybeSingle()
     if (error) return null
@@ -15,6 +19,13 @@ export async function getConfiguracion(): Promise<Configuracion | null> {
   } catch {
     return null
   }
+})
+
+// Respeta la casilla "Mostrar productos agotados" de /admin/configuracion:
+// si está desactivada, las listas de la tienda dejan fuera los agotados.
+async function ocultarAgotados(): Promise<boolean> {
+  const config = await getConfiguracion()
+  return config?.mostrar_agotados === false
 }
 
 export async function getCategorias(): Promise<Categoria[]> {
@@ -38,41 +49,45 @@ export async function getMarcas(): Promise<Marca[]> {
 }
 
 export async function getDestacados(limit = 8): Promise<Producto[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('productos_publicos')
     .select(PRODUCTO_PUBLICO_SELECT)
     .eq('destacado', true)
-    .limit(limit)
+  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
+  const { data, error } = await query.limit(limit)
   if (error) throw error
   return (data ?? []) as Producto[]
 }
 
 export async function getMasVendidos(limit = 8): Promise<Producto[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('productos_publicos')
     .select(PRODUCTO_PUBLICO_SELECT)
     .eq('mas_vendido', true)
-    .limit(limit)
+  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
+  const { data, error } = await query.limit(limit)
   if (error) throw error
   return (data ?? []) as Producto[]
 }
 
 export async function getNovedades(limit = 8): Promise<Producto[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('productos_publicos')
     .select(PRODUCTO_PUBLICO_SELECT)
     .eq('nuevo', true)
-    .limit(limit)
+  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
+  const { data, error } = await query.limit(limit)
   if (error) throw error
   return (data ?? []) as Producto[]
 }
 
 export async function getOfertas(limit = 8): Promise<Producto[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from('productos_publicos')
     .select(PRODUCTO_PUBLICO_SELECT)
     .eq('oferta', true)
-    .limit(limit)
+  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
+  const { data, error } = await query.limit(limit)
   if (error) throw error
   return (data ?? []) as Producto[]
 }
@@ -167,6 +182,8 @@ export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
   }
 
   let query = supabase.from('productos_publicos').select(PRODUCTO_PUBLICO_SELECT, { count: 'exact' })
+
+  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
 
   if (categoriaId) query = query.eq('categoria_id', categoriaId)
   if (marcaId) query = query.eq('marca_id', marcaId)

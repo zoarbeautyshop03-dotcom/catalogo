@@ -61,18 +61,23 @@ export default function Logo({
   return (
     <span className={`inline-flex flex-col ${className}`}>
       <span className={`flex flex-wrap items-center ${s.gap}`}>
-        <ButterflyMark className={`${s.icon} shrink-0`} />
+        <ButterflyMark
+          className={`${s.icon} shrink-0 origin-bottom transition-transform duration-300 ease-boutique group-hover:-rotate-6`}
+        />
         <span className="flex flex-wrap items-baseline gap-x-2">
           <span
-            className={`font-display ${s.word} font-extrabold uppercase leading-none tracking-tight bg-gradient-to-br from-lavender-magenta-400 to-lavender-magenta-700 bg-clip-text text-transparent`}
+            className={`font-display ${s.word} font-extrabold uppercase leading-[0.95] tracking-[-0.02em] bg-gradient-to-br from-lavender-magenta-500 via-lavender-magenta-700 to-lavender-magenta-900 bg-clip-text text-transparent`}
           >
             Zoar Beauty
           </span>
-          <span className={`font-script ${s.word} leading-none text-gray-900`}>Shop</span>
+          <span className={`font-script ${s.word} leading-[0.9] text-lavender-magenta-950`}>Shop</span>
         </span>
       </span>
       {showBy && (
-        <span className={`${s.by} mt-1.5 pl-1 font-body font-medium uppercase tracking-[0.32em] text-dorado`}>
+        <span
+          className={`${s.by} mt-2 flex items-center gap-2 pl-1 font-body font-medium uppercase tracking-[0.32em] text-dorado-oscuro`}
+        >
+          <span aria-hidden="true" className="h-px w-4 shrink-0 bg-dorado/70" />
           By: Daniela Pérez
         </span>
       )}

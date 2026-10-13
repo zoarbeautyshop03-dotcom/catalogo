@@ -91,8 +91,10 @@ público solo lo que la vista `productos_publicos` expone.
 - No hay subida de archivos de imagen: se pega la URL ya subida a Cloudinary/
   ImageKit. Conectar un botón de "subir foto" directo es una mejora natural del
   siguiente paso.
-- El número de WhatsApp del catálogo público todavía no lee de `configuracion`
-  (ver nota en esa página).
+- El número de WhatsApp de la tienda ahora sale de `configuracion` (lo que
+  escribes en `/admin/configuracion`), tanto en la ficha de producto como en el
+  carrito. La variable `NEXT_PUBLIC_WHATSAPP_NUMBER` queda solo como respaldo si
+  ese campo está vacío.
 
 ## Inventario por Excel (`/admin/inventario`)
 
