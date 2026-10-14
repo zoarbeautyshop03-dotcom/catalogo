@@ -102,20 +102,23 @@ function XIcon() {
 export default async function CatalogoPage({ searchParams }: { searchParams: SearchParams }) {
   const page = Number(searchParams.page ?? '1')
   const orden = searchParams.orden === 'precio-asc' || searchParams.orden === 'precio-desc' ? searchParams.orden : 'nombre'
-  const { productos, total } = await getProductosCatalogo({
-    categoriaSlug: searchParams.categoria,
-    marcaSlug: searchParams.marca,
-    precioMin: searchParams.min ? Number(searchParams.min) : undefined,
-    precioMax: searchParams.max ? Number(searchParams.max) : undefined,
-    busqueda: searchParams.q,
-    nuevo: searchParams.nuevo === '1',
-    oferta: searchParams.oferta === '1',
-    orden,
-    page,
-    porPagina: POR_PAGINA,
-  })
-
-  const [categorias, marcas] = await Promise.all([getCategorias(), getMarcas()])
+  // Productos, categorías y marcas se piden a la vez (antes iban una tras otra).
+  const [{ productos, total }, categorias, marcas] = await Promise.all([
+    getProductosCatalogo({
+      categoriaSlug: searchParams.categoria,
+      marcaSlug: searchParams.marca,
+      precioMin: searchParams.min ? Number(searchParams.min) : undefined,
+      precioMax: searchParams.max ? Number(searchParams.max) : undefined,
+      busqueda: searchParams.q,
+      nuevo: searchParams.nuevo === '1',
+      oferta: searchParams.oferta === '1',
+      orden,
+      page,
+      porPagina: POR_PAGINA,
+    }),
+    getCategorias(),
+    getMarcas(),
+  ])
   const imagenes = await getImagenesPrincipales(productos.map((p) => p.id))
   const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA))
   const marcaPorId = new Map(marcas.map((m) => [m.id, m.nombre]))
@@ -342,9 +345,10 @@ export default async function CatalogoPage({ searchParams }: { searchParams: Sea
 
             <ScrollAlPaginar targetId="resultados" />
             <div id="resultados" className="catalog-product-grid mt-6 scroll-mt-28">
-              {productos.map((p) => (
+              {productos.map((p, i) => (
                 <ProductCard
                   key={p.id}
+                  prioridad={i < 2}
                   producto={p}
                   imagenUrl={imagenes[p.id]}
                   marcaNombre={p.marca_id ? marcaPorId.get(p.marca_id) : undefined}

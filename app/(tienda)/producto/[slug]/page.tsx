@@ -85,7 +85,7 @@ export default async function ProductoPage({ params }: Props) {
           { etiqueta: producto.nombre },
         ]}
       />
-      <div className="sm:hidden">
+      <div>
         <BotonVolver label="Volver al catálogo" />
       </div>
 
@@ -96,10 +96,10 @@ export default async function ProductoPage({ params }: Props) {
           <div className="premium-card p-6 sm:p-8 lg:p-9">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="eyebrow">Zoar Beauty Shop</span>
-              <span className="catalog-status-pill gap-1.5">
+              <span className="catalog-status-pill shrink-0 whitespace-nowrap">
                 <span
                   aria-hidden="true"
-                  className={`h-1.5 w-1.5 rounded-full ${
+                  className={`mr-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${
                     producto.estado_inventario === 'disponible'
                       ? 'bg-green-500'
                       : producto.estado_inventario === 'ultimas_unidades'

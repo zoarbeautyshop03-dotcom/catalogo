@@ -20,6 +20,7 @@ const playball = Playball({
   subsets: ['latin'],
   weight: '400',
   variable: '--font-script',
+  preload: false,
 })
 
 export const metadata: Metadata = {

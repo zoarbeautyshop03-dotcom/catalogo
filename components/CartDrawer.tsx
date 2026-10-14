@@ -126,7 +126,7 @@ export default function CartDrawer({ whatsappNumero }: { whatsappNumero?: string
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-boutique border border-white/10 bg-white/[0.045] p-3.5 shadow-lg shadow-black/5 backdrop-blur-sm transition duration-200 ease-boutique hover:border-white/20 sm:p-4"
+                    className="rounded-boutique border border-white/10 bg-white/[0.045] p-3.5 shadow-lg shadow-black/5 transition duration-200 ease-boutique hover:border-white/20 sm:p-4"
                   >
                     <div className="flex gap-3.5">
                       <div className="relative h-[74px] w-[74px] shrink-0 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">

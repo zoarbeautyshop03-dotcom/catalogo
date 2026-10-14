@@ -54,7 +54,7 @@ export default async function Header() {
   const config = await getConfiguracion()
 
   return (
-    <header className="glass-panel sticky top-0 z-40 border-0">
+    <header className="glass-panel sticky top-0 z-40 !border-0">
       {/* Franja de anuncio */}
       <div className="relative overflow-hidden border-b border-lavender-magenta-900/70 bg-gradient-to-r from-lavender-magenta-950 via-lavender-magenta-900 to-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-2">

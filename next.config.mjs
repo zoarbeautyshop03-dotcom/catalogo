@@ -19,6 +19,9 @@ const nextConfig = {
     ]
   },
   images: {
+    // Las fotos optimizadas se conservan 7 días (por defecto solo 60 s), así el
+    // servidor no las vuelve a procesar en cada visita.
+    minimumCacheTTL: 604800,
     remotePatterns: [
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'https', hostname: 'ik.imagekit.io' },

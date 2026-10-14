@@ -170,20 +170,18 @@ type FiltrosCatalogo = {
 export async function getProductosCatalogo(filtros: FiltrosCatalogo = {}) {
   const { categoriaSlug, marcaSlug, precioMin, precioMax, busqueda, page = 1, porPagina = 24, nuevo, oferta, orden = 'nombre' } = filtros
 
-  let categoriaId: string | undefined
-  if (categoriaSlug) {
-    const { data } = await supabase.from('categorias').select('id').eq('slug', categoriaSlug).maybeSingle()
-    categoriaId = data?.id
-  }
-  let marcaId: string | undefined
-  if (marcaSlug) {
-    const { data } = await supabase.from('marcas').select('id').eq('slug', marcaSlug).maybeSingle()
-    marcaId = data?.id
-  }
+  // Las tres comprobaciones previas no dependen entre sí: se hacen a la vez.
+  const [categoriaRes, marcaRes, sinAgotados] = await Promise.all([
+    categoriaSlug ? supabase.from('categorias').select('id').eq('slug', categoriaSlug).maybeSingle() : null,
+    marcaSlug ? supabase.from('marcas').select('id').eq('slug', marcaSlug).maybeSingle() : null,
+    ocultarAgotados(),
+  ])
+  const categoriaId: string | undefined = categoriaRes?.data?.id
+  const marcaId: string | undefined = marcaRes?.data?.id
 
   let query = supabase.from('productos_publicos').select(PRODUCTO_PUBLICO_SELECT, { count: 'exact' })
 
-  if (await ocultarAgotados()) query = query.neq('estado_inventario', 'agotado')
+  if (sinAgotados) query = query.neq('estado_inventario', 'agotado')
 
   if (categoriaId) query = query.eq('categoria_id', categoriaId)
   if (marcaId) query = query.eq('marca_id', marcaId)

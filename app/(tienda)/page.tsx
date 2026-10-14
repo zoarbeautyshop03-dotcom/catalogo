@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import ProductCard from '@/components/ProductCard'
@@ -63,24 +64,6 @@ const VALORES = [
   },
 ]
 
-const TESTIMONIOS = [
-  {
-    inicial: 'M',
-    nombre: 'Mariana',
-    texto: 'Me encantó la selección y lo fácil que fue pedir. Todo llegó muy bien empacado.',
-  },
-  {
-    inicial: 'L',
-    nombre: 'Laura',
-    texto: 'Los productos son tal cual se ven en la tienda. La atención fue cercana de principio a fin.',
-  },
-  {
-    inicial: 'C',
-    nombre: 'Camila',
-    texto: 'Encontré justo lo que buscaba para mi rutina. Ya tengo mis favoritos de Zoar.',
-  },
-]
-
 export default async function HomePage() {
   const [categorias, destacados, novedades, ofertas, masVendidos] = await Promise.all([
     getCategorias(),
@@ -110,7 +93,7 @@ export default async function HomePage() {
       <section className="section-shell pt-4 sm:pt-7">
         <div
           className="zoar-hero relative isolate overflow-hidden"
-          style={{ backgroundImage: `url(${HERO_IMAGEN})`, backgroundSize: 'cover', backgroundPosition: '72% center' }}
+          style={{ '--hero-imagen': `url(${HERO_IMAGEN})` } as CSSProperties}
         >
           <div aria-hidden="true" className="zoar-hero-wash absolute inset-0" />
           <div aria-hidden="true" className="zoar-orb zoar-orb-one" />
@@ -222,7 +205,7 @@ export default async function HomePage() {
       )}
 
       {masVendidos.length > 0 && (
-        <Seccion eyebrow="Favoritos" titulo="Favoritos de la tienda" descripcion="Lo que más eligen nuestras clientas." productos={masVendidos} imagenes={imagenes} />
+        <Seccion eyebrow="Favoritos" titulo="Favoritos de la tienda" descripcion="Los productos que más recomendamos en la tienda." productos={masVendidos} imagenes={imagenes} />
       )}
       {novedades.length > 0 && (
         <Seccion eyebrow="Novedades" titulo="Recién llegados" descripcion="Productos que acaban de llegar a la tienda." productos={novedades} imagenes={imagenes} />
@@ -258,7 +241,7 @@ export default async function HomePage() {
 
             <ul className="grid gap-4">
               {VALORES.map((v) => (
-                <li key={v.titulo} className="flex items-start gap-4 rounded-boutique border border-white/15 bg-white/10 px-5 py-4 backdrop-blur-sm">
+                <li key={v.titulo} className="flex items-start gap-4 rounded-boutique border border-white/15 bg-white/10 px-5 py-4 md:backdrop-blur-sm">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-blush-pink-100">
                     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d={v.icono} />
@@ -272,30 +255,6 @@ export default async function HomePage() {
               ))}
             </ul>
           </div>
-        </div>
-      </section>
-
-      <section className="section-shell reveal-on-scroll pt-16 sm:pt-24">
-        <Encabezado
-          eyebrow="Testimonios"
-          titulo="Lo que dicen nuestras clientas"
-          descripcion="Experiencias reales de quienes ya compran en Zoar."
-          href="/catalogo"
-          enlace="Ver catálogo"
-        />
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {TESTIMONIOS.map((t) => (
-            <figure key={t.nombre} className="card-editorial flex h-full flex-col p-6">
-              <IconoComilla className="h-7 w-7 text-dorado" />
-              <blockquote className="mt-4 text-sm leading-7 text-gray-700">{t.texto}</blockquote>
-              <figcaption className="mt-5 flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lavender-magenta-100 text-xs font-bold text-lavender-magenta-700">
-                  {t.inicial}
-                </span>
-                <span className="text-sm font-semibold text-gray-900">{t.nombre}</span>
-              </figcaption>
-            </figure>
-          ))}
         </div>
       </section>
 
@@ -428,7 +387,7 @@ function TarjetaSeleccion({
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-t from-lavender-magenta-950/10 to-transparent"
       />
-      <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-full bg-white/90 py-2 pl-4 pr-2 shadow-sm ring-1 ring-lavender-magenta-100 backdrop-blur-sm sm:inset-x-4 sm:bottom-4">
+      <div className="absolute inset-x-3 bottom-3 flex items-center justify-between gap-3 rounded-full bg-white/90 py-2 pl-4 pr-2 shadow-sm ring-1 ring-lavender-magenta-100 sm:inset-x-4 sm:bottom-4">
         <p className="min-w-0 truncate text-xs font-semibold text-gray-900 sm:text-sm">{producto.nombre}</p>
         <span className="shrink-0 rounded-full bg-lavender-magenta-600 px-3 py-1.5 text-xs font-bold text-white">
           {formatPrecio(producto.precio, producto.moneda)}
@@ -466,11 +425,3 @@ function IconoCorazon({ className = 'h-4 w-4' }: IconoProps) {
   )
 }
 
-function IconoComilla({ className = 'h-6 w-6' }: IconoProps) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M10 11H6.5A2.5 2.5 0 0 1 4 8.5v-.5A2.5 2.5 0 0 1 6.5 5.5h1A2.5 2.5 0 0 1 10 8v5a4 4 0 0 1-4 4" />
-      <path d="M20 11h-3.5A2.5 2.5 0 0 1 14 8.5v-.5a2.5 2.5 0 0 1 2.5-2.5h1A2.5 2.5 0 0 1 20 8v5a4 4 0 0 1-4 4" />
-    </svg>
-  )
-}

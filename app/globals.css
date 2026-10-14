@@ -3,9 +3,11 @@
 @tailwind utilities;
 
 /* Pista visual del botón "agregar al carrito" (solo celular, donde el botón
-   es únicamente el ícono). La bolsita se menea y sale un halo suave una vez
-   al cargar la página y luego cada 60 segundos; el resto del tiempo queda
-   quieta para no cansar la vista. El meneo dura ~1.2 s (2% de 60 s).
+   es únicamente el ícono). La bolsita se menea y sale un halo suave en turnos
+   alternados: las tarjetas PARES al cargar la página, las IMPARES 30 segundos
+   después, las pares otra vez a los 60 s, y así sucesivamente (cada tarjeta se
+   repite cada 60 s). El resto del tiempo queda quieta para no cansar la vista.
+   El meneo dura ~1.2 s (2% de 60 s).
    No aplica en pantallas >= 640px (ahí el botón ya dice "Agregar"). */
 @media (prefers-reduced-motion: no-preference) and (max-width: 639px) {
   @keyframes carrito-meneo {
@@ -31,17 +33,17 @@
     background: var(--color-lavender-magenta-400);
     pointer-events: none;
     opacity: 0;
-    animation: carrito-halo 60s ease-out 1.2s infinite;
+    animation: carrito-halo 60s ease-out 31.2s infinite;
   }
   .pista-agregar-icono {
     transform-origin: 50% 20%;
-    animation: carrito-meneo 60s ease-in-out 1.2s infinite;
+    animation: carrito-meneo 60s ease-in-out 31.2s infinite;
   }
 
-  /* Desfase en las tarjetas pares para que no se muevan todas a la vez. */
+  /* Las impares (arriba) arrancan 30 s después; las pares van primero. */
   article:nth-child(even) > .pista-agregar-carrito::after,
   article:nth-child(even) > .pista-agregar-carrito .pista-agregar-icono {
-    animation-delay: 2.6s;
+    animation-delay: 1.2s;
   }
 }
 
@@ -224,7 +226,9 @@ input:focus-visible,
 
   .catalog-filter-card {
     box-shadow: 0 18px 50px rgba(81, 1, 65, 0.06);
-    backdrop-filter: blur(12px);
+  }
+  @media (min-width: 768px) {
+    .catalog-filter-card { backdrop-filter: blur(12px); }
   }
 
   .catalog-chip {
@@ -741,11 +745,18 @@ p { text-wrap: pretty; }
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.72);
+  /* En celular el fondo es casi sólido: el desenfoque (backdrop-filter) sobre un
+     elemento fijo obliga al teléfono a repintarlo en cada gesto de scroll. */
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(255, 255, 255, 0.75);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
   box-shadow: 0 20px 50px -26px rgba(81, 1, 65, 0.38);
+}
+@media (min-width: 768px) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    backdrop-filter: blur(16px) saturate(1.2);
+  }
 }
 
 /* ---------- Tarjetas ---------- */
@@ -787,7 +798,9 @@ p { text-wrap: pretty; }
     radial-gradient(ellipse at 50% 18%, rgba(255, 255, 255, 0.96), transparent 62%),
     linear-gradient(150deg, #fff9fe 0%, #ffe7fc 55%, #fff2fb 100%);
 }
-.catalog-product-hover { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+@media (min-width: 640px) {
+  .catalog-product-hover { -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+}
 .catalog-product-grid { gap: 1.1rem; }
 @media (min-width: 640px) { .catalog-product-grid { gap: 1.35rem; } }
 @media (min-width: 1024px) { .catalog-product-grid { gap: 1.6rem; } }
@@ -854,6 +867,16 @@ p { text-wrap: pretty; }
   box-shadow: 0 1px 2px rgba(81, 1, 65, 0.05), 0 40px 90px -40px rgba(81, 1, 65, 0.40);
   background-color: #fff3fd;
   overflow: hidden;
+  background-image: none;
+}
+/* La imagen de fondo de la portada solo se carga desde 640px: en celular casi
+   queda tapada por el degradado y descargarla/pintarla solo hacía más lenta la página. */
+@media (min-width: 640px) {
+  .zoar-hero {
+    background-image: var(--hero-imagen);
+    background-size: cover;
+    background-position: 72% center;
+  }
 }
 .zoar-hero-wash {
   background:
@@ -861,7 +884,7 @@ p { text-wrap: pretty; }
     radial-gradient(ellipse at 80% 46%, rgba(255, 110, 226, 0.26), transparent 46%),
     radial-gradient(ellipse at 92% 90%, rgba(232, 207, 154, 0.35), transparent 55%);
 }
-.zoar-orb { filter: blur(6px); }
+.zoar-orb { filter: none; } /* ya son degradados suaves: el blur solo costaba rendimiento */
 .zoar-orb-one {
   width: 300px;
   height: 300px;
@@ -951,3 +974,56 @@ p { text-wrap: pretty; }
 }
 .filtro-chevron { transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1); }
 .filtro-seccion[open] .filtro-chevron { transform: rotate(90deg); }
+
+/* Pista visual del botón "Filtrar" (solo celular). Cuando no hay filtros
+   activos, el botón respira cada 2.8 s con un anillo magenta + un punto
+   pulsante para que se note que es tocable. Al aplicar un filtro deja de
+   animarse y pasa a estado sólido. No aplica en >= 640px (ahí los filtros
+   ya están visibles al lado) ni con reduced-motion. */
+@media (prefers-reduced-motion: no-preference) and (max-width: 639px) {
+  @keyframes filtro-resplandor {
+    0%, 12%, 100% {
+      transform: scale(1);
+      box-shadow: 0 1px 2px rgba(81, 1, 65, 0.08);
+      border-color: rgba(219, 30, 177, 0.35);
+    }
+    5%, 8% {
+      transform: scale(1.03);
+      box-shadow: 0 0 0 4px rgba(209, 31, 184, 0.18), 0 8px 22px -8px rgba(209, 31, 184, 0.55);
+      border-color: #d11fb8;
+    }
+  }
+  @keyframes filtro-icono-meneo {
+    0%, 12%, 100% { transform: rotate(0); }
+    4% { transform: rotate(-14deg); }
+    6.5% { transform: rotate(12deg); }
+    9% { transform: rotate(-6deg); }
+  }
+  @keyframes filtro-punto-pulso {
+    0%, 12%, 100% { transform: scale(1); opacity: 1; }
+    5%, 8% { transform: scale(1.5); opacity: 0.55; }
+  }
+
+  .pista-filtrar {
+    position: relative;
+    border-width: 1.5px;
+    animation: filtro-resplandor 2.8s ease-in-out infinite;
+  }
+  .pista-filtrar-icono {
+    display: inline-flex;
+    transform-origin: 50% 50%;
+    animation: filtro-icono-meneo 2.8s ease-in-out infinite;
+  }
+  .pista-filtrar-punto {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: #d11fb8;
+    box-shadow: 0 0 0 3px rgba(209, 31, 184, 0.2);
+    pointer-events: none;
+    animation: filtro-punto-pulso 2.8s ease-in-out infinite;
+  }
+}

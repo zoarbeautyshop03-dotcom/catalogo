@@ -10,9 +10,11 @@ type Props = {
   producto: Producto
   imagenUrl?: string
   marcaNombre?: string
+  /** Carga la foto con prioridad (úsalo solo en las primeras tarjetas visibles). */
+  prioridad?: boolean
 }
 
-export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props) {
+export default function ProductCard({ producto, imagenUrl, marcaNombre, prioridad = false }: Props) {
   const tieneDescuento = !!producto.precio_anterior && producto.precio_anterior > producto.precio
   const porcentaje = porcentajeDescuento(producto)
   const agotado = producto.estado_inventario === 'agotado'
@@ -33,6 +35,7 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
               src={imagenUrl}
               alt={producto.nombre}
               fill
+              priority={prioridad}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="relative z-10 object-contain p-4 transition duration-500 ease-boutique group-hover:scale-[1.06] sm:p-5"
             />
@@ -113,16 +116,18 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre }: Props)
                 )}
               </div>
             )}
-            <div className="flex items-end justify-between gap-2">
-              <span className={`block text-xl font-extrabold tracking-tight sm:text-2xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
-                {formatPrecio(producto.precio, producto.moneda)}
-              </span>
+            <div className="flex flex-col gap-1.5">
               {ultimasUnidades && (
-                <span className="catalog-status-pill mb-1 shrink-0 gap-1.5">
-                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                <span className="catalog-status-pill self-start whitespace-nowrap">
+                  <span aria-hidden="true" className="mr-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
                   Últimas unidades
                 </span>
               )}
+              <div className="flex items-end justify-between gap-2">
+                <span className={`block min-w-0 text-xl font-extrabold tracking-tight sm:text-2xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
+                  {formatPrecio(producto.precio, producto.moneda)}
+                </span>
+              </div>
             </div>
           </div>
         </div>

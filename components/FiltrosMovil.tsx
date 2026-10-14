@@ -60,12 +60,20 @@ export default function FiltrosMovil({ children, cantidadActivos, hayFiltros, to
       <SheetTrigger asChild>
         <Button
           variant="outline"
-          className="h-11 flex-1 px-4 text-xs font-bold transition ease-boutique sm:hidden"
+          aria-label="Filtrar productos por categoría y marca"
+          className={`h-11 flex-1 px-4 text-xs font-bold transition ease-boutique sm:hidden ${
+            cantidadActivos === 0 ? 'pista-filtrar' : 'border-lavender-magenta-600 bg-lavender-magenta-600 text-white shadow-md'
+          }`}
         >
-          <SlidersIcon />
+          <span className={cantidadActivos === 0 ? 'pista-filtrar-icono flex items-center' : 'flex items-center'}>
+            <SlidersIcon />
+          </span>
           Filtrar
           {cantidadActivos > 0 && (
-            <Badge className="h-5 min-w-5 justify-center px-1 py-0 text-[10px] font-bold">{cantidadActivos}</Badge>
+            <Badge className="h-5 min-w-5 justify-center bg-white px-1 py-0 text-[10px] font-bold text-lavender-magenta-700">{cantidadActivos}</Badge>
+          )}
+          {cantidadActivos === 0 && (
+            <span aria-hidden="true" className="pista-filtrar-punto" />
           )}
         </Button>
       </SheetTrigger>

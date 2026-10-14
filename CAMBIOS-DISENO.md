@@ -192,3 +192,24 @@ Se incorporó shadcn/ui (componentes copiados al proyecto en `components/ui/`, s
 - El panel de administración **no se tocó**: su modo oscuro depende de clases CSS y los paneles de Radix salen en un portal fuera de ese contenedor.
 - Se dejó el selector «Ordenar por» nativo a propósito: en el celular abre el selector del sistema, que es más cómodo que una lista personalizada.
 - Validación: revisión sintáctica de los 79 archivos TS/TSX sin errores. No se pudo ejecutar `npm run build` en este entorno (sin acceso a internet para instalar dependencias).
+
+
+## Testimonios, banner superior y rendimiento en celular (octubre de 2026)
+
+**Testimonios eliminados.** Se quitó de la portada la sección «Testimonios / Lo que dicen nuestras clientas» (nombres y comentarios que no eran de clientas reales). También se cambió la frase «Lo que más eligen nuestras clientas» de la sección Favoritos por «Los productos que más recomendamos en la tienda», porque tampoco se podía comprobar. Si en el futuro se publican opiniones, deben ser de clientas reales y con su autorización.
+
+**Líneas blancas del banner superior.** La causa era el estilo `.glass-panel` del header: traía un borde blanco de 1 px que anulaba la clase `border-0`, así que se veía una línea blanca arriba y a los lados de la franja oscura. El header ahora usa `!border-0`.
+
+**Rendimiento en celular**
+- El header y la barra del carrito ya no usan desenfoque (`backdrop-filter`) en pantallas pequeñas; es lo que más hacía tropezar el scroll. En tablet y escritorio se conserva.
+- Se quitaron otros desenfoques innecesarios en celular (etiqueta de las tarjetas, tarjetas del carrito, fondo oscuro de los paneles, tarjetas de «Nuestra historia», esferas decorativas de la portada).
+- La imagen de fondo de la portada (`hero-fondo.svg`, con 28 filtros de desenfoque) solo se carga desde 640 px; en celular quedaba casi tapada por el degradado.
+- Catálogo: productos, categorías y marcas se consultan a la vez, y las búsquedas previas por categoría/marca también (antes iban una tras otra).
+- Las dos primeras fotos del catálogo se cargan con prioridad.
+- Las fotos optimizadas se guardan 7 días (`minimumCacheTTL`) en vez de 60 segundos.
+- La fuente decorativa Playball ya no se precarga en todas las páginas.
+
+
+## Animación del carrito en celular: turnos alternados
+
+La bolsita del botón «Agregar» ahora se mueve por turnos: las tarjetas **pares** al cargar la página, las **impares** 30 segundos después, las pares otra vez a los 60 s, y así sucesivamente (cada tarjeta se repite cada 60 s, siempre alternando cada 30 s). Está en `app/globals.css`; para cambiar el ritmo se ajustan los `animation-delay` (pares 1.2 s, impares 31.2 s).
