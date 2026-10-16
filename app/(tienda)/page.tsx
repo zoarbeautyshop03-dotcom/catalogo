@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import ProductCard from '@/components/ProductCard'
 import CategoryCard from '@/components/CategoryCard'
+import { CarruselPortada } from '@/components/CarruselPortada'
 import type { Producto } from '@/lib/types'
 import { rutaProducto } from '@/lib/slug'
 import { formatPrecio } from '@/lib/whatsapp'
@@ -14,6 +15,7 @@ import {
   getOfertas,
   getMasVendidos,
   getImagenesPrincipales,
+  getConfiguracion,
 } from '@/lib/queries'
 
 export const revalidate = 300
@@ -78,6 +80,12 @@ export default async function HomePage() {
   )
   const imagenes = await getImagenesPrincipales(idsUnicos)
 
+  // Imágenes de la portada: se eligen desde el panel (Configuración) y se turnan
+  // en un carrusel. Si no hay ninguna, la columna derecha del hero no se muestra
+  // y el texto ocupa todo el ancho.
+  const config = await getConfiguracion()
+  const imagenesPortada = (config?.hero_imagenes ?? []).filter((url) => url && url.trim().length > 0)
+
   // Selección Zoar: tres destacados con foto, en una cuadrícula de tamaños
   // distintos. Si no hay tres con foto, se omite y los destacados van en la
   // cuadrícula normal del final.
@@ -98,7 +106,11 @@ export default async function HomePage() {
           <div aria-hidden="true" className="zoar-hero-wash absolute inset-0" />
           <div aria-hidden="true" className="zoar-orb zoar-orb-one" />
           <div aria-hidden="true" className="zoar-orb zoar-orb-two" />
-          <div className="relative z-10 grid min-h-[460px] items-center gap-10 px-6 py-12 sm:min-h-[520px] sm:px-10 sm:py-16 lg:min-h-[560px] lg:grid-cols-[1.05fr_.95fr] lg:px-16 lg:py-20">
+          <div
+            className={`relative z-10 grid min-h-[460px] items-center gap-10 px-6 py-12 sm:min-h-[520px] sm:px-10 sm:py-16 lg:min-h-[560px] lg:px-16 lg:py-20 ${
+              imagenesPortada.length > 0 ? 'lg:grid-cols-[1.05fr_.95fr]' : ''
+            }`}
+          >
             <div className="max-w-2xl">
               <p className="eyebrow reveal-up">Tu ritual, tu momento</p>
               <h1 className="mt-5 font-display text-display-lg font-semibold text-lavender-magenta-950 sm:text-display-xl">
@@ -128,26 +140,11 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="hidden min-h-[290px] items-center justify-center lg:flex">
-              <div className="zoar-hero-note w-[min(100%,340px)] rounded-boutique p-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold uppercase tracking-[.16em] text-lavender-magenta-800">
-                    Zoar Beauty
-                  </span>
-                  <IconoDestello className="h-5 w-5 text-lavender-magenta-600" />
-                </div>
-                <div className="my-7 flex h-36 items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-white/80 to-lavender-magenta-100/80">
-                  <span className="font-script text-5xl text-lavender-magenta-700">Shop</span>
-                  <IconoDestello className="h-7 w-7 text-lavender-magenta-400" />
-                </div>
-                <p className="font-display text-2xl font-semibold leading-tight text-lavender-magenta-950">
-                  Un toque de cuidado, todos los días.
-                </p>
-                <p className="mt-2 text-sm leading-6 text-gray-600">
-                  Pequeños detalles que hacen especial tu rutina.
-                </p>
+            {imagenesPortada.length > 0 && (
+              <div className="hidden min-h-[290px] items-center justify-center lg:flex">
+                <CarruselPortada imagenes={imagenesPortada} />
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

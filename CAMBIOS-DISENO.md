@@ -1,3 +1,95 @@
+# Carrusel de imágenes en la portada, elegible desde el panel (octubre 2026)
+
+- **Se quitó la tarjeta de producto del hero.** La columna derecha de la portada
+  mostraba un producto destacado ("Destacado" + foto + precio). Ahora muestra un
+  carrusel con las fotos que elijas tú desde el panel.
+- **Carrusel de hasta 5 fotos**, que se van turnando con un fundido cada 5
+  segundos. Llevan un desenfoque suave (3 px) y un velo rosa que las funde con el
+  fondo del hero, para que acompañen al texto sin competir con él. Son
+  decorativas, así que quedan ocultas a los lectores de pantalla (`aria-hidden`).
+- **Se queda quieto si el sistema pide menos movimiento.** Con
+  `prefers-reduced-motion` no rota y muestra solo la primera.
+- **Se eligen en Administración → Configuración → Imágenes de la portada.** Ahí
+  puedes pegar links (Cloudinary o ImageKit, igual que las fotos de los productos)
+  o elegir entre las fotos que ya subiste. Se numeran en orden, se pueden quitar
+  una por una y hay vista previa.
+- **Si no eliges ninguna**, la columna derecha no se muestra y el texto ocupa
+  todo el ancho.
+
+Requiere correr una sola vez `supabase/portada-imagen.sql`, que agrega la columna
+`hero_imagenes` (`text[]`) a la tabla `configuracion`. Si todavía no se ha
+corrido, el panel lo avisa con un recuadro claro en vez de fallar sin explicación.
+
+Verificado con `npm run build` (21 rutas, sin errores) y en navegador real.
+
+---
+
+# Aplicado sobre la versión del 14 de octubre (octubre 2026)
+
+Estos arreglos se hicieron sobre la **copia más reciente** del proyecto (la del
+14 de octubre), que ya traía la pista visual del botón "Filtrar" en celular, la
+caché de imágenes y los testimonios retirados. La copia anterior (12 de octubre)
+quedó descartada.
+
+## Acceso al panel con muñequito
+
+- El enlace "Administración" del menú público lleva ahora un **icono de persona**
+  (`components/IconoUsuario.tsx`, un SVG de trazo como el resto de iconos del
+  sitio, para que no desentone). Se conserva el texto, así que el acceso sigue
+  siendo evidente y accesible; el icono solo lo hace más reconocible. En el menú
+  de celular el muñequito ocupa el lugar del número ("05"), de modo que la lista
+  sigue leyéndose 01–04 y el acceso al panel queda marcado como algo aparte.
+  No se ocultó el enlace.
+
+## Portada con escaparate
+
+- **El hero de escritorio ahora muestra producto real.** La columna derecha tenía
+  una tarjeta decorativa que repetía el logo (que ya está en el header) y
+  dedicaba 144 px a una caja casi vacía con la palabra "Shop". Ahora muestra un
+  producto destacado real —etiqueta "Destacado", foto en marco blanco, nombre,
+  precio y "Ver producto"— y enlaza a su ficha. Si no hay ningún destacado con
+  foto, cae a la tarjeta decorativa de antes.
+- **La tarjeta del hero quedó enderezada.** Arrastraba un `rotate(2deg)` de una
+  capa CSS anterior que la capa final ya no redefinía: salía torcida sin que
+  fuera una decisión. El movimiento pasa a ser una elevación de 4 px al pasar el
+  cursor, igual que en las tarjetas de producto.
+
+## Sistema de diseño documentado
+
+- **`DESIGN.md` pasa a ser el sistema de diseño propio de Zoar**, con los tokens
+  reales de `app/globals.css` y `tailwind.config.ts`. El documento original de
+  Oura se conserva aparte en `DESIGN-referencia-oura.md` (referencia: su paleta y
+  tipografías no se aplican).
+
+## Correcciones de robustez y detalles
+
+Pasada de auditoría sobre el sitio ya rediseñado, hecha en navegador real
+(Edge, a 390 y 1440 px). No se tocó la identidad visual: solo se corrigieron
+defectos concretos encontrados con evidencia.
+
+- **Favicon:** el sitio no declaraba ningún icono, así que el navegador pedía
+  `/favicon.ico` y recibía un 404 en cada carga. Se añadió `app/icon.svg`
+  (monograma "Z" en blanco sobre el degradado magenta de la marca); Next lo
+  sirve solo e inyecta el `<link rel="icon">`.
+- **Franja superior cortada en celular:** el texto "Belleza que se siente,
+  detalles que enamoran" usaba `truncate`, de modo que a 390 px se cortaba a
+  media palabra ("…DETA…"). Ahora se reduce el interletrado y el texto baja a
+  dos líneas en celular; en tablet y escritorio queda igual que antes.
+- **Impresión y PDF:** las apariciones al hacer scroll (`reveal-on-scroll`) usan
+  `animation-timeline: view()` con relleno `both`, así que fuera de la ventana
+  quedan en `opacity: 0`. Al imprimir o exportar a PDF no hay scroll, y varias
+  secciones salían en blanco. Se añadió una guarda `@media print` que fuerza
+  todo visible y sin movimiento, y quita las sombras de las tarjetas.
+
+La etiqueta "Últimas unidades" ya venía resuelta en esta versión (se movió arriba
+del precio, en una columna), así que aquí no se tocó.
+
+Verificado con `npm run build` (termina sin errores de tipos ni de lint, 21
+rutas) y con revisión en navegador real de los tres arreglos visuales, del
+escaparate y del muñequito.
+
+---
+
 # Rosa pastel dominante + portada con imagen (octubre 2026)
 
 - **Fondo:** las páginas de la tienda usan un rosa pastel con luces suaves (clase `fondo-tienda`, solo en la tienda; el panel de administración no cambia). Las tarjetas son blancas con borde rosa para destacar sobre el fondo.

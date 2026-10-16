@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Zoar Beauty Shop">
+  <defs>
+    <linearGradient id="zoarIconGradient" x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#db1eb1" />
+      <stop offset="60%" stop-color="#b4179a" />
+      <stop offset="100%" stop-color="#951374" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#zoarIconGradient)" />
+  <path
+    d="M18 19.5h28L18 44.5h28"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

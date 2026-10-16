@@ -2,25 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createServerSupabase } from '@/lib/supabase/server'
-
-// Debe coincidir con los "remotePatterns" de next.config.mjs: si guardamos una
-// URL de un dominio que no está ahí, next/image la va a rechazar y la imagen
-// se ve rota en la tienda (aunque en el panel admin todo parezca normal).
-const HOSTS_PERMITIDOS = ['res.cloudinary.com', 'ik.imagekit.io']
-
-function validarUrlImagen(url: string) {
-  let host: string
-  try {
-    host = new URL(url).hostname
-  } catch {
-    throw new Error('Esa URL de imagen no es válida. Debe empezar por https://')
-  }
-  if (!HOSTS_PERMITIDOS.includes(host)) {
-    throw new Error(
-      `Esa imagen no se va a mostrar en la tienda: solo se aceptan links de ${HOSTS_PERMITIDOS.join(' o ')}. Si la subiste a otro sitio (Google Fotos, Instagram, WhatsApp, etc.), primero súbela a Cloudinary o ImageKit y pega ese link.`
-    )
-  }
-}
+import { validarUrlImagen } from '@/lib/imagenes-url'
 
 export async function agregarImagen(productoId: string, formData: FormData) {
   const supabase = createServerSupabase()

@@ -64,6 +64,7 @@ export type Configuracion = {
   horarios: string | null
   info_entrega: string | null
   mostrar_agotados: boolean | null
+  hero_imagenes: string[] | null
 }
 
 // Placeholder simple: para tipado completo generado desde el esquema real,

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ChevronRight, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { IconoUsuario } from '@/components/IconoUsuario'
 import {
   Sheet,
   SheetClose,
@@ -88,12 +89,16 @@ export default function MenuMovil() {
                     className="group flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-[15px] font-semibold text-gray-700 transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-50 hover:text-lavender-magenta-800"
                   >
                     <span className="flex items-center gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="font-display text-xs font-bold tabular-nums text-dorado-oscuro/70"
-                      >
-                        {String(indice + 1).padStart(2, '0')}
-                      </span>
+                      {href === '/admin' ? (
+                        <IconoUsuario className="h-4 w-4 shrink-0 text-dorado-oscuro/70" />
+                      ) : (
+                        <span
+                          aria-hidden="true"
+                          className="font-display text-xs font-bold tabular-nums text-dorado-oscuro/70"
+                        >
+                          {String(indice + 1).padStart(2, '0')}
+                        </span>
+                      )}
                       {label}
                     </span>
                     <ChevronRight

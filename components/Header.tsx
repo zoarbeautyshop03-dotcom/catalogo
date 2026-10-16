@@ -3,6 +3,7 @@ import CartDrawer from './CartDrawer'
 import Logo from './Logo'
 import RedesSociales from './RedesSociales'
 import MenuMovil from './MenuMovil'
+import { IconoUsuario } from './IconoUsuario'
 import { getConfiguracion } from '@/lib/queries'
 
 function SearchIcon() {
@@ -58,7 +59,7 @@ export default async function Header() {
       {/* Franja de anuncio */}
       <div className="relative overflow-hidden border-b border-lavender-magenta-900/70 bg-gradient-to-r from-lavender-magenta-950 via-lavender-magenta-900 to-lavender-magenta-950 text-lavender-magenta-100">
         <div className="section-shell flex items-center justify-between gap-3 py-2">
-          <p className="min-w-0 truncate text-[11px] font-medium uppercase tracking-[0.16em] sm:text-xs">
+          <p className="min-w-0 text-[10px] font-medium uppercase leading-snug tracking-[0.08em] sm:text-xs sm:tracking-[0.16em]">
             Belleza que se siente, detalles que enamoran
           </p>
           <RedesSociales config={config} variant="header" />
@@ -121,7 +122,8 @@ export default async function Header() {
           <NavLink href="/catalogo?oferta=1">Ofertas</NavLink>
           <NavLink href="/catalogo?nuevo=1">Novedades</NavLink>
           <NavLink href="/admin" tono="suave">
-            Administración
+            <IconoUsuario className="h-3.5 w-3.5 shrink-0" />
+            <span className="ml-1.5">Administración</span>
           </NavLink>
         </nav>
       </div>

@@ -1,11 +1,37 @@
 import { createServerSupabase } from '@/lib/supabase/server'
 import { guardarConfiguracion } from '@/lib/actions/configuracion'
+import { SelectorImagenesPortada } from '@/components/admin/SelectorImagenesPortada'
+import { esUrlPermitida } from '@/lib/imagenes-url'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ConfiguracionPage() {
   const supabase = createServerSupabase()
   const { data: config } = await supabase.from('configuracion').select('*').eq('id', 1).maybeSingle()
+
+  // ¿Ya se corrió supabase/portada-imagen.sql? Si todavía no, se avisa aquí en
+  // el panel en vez de dejar que el guardado falle sin explicación.
+  const { error: errorColumna } = await supabase.from('configuracion').select('hero_imagenes').limit(1)
+  const faltaColumna = Boolean(errorColumna)
+
+  // Fotos que ya están subidas a los productos, para poder elegir sin salir del
+  // panel.
+  const { data: imagenes } = await supabase
+    .from('producto_imagenes')
+    .select('url, texto_alt')
+    .order('es_principal', { ascending: false })
+    .order('orden')
+    .limit(80)
+
+  const sugeridas: { url: string; alt: string }[] = []
+  const vistas = new Set<string>()
+  for (const imagen of imagenes ?? []) {
+    const url = String(imagen.url ?? '').trim()
+    if (!url || vistas.has(url) || !esUrlPermitida(url)) continue
+    vistas.add(url)
+    sugeridas.push({ url, alt: imagen.texto_alt ?? '' })
+    if (sugeridas.length >= 12) break
+  }
 
   return (
     <div>
@@ -15,7 +41,7 @@ export default async function ConfiguracionPage() {
         <p className="mt-1 max-w-xl text-sm leading-6 text-gray-500">Datos de contacto y preferencias de la tienda.</p>
         <div className="hairline-gold mt-5" aria-hidden="true" />
       </header>
-      <form action={guardarConfiguracion} className="max-w-lg space-y-4 rounded-boutique-lg border border-lavender-magenta-100 bg-white p-5 shadow-card sm:p-6">
+      <form action={guardarConfiguracion} className="max-w-2xl space-y-4 rounded-boutique-lg border border-lavender-magenta-100 bg-white p-5 shadow-card sm:p-6">
         <Campo label="Nombre de la tienda" name="nombre_tienda" defaultValue={config?.nombre_tienda ?? 'ZOAR BEAUTY SHOP'} />
         <Campo label="WhatsApp (con indicativo, sin +)" name="whatsapp_numero" defaultValue={config?.whatsapp_numero ?? ''} />
         <Campo label="Instagram" name="instagram" defaultValue={config?.instagram ?? ''} />
@@ -27,6 +53,11 @@ export default async function ConfiguracionPage() {
           <input type="checkbox" name="mostrar_agotados" defaultChecked={config?.mostrar_agotados ?? true} className="h-4 w-4 accent-lavender-magenta-600" />
           Mostrar productos agotados en el catálogo público
         </label>
+        <SelectorImagenesPortada
+          valorInicial={config?.hero_imagenes ?? []}
+          sugeridas={sugeridas}
+          faltaColumna={faltaColumna}
+        />
         <button className="inline-flex items-center gap-2 rounded-full bg-lavender-magenta-700 px-6 py-2.5 font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">Guardar</button>
       </form>
       <p className="text-xs leading-5 text-gray-400 mt-3 max-w-lg">
