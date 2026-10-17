@@ -3,10 +3,15 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 
-// Carrusel de la portada: muestra las imágenes elegidas en el panel, con un
-// desenfoque suave, turnándose con un fundido cada 5 segundos. Es decorativo
-// (va oculto a los lectores de pantalla) y se queda quieto si el sistema pide
-// menos animación.
+// Carrusel de la portada: muestra las imágenes elegidas en el panel, turnándose
+// con un fundido cada 5 segundos.
+//
+// La foto va nítida y grande, enmarcada. El desenfoque quedó alrededor, a modo
+// de bordado: detrás del marco hay una copia de la misma foto, borrosa y un poco
+// más grande, que asoma por los bordes como un halo de color.
+//
+// Es decorativo (va oculto a los lectores de pantalla) y se queda quieto si el
+// sistema pide menos animación.
 export function CarruselPortada({
   imagenes,
   intervaloMs = 5000,
@@ -25,22 +30,42 @@ export function CarruselPortada({
     return () => window.clearInterval(id)
   }, [imagenes.length, intervaloMs])
 
+  // El fundido del carrusel. El halo usa opacidades más bajas para que se lea
+  // como un borde y no como una segunda foto.
+  const fundido = (indice: number, visible: string) =>
+    `transition-opacity duration-1000 ease-boutique ${indice === activo ? visible : 'opacity-0'}`
+
   return (
-    <div className="zoar-hero-portada relative aspect-[4/5] w-[min(100%,360px)] overflow-hidden rounded-boutique">
-      {imagenes.map((url, indice) => (
-        <Image
-          key={indice}
-          src={url}
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="360px"
-          className={`scale-105 object-cover blur-[3px] transition-opacity duration-1000 ease-boutique ${
-            indice === activo ? 'opacity-100' : 'opacity-0'
-          }`}
-        />
-      ))}
-      <div aria-hidden="true" className="zoar-hero-portada-velo absolute inset-0" />
+    <div className="relative aspect-[4/5] w-[min(100%,440px)]">
+      {/* Halo: copia borrosa y agrandada de la misma foto, asomando por los bordes. */}
+      <div aria-hidden="true" className="absolute inset-0">
+        {imagenes.map((url, indice) => (
+          <Image
+            key={indice}
+            src={url}
+            alt=""
+            fill
+            sizes="440px"
+            className={`zoar-hero-portada-halo rounded-[2.2rem] object-cover ${fundido(indice, 'opacity-80')}`}
+          />
+        ))}
+      </div>
+
+      {/* Foto nítida, con margen para que el halo se vea alrededor. */}
+      <div className="zoar-hero-portada-marco absolute inset-[13px] overflow-hidden rounded-[1.35rem]">
+        {imagenes.map((url, indice) => (
+          <Image
+            key={indice}
+            src={url}
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="420px"
+            className={`object-cover ${fundido(indice, 'opacity-100')}`}
+          />
+        ))}
+        <div aria-hidden="true" className="zoar-hero-portada-velo absolute inset-0" />
+      </div>
     </div>
   )
 }

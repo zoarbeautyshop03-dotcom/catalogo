@@ -1,12 +1,26 @@
+# Precio arriba y "Últimas unidades" abajo en las tarjetas (octubre 2026)
+
+- En las tarjetas del catálogo, la etiqueta **"Últimas unidades" ahora va debajo
+  del precio** (antes iba arriba). Así el precio es lo primero que se ve y la
+  etiqueta queda como aviso secundario.
+- Las píldoras de estado de la ficha de producto (`/producto/...`) **no se
+  tocaron**: ahí van en la fila del encabezado, junto a "Zoar Beauty Shop", no
+  apiladas con el precio.
+
+---
+
 # Carrusel de imágenes en la portada, elegible desde el panel (octubre 2026)
 
 - **Se quitó la tarjeta de producto del hero.** La columna derecha de la portada
   mostraba un producto destacado ("Destacado" + foto + precio). Ahora muestra un
   carrusel con las fotos que elijas tú desde el panel.
 - **Carrusel de hasta 5 fotos**, que se van turnando con un fundido cada 5
-  segundos. Llevan un desenfoque suave (3 px) y un velo rosa que las funde con el
-  fondo del hero, para que acompañen al texto sin competir con él. Son
-  decorativas, así que quedan ocultas a los lectores de pantalla (`aria-hidden`).
+  segundos. La foto va **nítida y grande** (marco de 440 × 550); el desenfoque
+  quedó **alrededor**, a modo de bordado: detrás del marco hay una copia de la
+  misma foto, borrosa (26 px) y un poco más grande, que asoma por los bordes como
+  un halo de color. El marco lleva un hilo dorado fino y un velo rosa muy suave
+  que lo funde con el fondo del hero. Son decorativas, así que quedan ocultas a
+  los lectores de pantalla (`aria-hidden`).
 - **Se queda quieto si el sistema pide menos movimiento.** Con
   `prefers-reduced-motion` no rota y muestra solo la primera.
 - **Se eligen en Administración → Configuración → Imágenes de la portada.** Ahí

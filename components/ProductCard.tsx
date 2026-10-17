@@ -117,17 +117,17 @@ export default function ProductCard({ producto, imagenUrl, marcaNombre, priorida
               </div>
             )}
             <div className="flex flex-col gap-1.5">
+              <div className="flex items-end justify-between gap-2">
+                <span className={`block min-w-0 text-xl font-extrabold tracking-tight sm:text-2xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
+                  {formatPrecio(producto.precio, producto.moneda)}
+                </span>
+              </div>
               {ultimasUnidades && (
                 <span className="catalog-status-pill self-start whitespace-nowrap">
                   <span aria-hidden="true" className="mr-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
                   Últimas unidades
                 </span>
               )}
-              <div className="flex items-end justify-between gap-2">
-                <span className={`block min-w-0 text-xl font-extrabold tracking-tight sm:text-2xl ${tieneDescuento ? 'text-lavender-magenta-700' : 'text-lavender-magenta-950'}`}>
-                  {formatPrecio(producto.precio, producto.moneda)}
-                </span>
-              </div>
             </div>
           </div>
         </div>

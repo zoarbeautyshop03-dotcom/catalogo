@@ -930,20 +930,28 @@ a.zoar-hero-note:hover {
   a.zoar-hero-note:hover { transform: none; }
 }
 
-/* Imagen de la portada: la que se elige en el panel (Configuración). Va con un
-   desenfoque suave para que acompañe al texto sin competir con él, y con un
-   velo rosa que la funde con el fondo del hero. */
-.zoar-hero-portada {
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 30px 70px -24px rgba(81, 1, 65, 0.40);
+/* Carrusel de la portada: las fotos se eligen en el panel (Configuración).
+   La foto va nítida y grande; el desenfoque quedó A LADO, alrededor: detrás del
+   marco hay una copia de la misma foto, borrosa y agrandada, que asoma por los
+   bordes como un halo de color, a modo de bordado. El velo rosa la funde con el
+   fondo del hero sin apagarla.
+   Ojo: aquí NO se toca `opacity`, porque el carrusel la anima con utilidades de
+   Tailwind y este archivo va después de `@tailwind utilities`. */
+.zoar-hero-portada-halo {
+  filter: blur(26px) saturate(1.15);
+}
+.zoar-hero-portada-marco {
+  border: 1px solid rgba(183, 139, 60, 0.42); /* hilo dorado, tipo bordado */
+  box-shadow:
+    0 30px 70px -24px rgba(81, 1, 65, 0.42),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55);
 }
 .zoar-hero-portada-velo {
   background: linear-gradient(
     155deg,
-    rgba(255, 243, 253, 0.42) 0%,
-    rgba(255, 243, 253, 0.10) 42%,
-    rgba(81, 1, 65, 0.22) 100%
+    rgba(255, 243, 253, 0.20) 0%,
+    rgba(255, 243, 253, 0.02) 45%,
+    rgba(81, 1, 65, 0.16) 100%
   );
 }
 
