@@ -6,6 +6,7 @@ import {
   actualizarInventarioMasivo,
   actualizarPrecioMasivo,
   confirmarImportacionInventario,
+  confirmarSincronizacionInventario,
   previsualizarInventario,
   type FilaCambio,
   type ResultadoConfirmacion,
@@ -311,7 +312,7 @@ export default function InventarioClient({
           onReiniciar={() => setImportKey((k) => k + 1)}
           onTerminado={(n) => {
             setImportKey((k) => k + 1)
-            setMensajeOk(`Importación aplicada: ${n} ${n === 1 ? 'producto actualizado' : 'productos actualizados'}.`)
+            setMensajeOk(`Sincronización aplicada: ${n} ${n === 1 ? 'cambio realizado' : 'cambios realizados'} en el catálogo.`)
             window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         />
@@ -368,51 +369,141 @@ function Importador({ onReiniciar, onTerminado }: { onReiniciar: () => void; onT
     <form action={importAction} className="mt-5 rounded-boutique border border-dashed border-gray-300 bg-gray-50 p-5">
       <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
       <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
-      <p className="mt-2 text-xs text-gray-400">La plantilla reconoce <strong>slug</strong> o <strong>SKU</strong>. No cambies esos identificadores.</p>
+      <p className="mt-2 text-xs text-gray-400">El Excel manda: los productos nuevos se crean, los existentes se actualizan (por <strong>slug</strong> o <strong>SKU</strong>) y los que no estén en el archivo se eliminan. Antes de aplicar verás la lista completa.</p>
+      <label className="mt-3 flex items-start gap-2 text-sm text-gray-700">
+        <input type="checkbox" name="eliminar_faltantes" defaultChecked className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
+        <span>Eliminar de la página los productos que <strong>no estén</strong> en el Excel</span>
+      </label>
       <ImportButton />
       {importState.error && <p className="mt-3 text-sm text-red-500">{importState.error}</p>}
     </form>
   )
 }
 
+function ResumenSync({ numero, titulo, clase }: { numero: number; titulo: string; clase: string }) {
+  return (
+    <div className={`rounded-2xl p-4 text-center ${clase}`}>
+      <div className="text-2xl font-bold">{numero}</div>
+      <div className="text-xs font-semibold uppercase tracking-wide">{titulo}</div>
+    </div>
+  )
+}
+
 function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: ResultadoPrevisualizacion; onReiniciar: () => void; onTerminado: (n: number) => void }) {
-  const [state, action] = useFormState(confirmarImportacionInventario, INITIAL_CONF)
+  const [state, action] = useFormState(confirmarSincronizacionInventario, INITIAL_CONF)
   const cambios = resultado.cambios ?? []
-  const noReconocidos = resultado.noReconocidos ?? []
+  const nuevos = resultado.nuevos ?? []
+  const eliminar = resultado.eliminar ?? []
+  const advertencias = resultado.advertencias ?? []
+  const hayAlgo = cambios.length + nuevos.length + eliminar.length > 0
   useEffect(() => {
     if (state.ok && state.aplicados) onTerminado(state.aplicados)
   }, [state])
+
+  const plan = JSON.stringify({ cambios, nuevos, eliminar, eliminacionMasiva: resultado.eliminacionMasiva })
+  const th = 'px-4 py-3'
   return (
-    <div className="mt-5 space-y-4">
-      <div className="rounded-2xl bg-lavender-magenta-50 p-4 text-sm text-gray-600">
-        <strong className="text-lavender-magenta-700">{cambios.length}</strong> cambios · {resultado.sinCambios ?? 0} sin cambios · {noReconocidos.length} no reconocidos
+    <div className="mt-5 space-y-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <ResumenSync numero={nuevos.length} titulo="Se crean" clase="bg-emerald-50 text-emerald-700" />
+        <ResumenSync numero={cambios.length} titulo="Se actualizan" clase="bg-lavender-magenta-50 text-lavender-magenta-700" />
+        <ResumenSync numero={eliminar.length} titulo="Se eliminan" clase="bg-red-50 text-red-600" />
+        <ResumenSync numero={resultado.sinCambios ?? 0} titulo="Sin cambios" clase="bg-gray-50 text-gray-500" />
       </div>
+
+      {nuevos.length > 0 && (
+        <section>
+          <h3 className="mb-2 text-sm font-bold text-emerald-700">Productos nuevos que se van a crear ({nuevos.length})</h3>
+          <div className="max-h-72 overflow-auto rounded-2xl border border-emerald-100">
+            <table className="w-full min-w-[650px] text-sm">
+              <thead className="sticky top-0 bg-emerald-50 text-left text-xs font-semibold uppercase tracking-wide text-emerald-700"><tr><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Marca / Categoría</th><th className={th}>Stock</th><th className={th}>Precio</th></tr></thead>
+              <tbody>
+                {nuevos.map((n) => (
+                  <tr key={n.slug} className="border-t border-emerald-50">
+                    <td className="px-4 py-2">{n.nombre}</td>
+                    <td className="px-4 py-2 text-xs text-gray-500">{n.sku || '—'}</td>
+                    <td className="px-4 py-2 text-xs text-gray-500">{[n.marca, n.categoria].filter(Boolean).join(' · ') || '—'}</td>
+                    <td className="px-4 py-2">{n.stock}</td>
+                    <td className="px-4 py-2">{n.precio}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {eliminar.length > 0 && (
+        <section>
+          <h3 className="mb-2 text-sm font-bold text-red-600">Productos que se van a ELIMINAR de la página ({eliminar.length})</h3>
+          <p className="mb-2 text-xs text-gray-500">No están en el Excel. Esta acción es permanente.</p>
+          <div className="max-h-72 overflow-auto rounded-2xl border border-red-100">
+            <table className="w-full min-w-[500px] text-sm">
+              <thead className="sticky top-0 bg-red-50 text-left text-xs font-semibold uppercase tracking-wide text-red-600"><tr><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Stock actual</th></tr></thead>
+              <tbody>
+                {eliminar.map((e) => (
+                  <tr key={e.id} className="border-t border-red-50">
+                    <td className="px-4 py-2">{e.nombre}</td>
+                    <td className="px-4 py-2 text-xs text-gray-500">{e.sku || '—'}</td>
+                    <td className="px-4 py-2">{e.cantidad_stock ?? 0}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
       {cambios.length > 0 && (
-        <div className="overflow-x-auto rounded-2xl border border-gray-100">
-          <table className="w-full min-w-[650px] text-sm">
-            <thead className="bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"><tr><th className="px-4 py-3">Producto</th><th className="px-4 py-3">SKU</th><th className="px-4 py-3">Stock</th><th className="px-4 py-3">Precio</th></tr></thead>
-            <tbody>
-              {cambios.map((c) => (
-                <tr key={c.id || c.slug} className="border-t border-gray-100">
-                  <td className="px-4 py-2">{c.nombre}</td>
-                  <td className="px-4 py-2 text-xs text-gray-500">{c.sku || '—'}</td>
-                  <td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.stockNuevo}</strong></> : '—'}</td>
-                  <td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.precioNuevo}</strong></> : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <section>
+          <h3 className="mb-2 text-sm font-bold text-lavender-magenta-700">Productos que se actualizan ({cambios.length})</h3>
+          <div className="max-h-72 overflow-auto rounded-2xl border border-gray-100">
+            <table className="w-full min-w-[650px] text-sm">
+              <thead className="sticky top-0 bg-gray-50 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"><tr><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Stock</th><th className={th}>Precio</th></tr></thead>
+              <tbody>
+                {cambios.map((c) => (
+                  <tr key={c.id || c.slug} className="border-t border-gray-100">
+                    <td className="px-4 py-2">{c.nombre}</td>
+                    <td className="px-4 py-2 text-xs text-gray-500">{c.sku || '—'}</td>
+                    <td className="px-4 py-2">{c.stockNuevo !== null ? <>{c.stockActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.stockNuevo}</strong></> : '—'}</td>
+                    <td className="px-4 py-2">{c.precioNuevo !== null ? <>{c.precioActual} <Icono nombre="flecha" className="inline h-3.5 w-3.5 align-middle text-gray-400" /> <strong className="text-lavender-magenta-700">{c.precioNuevo}</strong></> : '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {advertencias.length > 0 && (
+        <div className="max-h-40 overflow-auto rounded-2xl bg-amber-50 p-4 text-xs text-amber-800">
+          <strong>Avisos ({advertencias.length}):</strong>
+          <ul className="mt-1 list-disc pl-4">{advertencias.map((a, i) => <li key={i}>{a}</li>)}</ul>
         </div>
       )}
-      {noReconocidos.length > 0 && <div className="rounded-2xl bg-amber-50 p-4 text-xs text-amber-800"><strong>No reconocidos:</strong> {noReconocidos.join(', ')}</div>}
-      <div className="flex flex-wrap items-center gap-3">
-        {cambios.length > 0 && (
-          <form action={action} className="flex items-center">
-            <input type="hidden" name="cambios" value={JSON.stringify(cambios)} />
-            <ConfirmarBoton texto="Confirmar y actualizar" cargando="Aplicando…" className="rounded-full bg-lavender-magenta-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800 disabled:opacity-60" />
+
+      {!hayAlgo && <p className="rounded-2xl bg-gray-50 p-4 text-sm text-gray-600">El Excel y la página ya coinciden. No hay nada que cambiar.</p>}
+
+      <div className="flex flex-wrap items-start gap-3">
+        {hayAlgo && (
+          <form action={action} className="space-y-3">
+            <input type="hidden" name="plan" value={plan} />
+            {eliminar.length > 0 && (
+              <label className="flex items-start gap-2 text-sm text-red-600">
+                <input type="checkbox" name="entiendo" required className="mt-0.5 h-4 w-4 accent-red-600" />
+                <span>Entiendo que se eliminarán {eliminar.length} {eliminar.length === 1 ? 'producto' : 'productos'} de forma permanente.</span>
+              </label>
+            )}
+            {resultado.eliminacionMasiva && (
+              <div>
+                <p className="text-xs text-red-600">Vas a eliminar una gran parte del catálogo ({eliminar.length} de {resultado.totalCatalogo}). Escribe <strong>ELIMINAR</strong> para continuar.</p>
+                <input name="palabra" required autoComplete="off" className="mt-1 w-40 rounded-lg border border-red-200 px-3 py-1.5 text-sm" />
+              </div>
+            )}
+            <ConfirmarBoton texto={`Confirmar: crear ${nuevos.length}, actualizar ${cambios.length}, eliminar ${eliminar.length}`} cargando="Aplicando…" className="rounded-full bg-lavender-magenta-700 px-6 py-2.5 text-sm font-semibold text-white transition-colors duration-200 ease-boutique hover:bg-lavender-magenta-800 disabled:opacity-60" />
           </form>
         )}
-        <button type="button" onClick={onReiniciar} className="rounded-full border border-gray-200 px-5 py-2.5 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700">{cambios.length > 0 ? 'Cancelar' : 'Subir otro archivo'}</button>
+        <button type="button" onClick={onReiniciar} className="rounded-full border border-gray-200 px-5 py-2.5 text-sm text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700">{hayAlgo ? 'Cancelar' : 'Subir otro archivo'}</button>
       </div>
       {state.error && <p className="text-sm text-red-500">{state.error}</p>}
     </div>
