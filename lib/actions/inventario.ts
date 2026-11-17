@@ -152,6 +152,7 @@ export async function previsualizarInventario(
     if (p.sku) porSku.set(p.sku, p)
   }
 
+  const columnas = new Set(filas.flatMap((f) => Object.keys(f)))
   const cambios: FilaCambio[] = []
   const nuevos: FilaNuevo[] = []
   const advertencias: string[] = []
@@ -177,8 +178,19 @@ export async function previsualizarInventario(
       (sku && porSku.get(sku)) ||
       null
 
-    const nuevoStock = leerNumero(raw.cantidad_stock)
-    const nuevoPrecio = leerNumero(raw.precio)
+    // Casilla vacía (o con "-") = 0. Solo si la columna existe en el archivo; si falta la columna, no se toca.
+    const etiqueta = nombre || slugExcel || sku
+    const leerCasilla = (columna: 'cantidad_stock' | 'precio', nombreColumna: string): number | null => {
+      if (!columnas.has(columna)) return null
+      const valor = raw[columna]
+      const textoCasilla = texto(valor)
+      if (valor === null || valor === undefined || textoCasilla === '' || textoCasilla === '-') return 0
+      const n = leerNumero(valor)
+      if (n === null) advertencias.push(`Fila ${fila}: ${nombreColumna} no es un número en “${etiqueta}”. Se ignoró ese dato.`)
+      return n
+    }
+    const nuevoStock = leerCasilla('cantidad_stock', 'el stock')
+    const nuevoPrecio = leerCasilla('precio', 'el precio')
 
     if (existente) {
       if (conservados.has(existente.id)) {
@@ -455,7 +467,7 @@ export async function confirmarSincronizacionInventario(
     actualizados = cambios.length
   }
 
-  // 2) Crear nuevos (publicados y activos para que aparezcan en la página)
+  // 2) Crear nuevos como BORRADOR (no se ven en la página hasta que los publiques desde Productos)
   for (const tanda of enTandas(nuevos, 200)) {
     const { error } = await supabase.from('productos').insert(
       tanda.map((n) => ({
@@ -470,7 +482,7 @@ export async function confirmarSincronizacionInventario(
         categoria_id: n.categoria_id,
         descripcion_corta: n.descripcion_corta,
         activo: true,
-        estado_publicacion: 'publicado',
+        estado_publicacion: 'borrador',
       }))
     )
     if (error) return { ok: false, error: `No se pudieron crear los productos nuevos: ${error.message}. ${hecho()}` }

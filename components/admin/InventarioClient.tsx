@@ -405,7 +405,7 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
   return (
     <div className="mt-5 space-y-5">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <ResumenSync numero={nuevos.length} titulo="Se crean" clase="bg-emerald-50 text-emerald-700" />
+        <ResumenSync numero={nuevos.length} titulo="Se crean (borrador)" clase="bg-emerald-50 text-emerald-700" />
         <ResumenSync numero={cambios.length} titulo="Se actualizan" clase="bg-lavender-magenta-50 text-lavender-magenta-700" />
         <ResumenSync numero={eliminar.length} titulo="Se eliminan" clase="bg-red-50 text-red-600" />
         <ResumenSync numero={resultado.sinCambios ?? 0} titulo="Sin cambios" clase="bg-gray-50 text-gray-500" />
@@ -413,7 +413,7 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
 
       {nuevos.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-bold text-emerald-700">Productos nuevos que se van a crear ({nuevos.length})</h3>
+          <h3 className="mb-2 text-sm font-bold text-emerald-700">Productos nuevos que se van a crear como borrador ({nuevos.length})</h3>
           <div className="max-h-72 overflow-auto rounded-2xl border border-emerald-100">
             <table className="w-full min-w-[650px] text-sm">
               <thead className="sticky top-0 bg-emerald-50 text-left text-xs font-semibold uppercase tracking-wide text-emerald-700"><tr><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Marca / Categoría</th><th className={th}>Stock</th><th className={th}>Precio</th></tr></thead>
