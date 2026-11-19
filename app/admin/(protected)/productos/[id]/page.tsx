@@ -48,7 +48,7 @@ export default async function EditarProductoPage({ params, searchParams }: { par
           {(imagenes ?? []).map((img) => (
             <div key={img.id} className="relative">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt={img.texto_alt ?? ''} className="w-full aspect-square object-cover rounded-2xl ring-1 ring-lavender-magenta-100" />
+              <img src={img.url} alt={img.texto_alt ?? ''} className="w-full aspect-square object-contain p-2 bg-lavender-magenta-50/30 rounded-2xl ring-1 ring-lavender-magenta-100" />
               {img.es_principal && (
                 <span className="badge absolute top-1.5 left-1.5 bg-lavender-magenta-700 text-white shadow-card">Principal</span>
               )}

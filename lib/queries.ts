@@ -1,6 +1,7 @@
 import { cache } from 'react'
 import { decodificarSlug } from './slug'
 import { supabase } from './supabase/public'
+import { urlImagenCuadrada } from './imagenes-url'
 import type { Producto, Categoria, Marca, ProductoImagen, Configuracion } from './types'
 
 const PRODUCTO_PUBLICO_SELECT = '*'
@@ -131,7 +132,10 @@ export async function getImagenesDeProducto(productoId: string): Promise<Product
     .eq('producto_id', productoId)
     .order('orden')
   if (error) throw error
-  return (data ?? []) as ProductoImagen[]
+  return (data ?? []).map((img) => ({
+    ...img,
+    url: urlImagenCuadrada(img.url) ?? img.url,
+  })) as ProductoImagen[]
 }
 
 // Trae, en una sola consulta, la mejor imagen (principal si existe, si no la
@@ -149,7 +153,7 @@ export async function getImagenesPrincipales(productoIds: string[]): Promise<Rec
 
   const mapa: Record<string, string> = {}
   for (const img of data ?? []) {
-    if (!mapa[img.producto_id]) mapa[img.producto_id] = img.url
+    if (!mapa[img.producto_id]) mapa[img.producto_id] = urlImagenCuadrada(img.url) ?? img.url
   }
   return mapa
 }

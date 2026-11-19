@@ -53,9 +53,9 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
   const foto = fotos[actual]
 
   return (
-    <div role="group" aria-roledescription="galería" aria-label={`Fotos de ${nombre}`}>
+    <div role="group" aria-roledescription="galería" aria-label={`Fotos de ${nombre}`} className="mx-auto w-full max-w-[620px] lg:max-w-none">
       <div
-        className="catalog-product-media group relative aspect-square overflow-hidden rounded-boutique-lg border border-lavender-magenta-100 shadow-card"
+        className="catalog-product-media group relative aspect-square overflow-hidden rounded-boutique-lg border border-lavender-magenta-100 shadow-card bg-white"
         onTouchStart={(e) => {
           inicioToque.current = e.touches[0].clientX
         }}
@@ -72,7 +72,7 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
           alt={foto.texto_alt ?? `${nombre} (foto ${actual + 1} de ${total})`}
           fill
           sizes="(max-width: 1024px) 100vw, 55vw"
-          className="object-cover"
+          className="object-contain p-4 sm:p-6 transition-transform duration-300 ease-boutique group-hover:scale-105"
           priority={actual === 0}
         />
 
@@ -116,13 +116,13 @@ export default function ProductGallery({ fotos, nombre }: { fotos: Foto[]; nombr
               onClick={() => ir(i)}
               aria-label={`Ver foto ${i + 1} de ${total}`}
               aria-current={i === actual ? 'true' : undefined}
-              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white transition duration-200 ease-boutique ${
+              className={`relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white p-1 transition duration-200 ease-boutique ${
                 i === actual
                   ? 'ring-2 ring-lavender-magenta-600 ring-offset-2 ring-offset-white'
                   : 'opacity-75 ring-1 ring-lavender-magenta-100 hover:opacity-100'
               }`}
             >
-              <Image src={f.url} alt="" fill sizes="80px" className="object-cover" />
+              <Image src={f.url} alt="" fill sizes="80px" className="object-contain p-1" />
             </button>
           ))}
         </div>

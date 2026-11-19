@@ -131,7 +131,7 @@ export default function CartDrawer({ whatsappNumero }: { whatsappNumero?: string
                     <div className="flex gap-3.5">
                       <div className="relative h-[74px] w-[74px] shrink-0 overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
                         {item.imagenUrl ? (
-                          <Image src={item.imagenUrl} alt={item.nombre} fill sizes="74px" className="object-cover" />
+                          <Image src={item.imagenUrl} alt={item.nombre} fill sizes="74px" className="object-contain p-1" />
                         ) : (
                           <div className="flex h-full items-center justify-center text-lavender-magenta-300">
                             <BagIcon className="h-6 w-6" />
