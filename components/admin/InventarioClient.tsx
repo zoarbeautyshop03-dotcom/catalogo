@@ -304,7 +304,7 @@ export default function InventarioClient({
             <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-lavender-magenta-950">Importar desde Excel</h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Ideal para actualizar decenas o cientos de productos. Primero previsualizamos y luego confirmas.</p>
           </div>
-          <a href="/admin/inventario/plantilla" className="shrink-0 text-sm font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Descargar plantilla</a>
+          <a href="/admin/inventario/plantilla" className="shrink-0 text-sm font-semibold text-lavender-magenta-700 transition-colors duration-200 ease-boutique hover:underline">Descargar plantilla (mismo formato del otro programa)</a>
         </div>
         <div className="hairline-gold mt-4" aria-hidden="true" />
         <Importador
@@ -369,7 +369,7 @@ function Importador({ onReiniciar, onTerminado }: { onReiniciar: () => void; onT
     <form action={importAction} className="mt-5 rounded-boutique border border-dashed border-gray-300 bg-gray-50 p-5">
       <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
       <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
-      <p className="mt-2 text-xs text-gray-400">El Excel manda: los productos nuevos se crean, los existentes se actualizan (por <strong>slug</strong> o <strong>SKU</strong>) y los que no estén en el archivo se eliminan. Antes de aplicar verás la lista completa.</p>
+      <p className="mt-2 text-xs text-gray-400">El Excel manda: los productos nuevos se crean, los existentes se actualizan (por <strong>Handle/slug</strong> o <strong>REF/SKU</strong>) y los que no estén en el archivo se eliminan. Antes de aplicar verás la lista completa.</p>
       <label className="mt-3 flex items-start gap-2 text-sm text-gray-700">
         <input type="checkbox" name="eliminar_faltantes" defaultChecked className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
         <span>Eliminar de la página los productos que <strong>no estén</strong> en el Excel</span>

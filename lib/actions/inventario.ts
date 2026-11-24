@@ -77,8 +77,37 @@ function texto(valor: unknown): string {
   return valor === null || valor === undefined ? '' : String(valor).trim()
 }
 
+// Nombres de columna del Excel que exporta el otro programa (Handle, REF, Precio [Zoar]...)
+// y su equivalente en la página. Así se puede subir ese archivo tal cual.
+function nombreColumna(clave: string): string {
+  const k = clave
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+  if (k === 'handle') return 'slug'
+  if (k === 'ref') return 'sku'
+  if (k === 'codigo de barras') return 'codigo_barras'
+  if (k === 'descripcion') return 'descripcion_corta'
+  if (/^precio(\s*\[.*\])?$/.test(k)) return 'precio'
+  if (/^en inventario(\s*\[.*\])?$/.test(k)) return 'cantidad_stock'
+  if (/^existencias bajas(\s*\[.*\])?$/.test(k)) return 'stock_minimo'
+  return clave.trim().toLowerCase()
+}
+
 function normalizarFila(fila: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(fila).map(([k, v]) => [k.trim().toLowerCase(), v]))
+  return Object.fromEntries(Object.entries(fila).map(([k, v]) => [nombreColumna(k), v]))
+}
+
+// El otro programa guarda las unidades con 3 decimales: "3.000" = 3 unidades.
+// Excel en español lo lee como "tres mil". Aquí el punto/coma se toma como decimal.
+function leerStock(valor: unknown): number | null {
+  if (valor === null || valor === undefined || valor === '') return null
+  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : null
+  const limpio = String(valor).trim().replace(/\s/g, '').replace(',', '.')
+  if (!limpio) return null
+  const n = Number(limpio)
+  return Number.isFinite(n) ? n : null
 }
 
 type ProductoDb = {
@@ -162,6 +191,19 @@ export async function previsualizarInventario(
   let sinCambios = 0
   let filasConIdentificador = 0
 
+  // Si TODOS los stocks son múltiplos de 1000 (1000, 3000, 14000...), es el error de Excel que lee
+  // "3.000" como tres mil. Un inventario real nunca se ve así, así que se divide entre 1000.
+  const stocksCrudos = filas
+    .map((f) => leerStock(f.cantidad_stock))
+    .filter((n): n is number => n !== null && n > 0)
+  if (stocksCrudos.length >= 3 && stocksCrudos.every((n) => n >= 1000 && n % 1000 === 0)) {
+    for (const f of filas) {
+      const n = leerStock(f.cantidad_stock)
+      if (n !== null) f.cantidad_stock = n / 1000
+    }
+    advertencias.push('Todas las cantidades venían multiplicadas por 1000 (Excel leyó “3.000” como 3000). Se corrigieron automáticamente: 3000 → 3.')
+  }
+
   filas.forEach((raw, i) => {
     const fila = i + 2 // fila real en Excel (la 1 es el encabezado)
     const nombre = texto(raw.nombre)
@@ -185,7 +227,7 @@ export async function previsualizarInventario(
       const valor = raw[columna]
       const textoCasilla = texto(valor)
       if (valor === null || valor === undefined || textoCasilla === '' || textoCasilla === '-') return 0
-      const n = leerNumero(valor)
+      const n = columna === 'cantidad_stock' ? leerStock(valor) : leerNumero(valor)
       if (n === null) advertencias.push(`Fila ${fila}: ${nombreColumna} no es un número en “${etiqueta}”. Se ignoró ese dato.`)
       return n
     }
