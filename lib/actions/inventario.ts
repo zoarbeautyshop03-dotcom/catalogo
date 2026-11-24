@@ -73,8 +73,56 @@ function leerNumero(valor: unknown): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+// Repara texto UTF-8 que se leyó como latin1 ("DAÃ‘ADO" -> "DAÑADO").
+function repararCodificacion(t: string): string {
+  if (!/[\u00C2\u00C3][\u0080-\u00BF]/.test(t)) return t
+  try {
+    const arreglado = Buffer.from(t, 'latin1').toString('utf8')
+    return arreglado.includes('\uFFFD') ? t : arreglado
+  } catch {
+    return t
+  }
+}
+
 function texto(valor: unknown): string {
-  return valor === null || valor === undefined ? '' : String(valor).trim()
+  return valor === null || valor === undefined ? '' : repararCodificacion(String(valor).trim())
+}
+
+// Clave para comparar nombres sin importar tildes, ñ, mayúsculas, espacios ni signos.
+// "CREMA DAÑADO" y "crema  danado" dan la misma clave.
+function claveNombre(valor: string): string {
+  return valor
+    .toUpperCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9]+/g, '')
+}
+
+// Clave "suave": además tolera la Ñ rota que dejan algunos programas ("DANÌADO", "DAN?ADO", "DAN�ADO").
+function claveSuave(valor: string): string {
+  return valor
+    .toUpperCase()
+    .replace(/N[\u00CC\u00CD\u00CE\u00CF\u00D2\u00D3\u00D1\uFFFD?]/g, 'N')
+    .replace(/\uFFFD/g, '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9]+/g, '')
+}
+
+function distancia(a: string, b: string, max: number): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j)
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i]
+    let minFila = i
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1))
+      if (cur[j] < minFila) minFila = cur[j]
+    }
+    if (minFila > max) return max + 1
+    prev = cur
+  }
+  return prev[b.length]
 }
 
 // Nombres de columna del Excel que exporta el otro programa (Handle, REF, Precio [Zoar]...)
@@ -143,13 +191,26 @@ export async function previsualizarInventario(
   formData: FormData
 ): Promise<ResultadoPrevisualizacion> {
   const archivo = formData.get('archivo') as File | null
-  const eliminarFaltantes = formData.get('eliminar_faltantes') === 'on'
+  // 'eliminar' = borrar los que no estén en el Excel; 'conservar' = dejarlos intactos.
+  const eliminarFaltantes = formData.get('modo_faltantes') === 'eliminar'
   if (!archivo || archivo.size === 0) return { ok: false, error: 'Selecciona un archivo primero.' }
 
   let filas: Record<string, unknown>[]
   try {
     const buffer = Buffer.from(await archivo.arrayBuffer())
-    const libro = XLSX.read(buffer, { type: 'buffer' })
+    let libro: XLSX.WorkBook
+    if (/\.(csv|txt)$/i.test(archivo.name)) {
+      // Un CSV guardado desde Excel en español suele venir en Windows-1252, no en UTF-8.
+      let contenido: string
+      try {
+        contenido = new TextDecoder('utf-8', { fatal: true }).decode(buffer)
+      } catch {
+        contenido = new TextDecoder('windows-1252').decode(buffer)
+      }
+      libro = XLSX.read(contenido.replace(/^\uFEFF/, ''), { type: 'string' })
+    } else {
+      libro = XLSX.read(buffer, { type: 'buffer' })
+    }
     const hoja = libro.Sheets[libro.SheetNames[0]]
     filas = XLSX.utils.sheet_to_json<Record<string, unknown>>(hoja, { defval: null }).map(normalizarFila)
   } catch {
@@ -176,9 +237,19 @@ export async function previsualizarInventario(
 
   const porSlug = new Map<string, ProductoDb>()
   const porSku = new Map<string, ProductoDb>()
+  const porNombre = new Map<string, ProductoDb | null>() // null = nombre repetido (ambiguo)
+  const porNombreSuave = new Map<string, ProductoDb | null>()
+  const claves: { clave: string; p: ProductoDb }[] = []
+  const agregar = (m: Map<string, ProductoDb | null>, k: string, p: ProductoDb) => {
+    if (!k) return
+    m.set(k, m.has(k) ? null : p)
+  }
   for (const p of productos) {
     if (p.slug) porSlug.set(p.slug, p)
-    if (p.sku) porSku.set(p.sku, p)
+    if (p.sku) porSku.set(p.sku.trim().toUpperCase(), p)
+    agregar(porNombre, claveNombre(p.nombre), p)
+    agregar(porNombreSuave, claveSuave(p.nombre), p)
+    claves.push({ clave: claveNombre(p.nombre), p })
   }
 
   const columnas = new Set(filas.flatMap((f) => Object.keys(f)))
@@ -214,11 +285,33 @@ export async function previsualizarInventario(
     filasConIdentificador++
     const slugLimpio = slugify(slugExcel || nombre)
 
-    const existente =
+    // Orden: SKU/REF → slug → nombre sin tildes → nombre tolerando Ñ rota → nombre muy parecido.
+    let existente: ProductoDb | null =
+      (sku && porSku.get(sku.toUpperCase())) ||
       (slugExcel && porSlug.get(slugExcel)) ||
       (slugLimpio && porSlug.get(slugLimpio)) ||
-      (sku && porSku.get(sku)) ||
       null
+    if (!existente && nombre) {
+      existente = porNombre.get(claveNombre(nombre)) ?? porNombreSuave.get(claveSuave(nombre)) ?? null
+    }
+    if (!existente && nombre) {
+      const k = claveSuave(nombre)
+      if (k.length >= 12) {
+        let mejor: ProductoDb | null = null
+        let mejorDist = 3
+        let empate = false
+        for (const c of claves) {
+          if (conservados.has(c.p.id)) continue
+          const d = distancia(k, claveSuave(c.p.nombre), 2)
+          if (d < mejorDist) { mejor = c.p; mejorDist = d; empate = false }
+          else if (d === mejorDist && mejor && mejor.id !== c.p.id) empate = true
+        }
+        if (mejor && !empate && mejorDist <= 2) {
+          existente = mejor
+          advertencias.push(`Fila ${fila}: “${nombre}” se emparejó por parecido con “${mejor.nombre}”. Revísalo.`)
+        }
+      }
+    }
 
     // Casilla vacía (o con "-") = 0. Solo si la columna existe en el archivo; si falta la columna, no se toca.
     const etiqueta = nombre || slugExcel || sku
@@ -459,7 +552,7 @@ export async function confirmarSincronizacionInventario(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { ok: false, error: 'Tu sesión de administrador venció. Vuelve a iniciar sesión.' }
 
-  let plan: { cambios?: FilaCambio[]; nuevos?: FilaNuevo[]; eliminar?: FilaEliminar[]; eliminacionMasiva?: boolean }
+  let plan: { cambios?: FilaCambio[]; nuevos?: FilaNuevo[]; eliminar?: FilaEliminar[]; totalCatalogo?: number }
   try {
     plan = JSON.parse(String(formData.get('plan') ?? '{}'))
   } catch {
@@ -478,7 +571,8 @@ export async function confirmarSincronizacionInventario(
     if (formData.get('entiendo') !== 'on') {
       return { ok: false, error: 'Marca la casilla para confirmar que entiendes que se eliminarán productos.' }
     }
-    if (plan.eliminacionMasiva && String(formData.get('palabra') ?? '').trim().toUpperCase() !== 'ELIMINAR') {
+    const masiva = eliminar.length >= 10 && eliminar.length >= (plan.totalCatalogo ?? 0) * 0.4
+    if (masiva && String(formData.get('palabra') ?? '').trim().toUpperCase() !== 'ELIMINAR') {
       return { ok: false, error: 'Vas a eliminar muchos productos. Escribe ELIMINAR para confirmar.' }
     }
   }

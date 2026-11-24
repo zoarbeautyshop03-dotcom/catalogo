@@ -369,11 +369,18 @@ function Importador({ onReiniciar, onTerminado }: { onReiniciar: () => void; onT
     <form action={importAction} className="mt-5 rounded-boutique border border-dashed border-gray-300 bg-gray-50 p-5">
       <label className="block text-sm font-semibold text-gray-700">Selecciona .xlsx, .xls o .csv</label>
       <input type="file" name="archivo" accept=".xlsx,.xls,.csv" required className="mt-3 block w-full text-sm" />
-      <p className="mt-2 text-xs text-gray-400">El Excel manda: los productos nuevos se crean, los existentes se actualizan (por <strong>Handle/slug</strong> o <strong>REF/SKU</strong>) y los que no estén en el archivo se eliminan. Antes de aplicar verás la lista completa.</p>
-      <label className="mt-3 flex items-start gap-2 text-sm text-gray-700">
-        <input type="checkbox" name="eliminar_faltantes" defaultChecked className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
-        <span>Eliminar de la página los productos que <strong>no estén</strong> en el Excel</span>
-      </label>
+      <p className="mt-2 text-xs text-gray-400">Los productos nuevos se crean y los existentes se actualizan (por <strong>REF/SKU</strong>, <strong>Handle/slug</strong> o nombre, sin importar tildes ni la Ñ). Antes de aplicar verás la lista completa.</p>
+      <fieldset className="mt-4 space-y-2">
+        <legend className="text-sm font-semibold text-gray-700">¿Qué hacer con los productos que están en la página pero NO en el Excel?</legend>
+        <label className="flex items-start gap-2 text-sm text-gray-700">
+          <input type="radio" name="modo_faltantes" value="conservar" defaultChecked className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
+          <span><strong>Conservarlos</strong> (no se borra nada)</span>
+        </label>
+        <label className="flex items-start gap-2 text-sm text-gray-700">
+          <input type="radio" name="modo_faltantes" value="eliminar" className="mt-0.5 h-4 w-4 accent-red-600" />
+          <span><strong>Eliminarlos</strong> (podrás marcar cuáles conservar antes de confirmar)</span>
+        </label>
+      </fieldset>
       <ImportButton />
       {importState.error && <p className="mt-3 text-sm text-red-500">{importState.error}</p>}
     </form>
@@ -393,14 +400,19 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
   const [state, action] = useFormState(confirmarSincronizacionInventario, INITIAL_CONF)
   const cambios = resultado.cambios ?? []
   const nuevos = resultado.nuevos ?? []
-  const eliminar = resultado.eliminar ?? []
+  const eliminarTodos = resultado.eliminar ?? []
+  const [conservar, setConservar] = useState<Set<string>>(new Set())
+  const eliminar = eliminarTodos.filter((e) => !conservar.has(e.id))
+  const alternarConservar = (id: string, v: boolean) =>
+    setConservar((prev) => { const n = new Set(prev); if (v) n.add(id); else n.delete(id); return n })
+  const eliminacionMasiva = eliminar.length >= 10 && eliminar.length >= (resultado.totalCatalogo ?? 0) * 0.4
   const advertencias = resultado.advertencias ?? []
   const hayAlgo = cambios.length + nuevos.length + eliminar.length > 0
   useEffect(() => {
     if (state.ok && state.aplicados) onTerminado(state.aplicados)
   }, [state])
 
-  const plan = JSON.stringify({ cambios, nuevos, eliminar, eliminacionMasiva: resultado.eliminacionMasiva })
+  const plan = JSON.stringify({ cambios, nuevos, eliminar: eliminarTodos, totalCatalogo: resultado.totalCatalogo })
   const th = 'px-4 py-3'
   return (
     <div className="mt-5 space-y-5">
@@ -433,21 +445,29 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
         </section>
       )}
 
-      {eliminar.length > 0 && (
+      {eliminarTodos.length > 0 && (
         <section>
-          <h3 className="mb-2 text-sm font-bold text-red-600">Productos que se van a ELIMINAR de la página ({eliminar.length})</h3>
-          <p className="mb-2 text-xs text-gray-500">No están en el Excel. Esta acción es permanente.</p>
+          <h3 className="mb-2 text-sm font-bold text-red-600">Productos que no están en el Excel ({eliminarTodos.length}) — se eliminarán {eliminar.length}</h3>
+          <p className="mb-2 text-xs text-gray-500">Marca <strong>Conservar</strong> en los que NO quieres borrar. Los que queden sin marcar se eliminan de forma permanente.</p>
+          <div className="mb-2 flex gap-2 text-xs">
+            <button type="button" onClick={() => setConservar(new Set(eliminarTodos.map((e) => e.id)))} className="rounded-full border border-gray-200 px-3 py-1 font-semibold text-gray-600 hover:border-lavender-magenta-400">Conservar todos</button>
+            <button type="button" onClick={() => setConservar(new Set())} className="rounded-full border border-gray-200 px-3 py-1 font-semibold text-gray-600 hover:border-red-300">Quitar todas las marcas</button>
+          </div>
           <div className="max-h-72 overflow-auto rounded-2xl border border-red-100">
             <table className="w-full min-w-[500px] text-sm">
-              <thead className="sticky top-0 bg-red-50 text-left text-xs font-semibold uppercase tracking-wide text-red-600"><tr><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Stock actual</th></tr></thead>
+              <thead className="sticky top-0 bg-red-50 text-left text-xs font-semibold uppercase tracking-wide text-red-600"><tr><th className={th}>Conservar</th><th className={th}>Producto</th><th className={th}>SKU</th><th className={th}>Stock actual</th></tr></thead>
               <tbody>
-                {eliminar.map((e) => (
-                  <tr key={e.id} className="border-t border-red-50">
-                    <td className="px-4 py-2">{e.nombre}</td>
-                    <td className="px-4 py-2 text-xs text-gray-500">{e.sku || '—'}</td>
-                    <td className="px-4 py-2">{e.cantidad_stock ?? 0}</td>
-                  </tr>
-                ))}
+                {eliminarTodos.map((e) => {
+                  const guardado = conservar.has(e.id)
+                  return (
+                    <tr key={e.id} className={`border-t border-red-50 ${guardado ? 'bg-emerald-50/60' : ''}`}>
+                      <td className="px-4 py-2"><input type="checkbox" checked={guardado} onChange={(ev) => alternarConservar(e.id, ev.target.checked)} aria-label={`Conservar ${e.nombre}`} className="h-4 w-4 accent-emerald-600" /></td>
+                      <td className={`px-4 py-2 ${guardado ? '' : 'text-red-700'}`}>{e.nombre}</td>
+                      <td className="px-4 py-2 text-xs text-gray-500">{e.sku || '—'}</td>
+                      <td className="px-4 py-2">{e.cantidad_stock ?? 0}</td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
@@ -488,13 +508,14 @@ function Previsualizacion({ resultado, onReiniciar, onTerminado }: { resultado: 
         {hayAlgo && (
           <form action={action} className="space-y-3">
             <input type="hidden" name="plan" value={plan} />
+            <input type="hidden" name="conservar_ids" value={Array.from(conservar).join(',')} />
             {eliminar.length > 0 && (
               <label className="flex items-start gap-2 text-sm text-red-600">
                 <input type="checkbox" name="entiendo" required className="mt-0.5 h-4 w-4 accent-red-600" />
                 <span>Entiendo que se eliminarán {eliminar.length} {eliminar.length === 1 ? 'producto' : 'productos'} de forma permanente.</span>
               </label>
             )}
-            {resultado.eliminacionMasiva && (
+            {eliminacionMasiva && (
               <div>
                 <p className="text-xs text-red-600">Vas a eliminar una gran parte del catálogo ({eliminar.length} de {resultado.totalCatalogo}). Escribe <strong>ELIMINAR</strong> para continuar.</p>
                 <input name="palabra" required autoComplete="off" className="mt-1 w-40 rounded-lg border border-red-200 px-3 py-1.5 text-sm" />
