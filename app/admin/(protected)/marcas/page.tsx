@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabase/server'
-import { crearMarca, actualizarMarca, eliminarMarca, aplicarDescuentoMarca, quitarDescuentoMarca } from '@/lib/actions/marcas'
+import { crearMarca, actualizarMarca, eliminarMarca, aplicarDescuentoMarca, quitarDescuentoMarca, aplicarDescuentoTienda, quitarDescuentoTienda } from '@/lib/actions/marcas'
 import DeleteButton from '@/components/admin/DeleteButton'
 import { Icono } from '@/components/admin/Iconos'
 
@@ -46,6 +46,11 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
 
   const currentFrom = (currentPage - 1) * PAGE_SIZE
 
+  const [{ count: totalProductos }, { count: productosConDescuento }] = await Promise.all([
+    supabase.from('productos').select('id', { count: 'exact', head: true }),
+    supabase.from('productos').select('id', { count: 'exact', head: true }).not('precio_anterior', 'is', null),
+  ])
+
   return (
     <div>
       <header className="mb-6">
@@ -54,6 +59,42 @@ export default async function MarcasPage({ searchParams }: { searchParams: Searc
         <p className="mt-1 max-w-xl text-sm leading-6 text-gray-500">Administra proveedores y aplica descuentos a toda una marca.</p>
         <div className="hairline-gold mt-5" aria-hidden="true" />
       </header>
+
+      <section className="mb-6 rounded-boutique-lg border border-lavender-magenta-100 bg-white p-5 shadow-card sm:p-6">
+        <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Descuento para toda la tienda</h2>
+        <p className="mt-1 text-xs leading-5 text-gray-500">
+          Se aplica a los {totalProductos ?? 0} productos, tengan marca o no ({productosConDescuento ?? 0} ya tienen un descuento activo).
+          Se calcula siempre desde el precio original, así que aplicarlo dos veces no descuenta sobre lo ya rebajado.
+        </p>
+        <div className="hairline-gold mt-3 mb-4" aria-hidden="true" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <form action={aplicarDescuentoTienda} className="space-y-3 rounded-2xl bg-gray-50 p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-gray-500">Porcentaje:</span>
+              <input type="number" name="porcentaje" min={1} max={99} placeholder="%" required className={`${INPUT} w-20 px-2 py-1`} />
+              <span className="text-xs text-gray-400">(1 a 99)</span>
+            </div>
+            <label className="flex items-start gap-2 text-xs text-gray-600">
+              <input type="checkbox" name="respetar_existentes" className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
+              <span>No tocar los productos que <strong>ya tienen</strong> un descuento (por marca o individual)</span>
+            </label>
+            <label className="flex items-start gap-2 text-xs text-lavender-magenta-800">
+              <input type="checkbox" name="confirmo" required className="mt-0.5 h-4 w-4 accent-lavender-magenta-600" />
+              <span>Confirmo que este descuento se aplicará a <strong>toda la tienda</strong></span>
+            </label>
+            <button className="rounded-full bg-lavender-magenta-700 px-4 py-2 text-sm font-semibold text-white shadow-card transition-all duration-200 ease-boutique hover:-translate-y-0.5 hover:bg-lavender-magenta-800">Aplicar a toda la tienda</button>
+          </form>
+
+          <form action={quitarDescuentoTienda} className="space-y-3 rounded-2xl bg-gray-50 p-4">
+            <p className="text-xs text-gray-500">Devuelve todos los productos con descuento a su precio original (incluye los de marca e individuales).</p>
+            <label className="flex items-start gap-2 text-xs text-gray-600">
+              <input type="checkbox" name="confirmo" required className="mt-0.5 h-4 w-4 accent-red-600" />
+              <span>Confirmo que quiero <strong>quitar los descuentos</strong> de toda la tienda</span>
+            </label>
+            <button className="rounded-full border border-rosa-pastel bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition-colors duration-200 ease-boutique hover:border-lavender-magenta-400 hover:text-lavender-magenta-700">Quitar descuento a toda la tienda</button>
+          </form>
+        </div>
+      </section>
 
       <section className="mb-6 rounded-boutique-lg border border-lavender-magenta-100 bg-white p-5 shadow-card sm:p-6">
         <h2 className="font-display text-lg font-semibold text-lavender-magenta-950">Nueva marca</h2>
